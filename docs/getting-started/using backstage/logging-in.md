@@ -12,7 +12,7 @@ This guide will provide a quick tutorial on how to log in to your Backstage inst
 
 ## Prerequisites
 
-You should have already [have a standalone app](./index.md) and completed the Github OAuth app setup defined in [the authentication tutorial](./config/authentication.md).
+You should have already [have a standalone app](../index.md) and completed the Github OAuth app setup defined in [the authentication tutorial](../configuring%20Backstage/authentication.md).
 
 ## 1. Login to Backstage
 
@@ -20,7 +20,7 @@ Run your Backstage app with `yarn dev`. Navigate to `http://localhost:3000`.
 
 If you're not already logged in, you should see a login screen like this,
 
-To login, you should choose the "Github" provider and click the "Sign in" button. This will redirect you to a Github OAuth page. Verify that the scopes mentioned on that page match the setup you did in [the authentication tutorial](./config/authentication.md). Once you click "Confirm", you will be brought back to the Backstage interface and signed in!
+To login, you should choose the "Github" provider and click the "Sign in" button. This will redirect you to a Github OAuth page. Verify that the scopes mentioned on that page match the setup you did in [the authentication tutorial](../configuring%20Backstage/authentication.md). Once you click "Confirm", you will be brought back to the Backstage interface and signed in!
 
 If you are already logged in, you will be automatically brought to your Backstage instance.
 
@@ -30,4 +30,4 @@ Once you've logged in, find the "Settings" item in the navigation bar to the lef
 
 <!-- Would like to have more FAQs here for help instead of funneling to Discord -->
 
-If you don't see your profile picture and name, check that you followed all of the steps in [the authentication tutorial](./config/authentication.md). If you have, search for similar issues on [the Discord server](https://discord.gg/backstage-687207715902193673).
+If you don't see your profile picture and name, check that you followed all of the steps in [the authentication tutorial](../configuring%20Backstage/authentication.md). If you have, search for similar issues on [the Discord server](https://discord.gg/backstage-687207715902193673).

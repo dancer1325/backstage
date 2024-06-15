@@ -147,18 +147,18 @@ Choose the correct next steps for your user role, if you're likely to be deployi
   - [Deploying with Kubernetes](../deployment/k8s.md)
   - [Deploying with AWS Lightsail](../deployment/backstage-deploy/aws.md)
 - Configuring Backstage
-  - [Database](./config/database.md)
-  - [Authentication](./config/authentication.md)
-  - [Plugins](./configure-app-with-plugins.md)
-  - [Theme](./app-custom-theme.md)
-  - [Homepage](./homepage.md)
+  - [Database](configuring Backstage/database.md)
+  - [Authentication](configuring Backstage/authentication.md)
+  - [Plugins](configuring Backstage/configure-app-with-plugins.md)
+  - [Theme](configuring Backstage/app-custom-theme.md)
+  - [Homepage](configuring Backstage/homepage.md)
 
 ### Developer
 
 - Using your Backstage instance
-  - [Logging into Backstage](./logging-in.md)
-  - [Register a component](./register-a-component.md)
-  - [Create a new component](./create-a-component.md)
+  - [Logging into Backstage](using backstage/logging-in.md)
+  - [Register a component](using backstage/register-a-component.md)
+  - [Create a new component](using backstage/create-a-component.md)
 
 Share your experiences, comments, or suggestions with us:
 [on discord](https://discord.gg/backstage-687207715902193673), file issues for any

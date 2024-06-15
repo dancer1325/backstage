@@ -495,7 +495,7 @@ You can add more icons, if the [default icons](https://github.com/backstage/back
 
    And this is the result:
 
-   ![Example Link with Alert icon](../assets/getting-started/add-icons-links-example.png)
+   ![Example Link with Alert icon](../../assets/getting-started/add-icons-links-example.png)
 
    Another way you can use these icons is from the `AppContext` like this:
 
@@ -599,7 +599,7 @@ For this example we'll show you how you can expand the sidebar with a sub-menu:
 
 When you startup your Backstage app and hover over the Home option on the sidebar you'll now see a nice sub-menu appear with links to the various Kinds in your Catalog. It would look like this:
 
-![Sidebar sub-menu example](./../assets/getting-started/sidebar-submenu-example.png)
+![Sidebar sub-menu example](../../assets/getting-started/sidebar-submenu-example.png)
 
 You can see more ways to use this in the [Storybook Sidebar examples](https://backstage.io/storybook/?path=/story/layout-sidebar--sample-scalable-sidebar)
 
@@ -610,4 +610,4 @@ homepage of your app. Read the full guide on the [next page](homepage.md).
 
 ## Migrating to Material UI v5
 
-We now support Material UI v5 in Backstage. Check out our [migration guide](../tutorials/migrate-to-mui5.md) to get started.
+We now support Material UI v5 in Backstage. Check out our [migration guide](../../tutorials/migrate-to-mui5.md) to get started.

@@ -18,20 +18,20 @@ If you're running Backstage with Node 20 or later, you'll need to pass the flag 
 
 :::
 
-You should already have [a standalone app](./index.md).
+You should already have [a standalone app](../index.md).
 
-You will also need to register the [GitHub Scaffolder Action module](../features/software-templates/builtin-actions.md#installing-action-modules) before moving forward.
+You will also need to register the [GitHub Scaffolder Action module](../../features/software-templates/builtin-actions.md#installing-action-modules) before moving forward.
 
 ## Creating your component
 
 - Go to `create` and choose to create a website with the `Example Node.js Template`
 - Type in a name, let's use `tutorial` and click `Next Step`
 
-![Software template deployment input screen asking for a name](../assets/getting-started/b-scaffold-1.png)
+![Software template deployment input screen asking for a name](../../assets/getting-started/b-scaffold-1.png)
 
 - You should see the following screen:
 
-![Software template deployment input screen asking for the GitHub username, and name of the new repo to create](../assets/getting-started/b-scaffold-2.png)
+![Software template deployment input screen asking for the GitHub username, and name of the new repo to create](../../assets/getting-started/b-scaffold-2.png)
 
 - For host, it should default to github.com
 - As owner, type your GitHub username
