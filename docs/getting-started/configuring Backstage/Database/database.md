@@ -8,7 +8,7 @@ Audience: Admins
 
 ### Summary
 
-This guide walks through how to set up a PostgreSQL database to host your Backstage data. It assumes you've already have a scaffolded Backstage app from following the [Standalone Install](../index.md) guide.
+This guide walks through how to set up a PostgreSQL database to host your Backstage data. It assumes you've already have a scaffolded Backstage app from following the [Standalone Install](../../index.md) guide.
 
 By the end of this tutorial, you will have a working PostgreSQL database hooked up to your Backstage install.
 
@@ -117,7 +117,7 @@ If you opt for the second option of replacing the entire string, take care to no
 
 :::
 
-[Start the Backstage app](../index.md#2-run-the-backstage-app):
+[Start the Backstage app](../../index.md#2-run-the-backstage-app):
 
 ```shell
 yarn dev
@@ -129,11 +129,11 @@ We've now made your data persist in your Backstage database.
 
 ## Next Steps
 
-We recommend you read [Setting up authentication](./authentication.md) next.
+We recommend you read [Setting up authentication](../authentication.md) next.
 
 ## Further Reading
 
 If you want to read more about the database configuration, here are some helpful links:
 
-- [Configuring Plugin Databases](../../tutorials/configuring-plugin-databases.md#privileges)
+- [Configuring Plugin Databases](../../../tutorials/configuring-plugin-databases.md#privileges)
 - [Read more about Knex](http://knexjs.org/), the database wrapper that we use.

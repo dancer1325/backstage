@@ -147,7 +147,7 @@ Choose the correct next steps for your user role, if you're likely to be deployi
   - [Deploying with Kubernetes](../deployment/k8s.md)
   - [Deploying with AWS Lightsail](../deployment/backstage-deploy/aws.md)
 - Configuring Backstage
-  - [Database](configuring Backstage/database.md)
+  - [Database](configuring Backstage/Database/database.md)
   - [Authentication](configuring Backstage/authentication.md)
   - [Plugins](configuring Backstage/configure-app-with-plugins.md)
   - [Theme](configuring Backstage/app-custom-theme.md)

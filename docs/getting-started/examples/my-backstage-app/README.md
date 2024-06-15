@@ -14,6 +14,10 @@ This is your newly scaffolded Backstage App, Good Luck!
 * `yarn dev`
   * Opened in your browser automatically or go to 'localhost:3000'
 
+## Configure a PostgreSQL Database
+* `yarn --cwd packages/backend add pg`
+  * install PostgreSQL client
+* Follow '../gettingStarted/configuringBackstage/database'
 
 ## Notes
 * Structure
