@@ -10,6 +10,7 @@ This is your newly scaffolded Backstage App, Good Luck!
 
 ## How to run?
 * `yarn install`
+  * it can take time!!
 * `yarn dev`
   * Opened in your browser automatically or go to 'localhost:3000'
 
