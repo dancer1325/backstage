@@ -292,7 +292,7 @@ describe('My plugin tests', () => {
 
 ## Package structure
 
-A detailed explanation of the package architecture can be found in the [Backstage Architecture Overview](../overview/architecture-overview.md#package-architecture). The most important packages to consider for this system are `backend`, `plugin-<pluginId>-backend`, `plugin-<pluginId>-node`, and `plugin-<pluginId>-backend-module-<moduleId>`.
+A detailed explanation of the package architecture can be found in the [Backstage Architecture Overview](../overview/Architecture/architecture-overview.md#package-architecture). The most important packages to consider for this system are `backend`, `plugin-<pluginId>-backend`, `plugin-<pluginId>-node`, and `plugin-<pluginId>-backend-module-<moduleId>`.
 
 - `plugin-<pluginId>-backend` houses the implementation of the plugins themselves.
 - `plugin-<pluginId>-node` houses the extension points and any other utilities that modules or other plugins might need.

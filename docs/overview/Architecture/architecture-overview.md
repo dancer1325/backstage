@@ -37,7 +37,7 @@ Running this architecture in a real environment typically involves
 containerising the components. Various commands are provided for accomplishing
 this.
 
-![The architecture of a basic Backstage application](../assets/architecture-overview/backstage-typical-architecture.png)
+![The architecture of a basic Backstage application](../../assets/architecture-overview/backstage-typical-architecture.png)
 
 ## User Interface
 
@@ -45,17 +45,17 @@ The UI is a thin, client-side wrapper around a set of plugins. It provides some
 core UI components and libraries for shared activities such as config
 management. [[live demo](https://demo.backstage.io/catalog)]
 
-![UI with different components highlighted](../assets/architecture-overview/core-vs-plugin-components-highlighted.png)
+![UI with different components highlighted](../../assets/architecture-overview/core-vs-plugin-components-highlighted.png)
 
 Each plugin typically makes itself available in the UI on a dedicated URL. For
 example, the Lighthouse plugin is registered with the UI on `/lighthouse`.
 [[learn more](https://backstage.io/blog/2020/04/06/lighthouse-plugin)]
 
-![The lighthouse plugin UI](../assets/architecture-overview/lighthouse-plugin.png)
+![The lighthouse plugin UI](../../assets/architecture-overview/lighthouse-plugin.png)
 
 The CircleCI plugin is available on `/circleci`.
 
-![CircleCI Plugin UI](../assets/architecture-overview/circle-ci.png)
+![CircleCI Plugin UI](../../assets/architecture-overview/circle-ci.png)
 
 ## Plugins and plugin backends
 
@@ -100,7 +100,7 @@ components, but in addition to being able to be rendered by React, they also
 contain various pieces of metadata that is used to wire together the entire app.
 Extension components are created using `create*Extension` methods, which you can
 read more about in the
-[composability documentation](../plugins/composability.md).
+[composability documentation](../../plugins/composability.md).
 
 As of this moment, there is no config based install procedure for plugins. Some
 code changes are required.
@@ -120,12 +120,12 @@ Standalone plugins run entirely in the browser.
 simply renders hard-coded information. It doesn't make any API requests to other
 services.
 
-![tech radar plugin ui](../assets/architecture-overview/tech-radar-plugin.png)
+![tech radar plugin ui](../../assets/architecture-overview/tech-radar-plugin.png)
 
 The architecture of the Tech Radar installed into a Backstage app is very
 simple.
 
-![ui and tech radar plugin connected together](../assets/architecture-overview/tech-radar-plugin-architecture.png)
+![ui and tech radar plugin connected together](../../assets/architecture-overview/tech-radar-plugin-architecture.png)
 
 #### Service backed plugins
 
@@ -140,7 +140,7 @@ results in a PostgreSQL database.
 
 Its architecture looks like this:
 
-![lighthouse plugin backed to microservice and database](../assets/architecture-overview/lighthouse-plugin-architecture.png)
+![lighthouse plugin backed to microservice and database](../../assets/architecture-overview/lighthouse-plugin-architecture.png)
 
 The software catalog in Backstage is another example of a service backed plugin.
 It retrieves a list of services, or "entities", from the Backstage Backend
@@ -162,7 +162,7 @@ Cross Origin Resource Sharing policies which prevent a browser page served at
 [https://example.com](https://example.com) from serving resources hosted at
 https://circleci.com.
 
-![CircleCI plugin talking to proxy talking to SaaS Circle CI](../assets/architecture-overview/circle-ci-plugin-architecture.png)
+![CircleCI plugin talking to proxy talking to SaaS Circle CI](../../assets/architecture-overview/circle-ci-plugin-architecture.png)
 
 ## Package Architecture
 
@@ -179,7 +179,7 @@ Surrounding the plugin are different package groups which are the different
 possible interface points of the plugin. Note that not all library package lists
 are complete as packages have been omitted for brevity.
 
-![Package architecture](../assets/architecture-overview/package-architecture.drawio.svg)
+![Package architecture](../../assets/architecture-overview/package-architecture.drawio.svg)
 
 ### Overview
 
@@ -210,7 +210,7 @@ each of the packages have their own unique suffix that denotes their role. In
 addition to these five plugin packages it's also possible for a plugin to have
 additional frontend and backend modules that can be installed to enable optional
 features. For a full list of suffixes and their roles, see the
-[Plugin Package Structure ADR](../architecture-decisions/adr011-plugin-package-structure.md).
+[Plugin Package Structure ADR](../../architecture-decisions/adr011-plugin-package-structure.md).
 
 The `-react`, `-common`, and `-node` plugin packages together form the external
 library of a plugin. The plugin library enables other plugins to build on top of
@@ -266,7 +266,7 @@ need it to be used by other plugins, then keep it directly in the plugin package
 
 Below is a chart to help you decide where to place your code.
 
-![Package decision](../assets/architecture-overview/package-decision.drawio.svg)
+![Package decision](../../assets/architecture-overview/package-decision.drawio.svg)
 
 ## Databases
 
@@ -339,7 +339,7 @@ separate Docker images.
 2. The backend container
 3. The Lighthouse audit service container
 
-![Boxes around the architecture to indicate how it is containerised](../assets/architecture-overview/containerised.png)
+![Boxes around the architecture to indicate how it is containerised](../../assets/architecture-overview/containerised.png)
 
 The backend container can be built by running the following command:
 

@@ -72,7 +72,7 @@ your backend server, there may be a comparably high amount of latency when
 loading TechDocs sites using this deployment approach. If you encounter this,
 you can optionally configure the `techdocs-backend` to cache responses in a
 cache store
-[supported by Backstage](../../overview/architecture-overview.md#cache).
+[supported by Backstage](../../overview/Architecture/architecture-overview.md#cache).
 
 ### Security consideration
 

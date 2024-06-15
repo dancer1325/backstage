@@ -17,7 +17,7 @@ access for unauthorized users. The identity system only serves to provide a pers
 experience and access to a Backstage Identity Token, which can be passed to backend plugins.
 This also means that your Backstage backend APIs are by default unauthenticated.
 Thus, if your Backstage instance is exposed to the Internet, anyone can access
-information in the Backstage. You can learn more [here](../overview/threat-model.md#integrator-responsibilities).
+information in the Backstage. You can learn more [here](../overview/Backstage%20Threat%20Model/threat-model.md#integrator-responsibilities).
 
 :::
 

@@ -17,7 +17,7 @@ The initiatives listed below are planned for release within the next half-year, 
 
 ### Backend System 1.0
 
-The goal of this initiative is the stable 1.0 release of the [new backend system](../backend-system/index.md).
+The goal of this initiative is the stable 1.0 release of the [new backend system](../../backend-system/index.md).
 This includes ensuring that all documentation is up to date, and includes API
 reviews and refactoring efforts to ensure that what is released is both stable
 and evolvable. You can follow along with this work in the [meta issue](https://github.com/backstage/backstage/issues/24493).
@@ -31,7 +31,7 @@ provide a more flexible and scalable way to extend backend services.
 
 ### New Frontend System - Ready for Adoption
 
-The [new fronted system](../frontend-system/index.md) still needs more work, and
+The [new fronted system](../../frontend-system/index.md) still needs more work, and
 the next milestone is to improve it to the point where there is enough
 confidence in the design to start encouraging adoption in the community. You can
 follow along with this work in the [meta issue](https://github.com/backstage/backstage/issues/19545).

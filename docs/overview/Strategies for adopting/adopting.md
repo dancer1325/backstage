@@ -27,7 +27,7 @@ This team will have **four** primary objectives:
 
 3. Work with senior tech leadership and architects to ensure your organization's
    best practices for software development are encoded into a set of
-   [Software Templates](../features/software-templates/index.md).
+   [Software Templates](../../features/software-templates/index.md).
 
 4. Evangelize Backstage as a central platform towards other
    infrastructure/platform teams.
@@ -39,7 +39,7 @@ also the most critical to successfully creating a consolidated platform. When
 done right, Backstage acts as a "platform of platforms" or marketplace between
 infra/platform teams and end-users:
 
-![pop](../assets/pop.png)
+![pop](../../assets/pop.png)
 
 While anyone at your company can contribute to the platform, the vast majority
 of work will be done by teams that also have internal engineers as their
@@ -47,16 +47,16 @@ customers. The central team should treat these _contributing teams_ as customers
 of the platform as well.
 
 These teams should be able to autonomously deliver value directly to their
-customers. This is done primarily by building [plugins](../plugins/index.md).
+customers. This is done primarily by building [plugins](../../plugins/index.md).
 Contributing teams should themselves treat their plugins as, or part of, the
 products they maintain.
 
 > Case study: Inside Spotify we have a team that owns our CI platform. They not
 > only maintain the pipelines and build servers, but also expose their product
 > in Backstage through a plugin. Since they also
-> [maintain their own API](../plugins/call-existing-api.md), they can improve
+> [maintain their own API](../../plugins/call-existing-api.md), they can improve
 > their product by iterating on API and UI in lockstep. Because the plugin
-> follows our [platform design guidelines](../dls/design.md) their customers get
+> follows our [platform design guidelines](../../dls/design.md) their customers get
 > a CI experience that is consistent with other tools on the platform (and users
 > don't have to become experts in Jenkins).
 
@@ -130,7 +130,7 @@ successful impact on your software development process:
   find information and overall satisfaction with internal tools.
 
 - **Fragmentation** _(Experimental)_ Backstage
-  [Software Templates](../features/software-templates/index.md) help drive
+  [Software Templates](../../features/software-templates/index.md) help drive
   standardization in your software ecosystem. By measuring the variance in
   technology between different software components it is possible to get a sense
   of the overall fragmentation in your ecosystem. Examples could include:
