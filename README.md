@@ -31,18 +31,31 @@ English \| [한국어](README-ko_kr.md) \| [中文版](README-zh_Hans.md)
 ### Features
 - [Backstage Software Catalog](https://backstage.io/docs/features/software-catalog/)
   - for managing all your software
-    - _Example:_ microservices, libraries, data pipelines, websites & ML models
+    - _Example:_ microservices, libraries, data pipelines, websites, ML models, PR status, resource monitoring, testing, ...
 - [Backstage Software Templates](https://backstage.io/docs/features/software-templates/) 
   - for
-    - quickly spinning up new projects
-    - standardizing your tooling -- via -- your organization’s best practices
+    - quickly spinning up new projects / CI already configured
+    - standardizing your tooling -- via -- your organization’s best practices (language program, CI tool, Cloud provider, ...)
 - [Backstage TechDocs](https://backstage.io/docs/features/techdocs/) 
-  - for making it easy about technical documentation -- via -- "docs like code" approach 
-    - create
-    - maintain
-    - find
-    - use
+  - for making it easy about technical documentation -- via -- "docs like code" approach,
+    - to
+      - create
+      - maintain
+      - find
+      - use
+    - in Markdown files -- alongside the -- code
 - Growing ecosystem of [open source plugins](https://github.com/backstage/backstage/tree/master/plugins) / expand Backstage’s customizability and functionality
+  - you can create your own ones
+- [Backstage Search](https://backstage.io/docs/features/search/)
+  - allows
+    - choosing search engine
+    - finding all easier
+- [Backstage Kubernetes](https://backstage.io/docs/features/kubernetes/)
+  - -- done for -- service owners (NOT cluster admins)
+  - allows
+    - monitoring easily all your services containerized
+    - freedom to choose any Kubernetes service (cloud-related)
+    - 1! UI / any stage
 
 ## Project roadmap
 
