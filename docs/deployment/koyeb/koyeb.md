@@ -31,7 +31,7 @@ backend:
 
 ## Push and deploy Backstage to Koyeb
 
-Push your Backstage application with its [Dockerfile](docker.md) to Koyeb using the following command:
+Push your Backstage application with its [Dockerfile](../docker/docker.md) to Koyeb using the following command:
 
 ```bash
 koyeb app init example-backstage \

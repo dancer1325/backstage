@@ -27,10 +27,10 @@ At Spotify, we deploy software generally by:
 3. Referencing the image in a Kubernetes Deployment YAML
 4. Applying that Deployment to a Kubernetes cluster
 
-This method is covered in [Building a Docker image](docker.md) and
-[Deploying with Kubernetes](k8s.md).
+This method is covered in [Building a Docker image](docker/docker.md) and
+[Deploying with Kubernetes](k8s/k8s.md).
 
-There is also an example of deploying on [Heroku](heroku.md), which only
+There is also an example of deploying on [Heroku](heroku/heroku.md), which only
 requires the first two steps.
 
 There is also a contrib guide to deploying Backstage with

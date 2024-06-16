@@ -59,7 +59,7 @@ $ heroku container:login
 
 ## Push and deploy a Docker image
 
-Now we can push a Backstage [Docker image](docker.md) to Heroku's container
+Now we can push a Backstage [Docker image](../docker/docker.md) to Heroku's container
 registry and release it to the `web` worker:
 
 ```bash

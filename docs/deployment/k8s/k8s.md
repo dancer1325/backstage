@@ -16,7 +16,7 @@ everything else.
 This guide covers basic Kubernetes definitions needed to get Backstage up and
 running in a typical cluster. The object definitions might look familiar, since
 the Backstage software catalog
-[also uses](../features/software-catalog/descriptor-format.md) the Kubernetes
+[also uses](../../features/software-catalog/descriptor-format.md) the Kubernetes
 object format for its entity definition files!
 
 ## Testing locally
@@ -326,7 +326,7 @@ secret/backstage-secrets created
 
 ### Creating a Backstage deployment
 
-To create the Backstage deployment, first create a [Docker image](docker.md).
+To create the Backstage deployment, first create a [Docker image](../docker/docker.md).
 We'll use this image to create a Kubernetes deployment. For this example, we'll
 use the standard host build with the frontend bundled and served from the
 backend.
@@ -496,7 +496,7 @@ backend:
     origin: http://localhost
 ```
 
-If you're using an [auth provider](../auth/index.md), it should also have this
+If you're using an [auth provider](../../auth/index.md), it should also have this
 address configured for the authentication pop-up to work properly.
 
 Now you can open a browser on your machine to [localhost](http://localhost) and

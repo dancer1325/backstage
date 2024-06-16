@@ -32,7 +32,7 @@ FROM node:18-bookworm-slim as build
 
 USER node
 WORKDIR /app
-COPY --chown=node:node . .
+COPY --chown=node:node .. .
 
 RUN yarn install --frozen-lockfile
 

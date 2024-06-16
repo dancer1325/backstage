@@ -143,8 +143,8 @@ Choose the correct next steps for your user role, if you're likely to be deployi
 ### Admin
 
 - Deploying a production server
-  - [Deploying with Docker](../deployment/docker.md)
-  - [Deploying with Kubernetes](../deployment/k8s.md)
+  - [Deploying with Docker](../deployment/docker/docker.md)
+  - [Deploying with Kubernetes](../deployment/k8s/k8s.md)
   - [Deploying with AWS Lightsail](../deployment/backstage-deploy/aws.md)
 - Configuring Backstage
   - [Database](configuring Backstage/Database/database.md)
