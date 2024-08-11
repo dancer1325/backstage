@@ -4,11 +4,6 @@ title: Search Concepts
 description: Documentation on Backstage Search Concepts
 ---
 
-Backstage Search lets you find the right information you are looking for in the
-Backstage ecosystem.
-
-To get started, you should get familiar with these core concepts:
-
 - [Search Engines](#search-engines)
 - [Query Translators](#query-translators)
 - [Documents and Indices](#documents-and-indices)
@@ -20,67 +15,57 @@ To get started, you should get familiar with these core concepts:
 
 ### Search Engines
 
-Backstage Search isn't a search engine itself, rather, it provides an interface
-between your Backstage instance and a Search Engine of your choice. More
-concretely, a `SearchEngine` is an interface whose concrete implementations
-facilitate communication with different search engines (like Elasticsearch,
-Lunr, Solr, etc). This abstraction exists in order to support your
-organization's needs.
-
-Out of the box, Backstage Search comes pre-packaged with an in-memory search
-engine implementation built on top of Lunr.
+* Backstage Search
+  * != search engine -- _Example:_ Elasticsearch, Lunr, Solr, etc -- 
+  * 👁️ == interface, between your Backstage instance -- and a -- Search Engine of your choice 👁️ / 
+    * implementation / search engines
+  * 👁️comes with in-memory search engine implementation | Lunr 👁️
 
 ### Query Translators
 
-Because you can bring your own search engine, and because search engines have
-very unique and robust query languages themselves, there needs to be a
-translation layer between an abstract search query (containing search terms,
-filters, and document types) into a concrete search query that is specific to a
-search engine.
-
-Search Engines come pre-packaged with simple translators that do rudimentary
-transformations of search terms and filters, but you may want to provide your
-own to help tune search results in the context of your organization.
+* == translation layer / 
+  * concrete query language -- abstract query language 
+    * Reason: 🧠you can bring ANY search engine / have it's own query language  🧠
+  * come with Search Engines
 
 ### Documents and Indices
 
-"Document" is an abstract concept representing something that can be found by
-searching for it. A document can represent a software entity, a TechDocs page,
-etc. Documents are made up of metadata fields, at a minimum including a title,
-text, and location (as in a URL).
-
-An index is a collection of such documents of a given type.
+* "Document"
+  * := abstract concept / -- can be found by -- searching for it
+    * can represent
+      * software entity,
+      * TechDocs page,
+      * ...
+  * == metadata fields + title + text + location (_Example:_ URL)
+* index
+  * == collection of documents / given type
 
 ### Collators
 
-You need to be able to search something! Collators are the way to define what
-can be searched. Specifically, they're readable object streams of documents that
-conform to a minimum set of fields (including a document title, location, and
-text), but which can contain any other fields as defined by the collator itself.
-One collator is responsible for defining and collecting documents of a type.
-
-Some plugins, like the Catalog Backend, provide so-called "default" collator
-factories which you can use out-of-the-box to start searching across Backstage
-quickly.
+* := way to define what can be searched /
+  * readable object streams of documents / -- conform a -- minimum set of fields
+  * -- responsible for --
+    * defining documents of a type
+    * collecting documents of a type
+* "default" collator
+  * provided by some plugins -- _Example:_ Catalog Backend --
+  * == factories to start searching across Backstage quickly
 
 ### Decorators
 
-Sometimes you want to add extra information to a set of documents in your search
-index that the collator may not be aware of. For example, the Software Catalog
-knows about software entities, but it may not know about their usage or quality.
-
-Decorators are transform streams which sit between a collator (read stream) and
-an indexer (write stream) during the indexing process. It can be used to add
-extra fields to documents as they are being collated and indexed. This extra
-metadata could then be used to bias search results or otherwise improve the
-search experience in your Backstage instance.
-
-In addition to adding extra metadata, decorators (like any transform stream) can
-also be used to remove metadata, filter out, or even add extra documents at
-index-time.
+* == transform streams / 
+  * place between collator (read stream) -- & -- indexer (write stream) | indexing process
+  * uses
+    * add extra information -- to a -- set of documents | search index 
+      * _Example:_ add usage or quality of software entities | Software Catalog
+      * -> can be used to search
+    * remove metadata,
+    * filter out,
+    * add extra documents | index-time
 
 ### The Scheduler
 
+* TODO:
 There are many ways a search index could be built and maintained, but Backstage
 Search chooses to completely rebuild indices on a schedule. Different collators
 can be configured to refresh at different intervals, depending on how often the
