@@ -5,10 +5,7 @@ title: Key Concepts
 description: High level key concepts used in the Backstage project
 ---
 
-For users of Backstage, there are certain concepts which are central to its
-design and functionality. Being an expert in each of these concepts is not
-necessary, however having a base understanding of each will make administering,
-configuring, and operating Backstage easier.
+Required concepts to comprehend its design and functionality
 
 - CHANGELOG - https://keepachangelog.com
 - Docker - https://www.docker.com/
