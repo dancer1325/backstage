@@ -7,54 +7,37 @@ description: How to install Backstage for your own use.
 
 Audience: Developers and Admins
 
-## Summary
+## Goal
 
-This guide walks through how to get started creating your very own Backstage customizable app. This is the first step in evaluating, developing on, or demoing Backstage.
+* Create your very own Backstage customizable app locally / `SQLite` database
+  * NOT a production-ready installation
 
-By the end of this guide, you will have a standalone Backstage installation running locally with a `SQLite` database and demo content. To be clear, this is not a production-ready installation, and it does not contain information specific to your organization.
-
-:::note Contributors
-
-If you are planning to contribute a new feature or bug fix to the Backstage project, we advise you to follow the [Contributors](https://github.com/backstage/backstage/blob/master/CONTRIBUTING.md#get-started) guide instead to do a repository-based installation.
-
-:::
 
 ## Prerequisites
 
-This guide assumes a basic understanding of working on a Linux based operating system and have some experience with the terminal, specifically, these commands: `npm`, `yarn`.
-
-- Access to a Unix-based operating system, such as Linux, MacOS or
-  [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/)
-- A GNU-like build environment available at the command line.
-  For example, on Debian/Ubuntu you will want to have the `make` and `build-essential` packages installed.
-  On MacOS, you will want to have run `xcode-select --install` to get the XCode command line build tooling in place.
-- An account with elevated rights to install the dependencies
-- `curl` or `wget` installed
-- Node.js [Active LTS Release](https://nodejs.org/en/about/previous-releases) installed using one of these
-  methods:
-  - Using `nvm` (recommended)
-    - [Installing nvm](https://github.com/nvm-sh/nvm#install--update-script)
-    - [Install and change Node version with nvm](https://nodejs.org/en/download/package-manager/#nvm)
-  - [Binary Download](https://nodejs.org/en/download/)
-  - [Package manager](https://nodejs.org/en/download/package-manager/)
-  - [Using NodeSource packages](https://github.com/nodesource/distributions/blob/master/README.md)
-- `yarn` [Installation](https://classic.yarnpkg.com/en/docs/install)
-  - You will need to use Yarn classic to create a new project, but it can then be [migrated to Yarn 3](../tutorials/yarn-migration.md)
-- `docker` [installation](https://docs.docker.com/engine/install/)
-- `git` [installation](https://github.com/git-guides/install-git)
-- If the system is not directly accessible over your network the following ports
-  need to be opened: 3000, 7007. This is quite uncommon, unless you're installing in a container, VM or remote system.
+* basic knowledge of Linux OS
+* GNU-like build environment | CL
+  * | Debian/Ubuntu -> `make` and `build-essential` packages installed
+  * | MacOS -> XCode command line build tooling -- get it via -- `xcode-select --install`
+* `curl` or `wget` installed
+* Node.js [Active LTS Release](https://nodejs.org/en/about/previous-releases)
+* `yarn` [Installation](https://classic.yarnpkg.com/en/docs/install)
+* `docker` [installation](https://docs.docker.com/engine/install/)
+* `git` [installation](https://github.com/git-guides/install-git)
+* if the system -- is NOT directly accessible over -- your network (_Example:_ | container, VM or remote system) -> open the ports
+  * 3000,
+  * 7007 
 
 ## 1. Create your Backstage App
 
-:::caution
-
-The Backstage app we'll be creating will only have demo data until we set up integrations with your specific data sources!
-
-:::
-
-To install the Backstage Standalone app, we will make use of `npx`. `npx` is a tool that comes preinstalled with Node.js and lets you run commands straight from `npm` or other registries. Before we jump in to running the command, let's chat about what it does.
-
+* Once we set up integrations with your specific data sources -> backstage app demo data is over
+* `npx`
+  * to install the Backstage Standalone app
+  * := tool / 
+    * preinstalled with Node.js
+    * allows
+      * running commands straight from NPM registry or other registries
+* TODO:
 This command will create a new directory with a Backstage app inside. The wizard will ask you for the name of the app. This name will be created as sub directory in your current working directory.
 
 ![create app](../assets/getting-started/create-app-output.png)
