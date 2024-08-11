@@ -8,73 +8,47 @@ description: The Backstage Software Catalog
 
 ## What is a Software Catalog?
 
-The Backstage Software Catalog is a centralized system that keeps track of
-ownership and metadata for all the software in your ecosystem (services,
-websites, libraries, data pipelines, etc). The catalog is built around the
-concept of [metadata YAML files](descriptor-format.md) stored together with the
-code, which are then harvested and visualized in Backstage.
+* := centralized system /
+  * keeps track for ALL the software (services, websites, libraries, data pipelines, ..) | your ecosystem 
+    * ownership
+    * metadata 
+  * == [metadata YAML files](descriptor-format.md) / stored together with the code
+    * -> | source control (GitHub, GitHub Enterprise, GitLab, ...)
+    * recommendations
+      * | repository rot
 
 ![software-catalog](../../assets/header.png)
 
-## How it works
-
-Backstage and the Backstage Software Catalog make it easy for one team to manage
-10 services — and makes it possible for your company to manage thousands of
-them.
-
-More specifically, the Software Catalog enables two main use-cases:
-
-1. Helping teams manage and maintain the software they own. Teams get a uniform
-   view of all their software; services, libraries, websites, ML models — you
-   name it, Backstage knows all about it.
-2. Makes all the software in your company, and who owns it, discoverable. No
-   more orphan software hiding in the dark corners of your software ecosystem.
-
-## Getting Started
-
-The Software Catalog is available to browse at `/catalog`. If you've followed
-[Getting Started with Backstage](../../getting-started), you should be able to
-browse the catalog at `http://localhost:3000`.
+* use cases
+  * manage and maintain the software of ALL Teams
+  * makes the software discoverable | your company
+* available | `/catalog`
+  * _Example:_ in [Getting Started with Backstage](../../getting-started) -> available | `http://localhost:3000`
 
 ![screenshot of software catalog](../../assets/software-catalog/software-catalog-home.png)
 
-## Adding components to the catalog
+* ways to add components to the catalog
+  * register components manually (== via UI)
+    * clicking the **REGISTER EXISTING COMPONENT** | `/create`
+    ![screenshot of manually register existing component](../../assets/software-catalog/bsc-register-1.png)
+      * Backstage -- expects the -- full URL to the YAML in your source control
+        * _Example:_
+        ```bash
+        https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/components/artist-lookup-component.yaml
+        ```
+        * _More examples:_ Check [here](https://github.com/backstage/backstage/tree/master/packages/catalog-model/examples)
 
-The source of truth for the components in your software catalog are [metadata YAML files](descriptor-format.md) stored in source control (GitHub, GitHub
-Enterprise, GitLab, ...). Repositories can include one or multiple metadata
-files. Usually the metadata file is located in the repository root. This is not
-a formal requirement & metadata files can be placed anywhere in the repository.
+    ![screenshot of creating new components](../../assets/software-catalog/bsc-register-2.png)
+    * 👁️ANY kind of software can be registered 👁️
+      * even software / NOT maintained by your company -- _Example:_ SaaS offering --
+  * creating new components -- through -- Backstage
+    * TODO:
+  * -- integrating with an -- [external source](external-integrations.md)
+    * TODO:
 
-There are 3 ways to add components to the catalog:
-
-1. Manually register components
-2. Creating new components through Backstage
-3. Integrating with an [external source](external-integrations.md)
-
-### Manually register components
-
-Users can register new components by going to `/create` and clicking the
-**REGISTER EXISTING COMPONENT** button:
-
-![screenshot of manually register existing component](../../assets/software-catalog/bsc-register-1.png)
-
-Backstage expects the full URL to the YAML in your source control. Example:
-
-```bash
-https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/components/artist-lookup-component.yaml
-```
-
-_More examples can be found
-[here](https://github.com/backstage/backstage/tree/master/packages/catalog-model/examples)._
-
-![screenshot of creating new components](../../assets/software-catalog/bsc-register-2.png)
-
-It is important to note that any kind of software can be registered in
-Backstage. Even if the software is not maintained by your company (SaaS
-offering, for example) it is still useful to create components for tracking
-ownership.
 
 ### Creating new components through Backstage
+TODO:
 
 All software created through the
 [Backstage Software Templates](../software-templates/index.md) are automatically
