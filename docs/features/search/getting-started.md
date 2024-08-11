@@ -4,213 +4,207 @@ title: Getting Started with Search
 description: How to set up and install Backstage Search
 ---
 
-Search functions as a plugin to Backstage, so you will need to use Backstage to
-use Search.
-
-If you haven't setup Backstage already, start
-[here](../../getting-started/index.md).
-
-> If you used `npx @backstage/create-app`, and you have a search page defined in
-> `packages/app/src/components/search`, skip to
-> [`Customizing Search`](#customizing-search) below.
+* Search functions
+  * plugin of Backstage
+  * requirements
+    * use Backstage -- Check [here](../../getting-started/index.md) --
 
 ## Adding Search to the Frontend
 
-```bash
-# From your Backstage root directory
-yarn --cwd packages/app add @backstage/plugin-search @backstage/plugin-search-react
-```
+* 👁️ if you used `npx @backstage/create-app` & have a search page | `packages/app/src/components/search` -> skip this section 👁️
+* steps
+  * 
+    ```bash
+    # From your Backstage root directory
+    yarn --cwd packages/app add @backstage/plugin-search @backstage/plugin-search-react
+    ```
+  * Create a new `packages/app/src/components/search/SearchPage.tsx` | your Backstage app
 
-Create a new `packages/app/src/components/search/SearchPage.tsx` file in your
-Backstage app with the following contents:
+    ```tsx
+    import React from 'react';
+    import { Content, Header, Page } from '@backstage/core-components';
+    import { Grid, List, Card, CardContent } from '@material-ui/core';
+    import {
+      SearchBar,
+      SearchResult,
+      DefaultResultListItem,
+      SearchFilter,
+    } from '@backstage/plugin-search-react';
+    import { CatalogSearchResultListItem } from '@backstage/plugin-catalog';
+    
+    export const searchPage = (
+      <Page themeId="home">
+        <Header title="Search" />
+        <Content>
+          <Grid container direction="row">
+            <Grid item xs={12}>
+              <SearchBar />
+            </Grid>
+            <Grid item xs={3}>
+              <Card>
+                <CardContent>
+                  <SearchFilter.Select
+                    name="kind"
+                    values={['Component', 'Template']}
+                  />
+                </CardContent>
+                <CardContent>
+                  <SearchFilter.Checkbox
+                    name="lifecycle"
+                    values={['experimental', 'production']}
+                  />
+                </CardContent>
+              </Card>
+            </Grid>
+            <Grid item xs={9}>
+              <SearchResult>
+                {({ results }) => (
+                  <List>
+                    {results.map(result => {
+                      switch (result.type) {
+                        case 'software-catalog':
+                          return (
+                            <CatalogSearchResultListItem
+                              key={result.document.location}
+                              result={result.document}
+                              highlight={result.highlight}
+                            />
+                          );
+                        default:
+                          return (
+                            <DefaultResultListItem
+                              key={result.document.location}
+                              result={result.document}
+                              highlight={result.highlight}
+                            />
+                          );
+                      }
+                    })}
+                  </List>
+                )}
+              </SearchResult>
+            </Grid>
+          </Grid>
+        </Content>
+      </Page>
+    );
+    ```
 
-```tsx
-import React from 'react';
-import { Content, Header, Page } from '@backstage/core-components';
-import { Grid, List, Card, CardContent } from '@material-ui/core';
-import {
-  SearchBar,
-  SearchResult,
-  DefaultResultListItem,
-  SearchFilter,
-} from '@backstage/plugin-search-react';
-import { CatalogSearchResultListItem } from '@backstage/plugin-catalog';
+  * Bind the above Search Page -- to the -> `/search` route | your `packages/app/src/App.tsx` 
 
-export const searchPage = (
-  <Page themeId="home">
-    <Header title="Search" />
-    <Content>
-      <Grid container direction="row">
-        <Grid item xs={12}>
-          <SearchBar />
-        </Grid>
-        <Grid item xs={3}>
-          <Card>
-            <CardContent>
-              <SearchFilter.Select
-                name="kind"
-                values={['Component', 'Template']}
-              />
-            </CardContent>
-            <CardContent>
-              <SearchFilter.Checkbox
-                name="lifecycle"
-                values={['experimental', 'production']}
-              />
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={9}>
-          <SearchResult>
-            {({ results }) => (
-              <List>
-                {results.map(result => {
-                  switch (result.type) {
-                    case 'software-catalog':
-                      return (
-                        <CatalogSearchResultListItem
-                          key={result.document.location}
-                          result={result.document}
-                          highlight={result.highlight}
-                        />
-                      );
-                    default:
-                      return (
-                        <DefaultResultListItem
-                          key={result.document.location}
-                          result={result.document}
-                          highlight={result.highlight}
-                        />
-                      );
-                  }
-                })}
-              </List>
-            )}
-          </SearchResult>
-        </Grid>
-      </Grid>
-    </Content>
-  </Page>
-);
-```
-
-Bind the above Search Page to the `/search` route in your
-`packages/app/src/App.tsx` file, like this:
-
-```tsx
-import { SearchPage } from '@backstage/plugin-search';
-import { searchPage } from './components/search/SearchPage';
-
-const routes = (
-  <FlatRoutes>
-    <Route path="/search" element={<SearchPage />}>
-      {searchPage}
-    </Route>
-  </FlatRoutes>
-);
-```
+    ```tsx
+    import { SearchPage } from '@backstage/plugin-search';
+    import { searchPage } from './components/search/SearchPage';
+    
+    const routes = (
+      <FlatRoutes>
+        <Route path="/search" element={<SearchPage />}>
+          {searchPage}
+        </Route>
+      </FlatRoutes>
+    );
+    ```
 
 ### Using the Search Modal
 
-In `Root.tsx`, add the `SidebarSearchModal` component:
+* | `Root.tsx`
+  * add the `SidebarSearchModal` component:
 
-```bash
-import { SidebarSearchModal } from '@backstage/plugin-search';
+    ```bash
+    import { SidebarSearchModal } from '@backstage/plugin-search';
+    
+    export const Root = ({ children }: PropsWithChildren<{}>) => (
+      <SidebarPage>
+        <Sidebar>
+          <SidebarLogo />
+          <SidebarSearchModal />
+          <SidebarDivider />
+    ...
+    ```
 
-export const Root = ({ children }: PropsWithChildren<{}>) => (
-  <SidebarPage>
-    <Sidebar>
-      <SidebarLogo />
-      <SidebarSearchModal />
-      <SidebarDivider />
-...
-```
-
-For more information about using `Root.tsx`, please see
-[the changelog](https://github.com/backstage/backstage/blob/master/packages/create-app/CHANGELOG.md#0315).
+  * Check [the changelog](https://github.com/backstage/backstage/blob/master/packages/create-app/CHANGELOG.md#0315)
 
 ## Adding Search to the Backend
 
-Add the following plugins into your backend app:
+* 👁️ if you used `npx @backstage/create-app` & have a search page | `packages/app/src/components/search` -> skip this section 👁️
+* steps
+  * add the following plugins | your backend app
 
-```bash
-# From your Backstage root directory
-yarn --cwd packages/backend add @backstage/plugin-search-backend @backstage/plugin-search-backend-node
-```
+    ```bash
+    # From your Backstage root directory
+    yarn --cwd packages/backend add @backstage/plugin-search-backend @backstage/plugin-search-backend-node
+    ```
 
-Create a `packages/backend/src/plugins/search.ts` file containing the following
-code:
+  * Create a `packages/backend/src/plugins/search.ts`
 
-```typescript
-import { useHotCleanup } from '@backstage/backend-common';
-import { createRouter } from '@backstage/plugin-search-backend';
-import {
-  IndexBuilder,
-  LunrSearchEngine,
-} from '@backstage/plugin-search-backend-node';
-import { PluginEnvironment } from '../types';
-import { DefaultCatalogCollator } from '@backstage/plugin-catalog-backend';
-import { Router } from 'express';
+    ```typescript
+    import { useHotCleanup } from '@backstage/backend-common';
+    import { createRouter } from '@backstage/plugin-search-backend';
+    import {
+      IndexBuilder,
+      LunrSearchEngine,
+    } from '@backstage/plugin-search-backend-node';
+    import { PluginEnvironment } from '../types';
+    import { DefaultCatalogCollator } from '@backstage/plugin-catalog-backend';
+    import { Router } from 'express';
+    
+    export default async function createPlugin(
+      env: PluginEnvironment,
+    ): Promise<Router> {
+      const searchEngine = new LunrSearchEngine({
+        logger: env.logger,
+      });
+      const indexBuilder = new IndexBuilder({
+        logger: env.logger,
+        searchEngine,
+      });
+    
+      const every10MinutesSchedule = env.scheduler.createScheduledTaskRunner({
+        frequency: { minutes: 10 },
+        timeout: { minutes: 15 },
+        initialDelay: { seconds: 3 },
+      });
+    
+      indexBuilder.addCollator({
+        schedule: every10MinutesSchedule,
+        factory: DefaultCatalogCollatorFactory.fromConfig(env.config, {
+          discovery: env.discovery,
+          tokenManager: env.tokenManager,
+        }),
+      });
+    
+      const { scheduler } = await indexBuilder.build();
+    
+      scheduler.start();
+      useHotCleanup(module, () => scheduler.stop());
+    
+      return await createRouter({
+        engine: indexBuilder.getSearchEngine(),
+        logger: env.logger,
+      });
+    }
+    ```
 
-export default async function createPlugin(
-  env: PluginEnvironment,
-): Promise<Router> {
-  const searchEngine = new LunrSearchEngine({
-    logger: env.logger,
-  });
-  const indexBuilder = new IndexBuilder({
-    logger: env.logger,
-    searchEngine,
-  });
+  * modify your `packages/backend/src/index.ts`
+    * 
+    ```typescript
+    import search from './plugins/search';
+    ```
+    * 
 
-  const every10MinutesSchedule = env.scheduler.createScheduledTaskRunner({
-    frequency: { minutes: 10 },
-    timeout: { minutes: 15 },
-    initialDelay: { seconds: 3 },
-  });
+    ```typescript
+    const searchEnv = useHotMemoize(module, () => createEnv('search'));
+    // Set up an environment for search
+    ```
 
-  indexBuilder.addCollator({
-    schedule: every10MinutesSchedule,
-    factory: DefaultCatalogCollatorFactory.fromConfig(env.config, {
-      discovery: env.discovery,
-      tokenManager: env.tokenManager,
-    }),
-  });
+    * Register the search service -- via the -- router
 
-  const { scheduler } = await indexBuilder.build();
-
-  scheduler.start();
-  useHotCleanup(module, () => scheduler.stop());
-
-  return await createRouter({
-    engine: indexBuilder.getSearchEngine(),
-    logger: env.logger,
-  });
-}
-```
-
-Make the following modifications to your `packages/backend/src/index.ts` file:
-
-Import the `plugins/search` file you created above:
-
-```typescript
-import search from './plugins/search';
-```
-
-Set up an environment for search:
-
-```typescript
-const searchEnv = useHotMemoize(module, () => createEnv('search'));
-```
-
-Register the search service with the router:
-
-```typescript
-apiRouter.use('/search', await search(searchEnv));
-```
+    ```typescript
+    apiRouter.use('/search', await search(searchEnv));
+    ```
 
 ## Customizing Search
-
+* TODO:
 ### Frontend
 
 The Search Plugin web library (`@backstage/plugin-search-react`) exposes several default filter types as static properties,
