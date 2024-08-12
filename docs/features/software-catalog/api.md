@@ -14,56 +14,50 @@ description: The Software Catalog API
 ## Overview
 
 * API surface == several groups of functionality
-  *  TODO:
-
-
-All of the URL paths in this article are assumed to be on top of some base URL
-pointing at your catalog installation. For example, if the path given in a
-section below is `/entities`, and the catalog is located at
-`http://localhost:7007/api/catalog` during local development, the full URL would
-be `http://localhost:7007/api/catalog/entities`. The actual URL may vary from
-one organization to the other, especially in production, but is commonly your
-`backend.baseUrl` in your app config, plus `/api/catalog` at the end.
-
-* 
-Some or all of the endpoints may accept or require an `Authorization` header
-with a `Bearer` token, which should then be the Backstage token returned by the
-[`identity API`](https://backstage.io/docs/reference/core-plugin-api.identityapiref).
+* `backend.baseUrl/api/catalog`
+  * syntax for software catalog
+  * 👁️ ALL next URL paths | this section, skip this part 👁️
+    * _Example:_ if we talk about `/entities` & catalog is on `http://localhost:7007/api/catalog` -> full URL is `http://localhost:7007/api/catalog/entities`
+* Authorization
+  * required by some of the endpoints
+  * type
+    * `Bearer` token / -- returned by the -- [`identity API`](https://backstage.io/docs/reference/core-plugin-api.identityapiref)
 
 ## Entities
 
-These are the endpoints that deal with reading of entities directly. What it
-exposes are final entities - i.e. the output of all processing and the stitching
-process, not the raw originally ingested entity data. See
-[The Life of an Entity](./life-of-an-entity.md) for more details about this process and
-distinction.
+* := endpoints / read final entities
+  * entities
+    * := output of ALL processing and the stitching process
+      * != raw originally ingested entity data
+    * [The Life of an Entity](./life-of-an-entity.md)
 
 ### `GET /entities/by-query`
 
-Query entities. Supports the following query parameters, described in the section below:
+* Query entities /available query parameters
+  * [`filter`](#filtering) -- for -- selecting ONLY a subset of all entities
+  * [`fields`](#field-selection) --for -- selecting ONLY parts of the full data structure of each entity
+  * `limit` -- for -- limiting the number of entities returned (20 is the default)
+  * [`orderField`](#ordering) -- for -- deciding the order of the entities
+  * [`fullTextFilter`](#full-text-filtering) -- for -- filtering the entities by text
+  * [`cursor`](#pagination) -- for -- retrieving the next or previous batch of entities
 
-- [`filter`](#filtering), for selecting only a subset of all entities
-- [`fields`](#field-selection), for selecting only parts of the full data
-  structure of each entity
-- `limit` for limiting the number of entities returned (20 is the default)
-- [`orderField`](#ordering), for deciding the order of the entities
-- [`fullTextFilter`](#full-text-filtering), for filtering the entities by text
-- [`cursor`](#pagination), for retrieving the next or previous batch of entities
+* returned type is JSON 
+  * _Example:_
 
-The return type is JSON, on the following form
-
-```json
-{
-  "items": [{ "kind": "Component", "metadata": { "name": "foo" } }],
-  "totalItems": 4,
-  "pageInfo": {
-    "nextCursor": "a-cursor",
-    "prevCursor": "another-cursor"
+  ```json
+  {
+    "items": [{ "kind": "Component", "metadata": { "name": "foo" } }],
+    "totalItems": 4,
+    "pageInfo": {
+      "nextCursor": "a-cursor",
+      "prevCursor": "another-cursor"
+    }
   }
-}
-```
+  ```
 
 #### Filtering
+
+* TODO:
 
 You can pass in one or more filter sets that get matched against each entity.
 Each filter set is a number of conditions that all have to match for the
@@ -461,38 +455,39 @@ where the `items` array has _the same length_ and _the same order_ as the input
 
 ### `GET /locations`
 
-Lists locations.
+* lists locations
+* returned type is JSON
+  * _Example:_
 
-Response type is JSON, on the form
-
-```json
-[
-  {
-    "data": {
-      "id": "b9784c38-7118-472f-9e22-5638fc73bab0",
-      "target": "https://git.example.com/example-project/example-repository/blob/main/catalog-info.yaml",
-      "type": "url"
+  ```json
+  [
+    {
+      "data": {
+        "id": "b9784c38-7118-472f-9e22-5638fc73bab0",
+        "target": "https://git.example.com/example-project/example-repository/blob/main/catalog-info.yaml",
+        "type": "url"
+      }
     }
-  }
-]
-```
+  ]
+  ```
 
 ### `GET /locations/{id}`
 
-Gets a location by it's location ID.
+* gets a location -- by it's -- location ID
+* returned type is JSON
+  * _Example:_
 
-Response type is JSON, on the form
-
-```json
-{
-  "id": "b9784c38-7118-472f-9e22-5638fc73bab0",
-  "target": "https://git.example.com/example-project/example-repository/blob/main/catalog-info.yaml",
-  "type": "url"
-}
-```
+  ```json
+  {
+    "id": "b9784c38-7118-472f-9e22-5638fc73bab0",
+    "target": "https://git.example.com/example-project/example-repository/blob/main/catalog-info.yaml",
+    "type": "url"
+  }
+  ```
 
 ### `GET /locations/by-entity/{kind}/{namespace}/{name}`
 
+* TODO: 
 Gets a location referring to a given entity.
 
 Response type is JSON, on the form
