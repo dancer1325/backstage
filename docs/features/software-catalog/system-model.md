@@ -16,7 +16,8 @@ description: Documentation on System Model
   * **APIs**
     * := boundaries between different components
   * **Resources**
-    * := physical or virtual infrastructure / -- allows operating a -- component
+    * := physical or virtual infrastructure / -- allows operating a -- component | runtime
+      * _Examples:_ BBDD, Pub/Sub topics, S3 buckets or CDNs
 
 ![](../../assets/software-catalog/software-model-core-entities.drawio.svg)
 
@@ -62,37 +63,41 @@ description: Documentation on System Model
 
 ### Resource
 
-* TODO:
-Resources are the infrastructure a component needs to operate at runtime, like
-BigTable databases, Pub/Sub topics, S3 buckets or CDNs. Modelling them together
-with components and systems will better allow us to visualize resource
-footprint, and create tooling around them.
+* if you model resources + components -> allow
+  * visualizing resource footprint,
+  * create tooling
 
 ## Organizational Entities
 
 ### User
 
-A user describes a person, such as an employee, a contractor, or similar.
+* describes a person
+  * *Example:* employee, contractor
 
 ### Group
 
-A group describes an organizational entity, such as for example a team, a
-business unit, or a loose collection of people in an interest group.
+* describes an organizational entity
+  * _Example:_ team, business unit, loose collection of people | interest group
 
 ## Ecosystem Modeling
 
-A large catalogue of components, APIs and resources can be highly granular and
-hard to understand as a whole. It might thus be convenient to further categorize
-these entities using the following (optional) concepts:
-
-- **Systems** are a collection of entities that cooperate to perform some
-  function
-- **Domains** relate entities and systems to part of the business
+* extra concepts -- to categorize -- entities
+  * **Systems**
+    * := collection of entities / -- cooperate to perform -- some function
+  * **Domains**
+    * allows
+      * entities and systems -- are related to -- part of the business
+  * characteristics
+    * optional
+    * uses
+      * large catalogue of components + APIs + resources
+        * Reason: 🧠 highly granular and hard to understand 🧠
 
 ![](../../assets/software-catalog/software-model-entities.drawio.svg)
 
 ### System
 
+* TODO:
 With increasing complexity in software, systems form an important abstraction
 level to help us reason about software ecosystems. Systems are a useful concept
 in that they allow us to ignore the implementation details of a certain
