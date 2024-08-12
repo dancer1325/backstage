@@ -6,48 +6,59 @@ sidebar_label: The Life of an Entity
 description: The life cycle of entities, from being introduced into the catalog, through processing, to being removed again
 ---
 
-This document gives a high level overview of the catalog backend, and the
-technical processes involved in making entities flow through it. It is mainly
-aimed at developers who want to understand the internals while installing or
-extending the catalog. However, it can be informative for other personas too.
+* goal
+  * catalog backend
+  * technical processes / -- allows making -- entities flow through
 
 ## Key Concepts
 
-The catalog forms a hub of sorts, where entities are ingested from various
-authoritative sources and held in a database, subject to automated processing,
-and then presented through an API for quick and easy access by Backstage and
-others. The most common source is [YAML files](descriptor-format.md) on a
-standard format, living in version control systems near the source code of
-systems that they describe. Those files are registered with the catalog and
-maintained by the respective owners. The catalog makes sure to keep itself up to
-date with changes to those files.
+* entities
+  * -- are ingested from -- various authoritative sources
+  * held | database,
+  * -- can be --
+    * automatically  processed
+    * presented -- through an -- API
+      * -> quick and easy access
+  * [YAML files](descriptor-format.md) / standard format
+    * most common source
+    * living | version control systems / -- near the -- source code
+    * registered with the catalog
+    * maintained by the respective owners
+    * catalog makes sure to keep itself up to date with changes to those files
+    * ONCE entity -- has passed through -- last process & landed | final entities -> visible to the outside world
+      * PREVIOUSLY, NOT
+* main customizations | software catalog
+  * _Entity providers_
+    * initial raw entity data -- are feed | catalog
+  * _Policies_
+    * establish baseline rules -- about the -- shape of entities
+  * _Processors_, 
+    * about raw entity data is
+      * validated,
+      * analyzed,
+      * mutated -- to -- final form
+* high level processes involved are
+  * _Ingestion_
+    * entity providers -- fetch -- raw entity data | external sources
+    * seed it | database
+  * _Processing_
+    * policies and processors
+      * -- continually treat -- ingested data
+      * -- may emit -- 
+        * other raw entities (that are also subject to processing),
+        * errors,
+        * -- relations to other -- entities,
+        * ...
+  * _Stitching_
+    * ALL of the data / emitted by various processors -- are assembled together into -- final output entity
 
-The main extension points where developers can customize the catalog are:
-
-- _Entity providers_, that feed initial raw entity data into the catalog,
-- _Policies_, that establish baseline rules about the shape of entities,
-- _Processors_, that validate, analyze, and mutate the raw entity data into its
-  final form.
-
-The high level processes involved are:
-
-- _Ingestion_, where entity providers fetch raw entity data from external
-  sources and seed it into the database,
-- _Processing_, where the policies and processors continually treat the ingested
-  data and may emit both other raw entities (that are also subject to
-  processing), errors, relations to other entities, etc.,
-- _Stitching_, where all of the data emitted by various processors are assembled
-  together into the final output entity.
-
-An entity is not visible to the outside world (through the catalog API), until
-it has passed through the last process and landed among the final entities.
 
 ![General overview](../../assets/features/catalog/life-of-an-entity_overview.svg)
 
-The details of these processes are described below.
 
 ## Ingestion
 
+* TODO:
 Each catalog deployment has a number of _entity providers_ installed. They are
 responsible for fetching data from external authoritative sources in any way
 that they see fit, translating those into entity objects, and notifying the
