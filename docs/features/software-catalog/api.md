@@ -4,18 +4,18 @@ title: API
 description: The Software Catalog API
 ---
 
-The software catalog backend has a JSON based REST API, which can be leveraged
-by external systems. This page describes its shape and features. The OpenAPI spec
-for this API can be found [here](https://github.com/backstage/backstage/blob/master/plugins/catalog-backend/src/schema/openapi.yaml).
-A UI visualizing the OpenAPI endpoints including the ability to try them out in the browser can be found [here](https://www.postman.com/backstage-io/workspace/catalog-api/overview).
+* JSON based REST API
+  * 👁️ existing | software catalog backend 👁️
+  * uses
+    * by external systems 
+  * OpenAPI spec [here](https://github.com/backstage/backstage/blob/master/plugins/catalog-backend/src/schema/openapi.yaml)
+  * UI / visualize OpenAPI endpoints [here](https://www.postman.com/backstage-io/workspace/catalog-api/overview)
 
 ## Overview
 
-The API surface consists of a few distinct groups of functionality. Each has a
-dedicated section below.
+* API surface == several groups of functionality
+  *  TODO:
 
-> **Note:** This page only describes some of the most commonly used parts of the
-> API, and is a work in progress.
 
 All of the URL paths in this article are assumed to be on top of some base URL
 pointing at your catalog installation. For example, if the path given in a
@@ -25,6 +25,7 @@ be `http://localhost:7007/api/catalog/entities`. The actual URL may vary from
 one organization to the other, especially in production, but is commonly your
 `backend.baseUrl` in your app config, plus `/api/catalog` at the end.
 
+* 
 Some or all of the endpoints may accept or require an `Authorization` header
 with a `Bearer` token, which should then be the Backstage token returned by the
 [`identity API`](https://backstage.io/docs/reference/core-plugin-api.identityapiref).
