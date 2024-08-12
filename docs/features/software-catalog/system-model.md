@@ -4,60 +4,65 @@ title: System Model
 description: Documentation on System Model
 ---
 
-We believe that a strong shared understanding and terminology around software
-and resources leads to a better Backstage experience.
-
-_This description originates from
-[this RFC](https://github.com/backstage/backstage/issues/390). Note that some of
-the concepts are not yet supported in Backstage._
+* [RFC](https://github.com/backstage/backstage/issues/390)
+  * 👁️ some of the concepts are NOT yet supported | Backstage 👁️
 
 ## Core Entities
 
-We model software in the Backstage catalogue using these three core entities
-(further explained below):
-
-- **Components** are individual pieces of software
-
-- **APIs** are the boundaries between different components
-
-- **Resources** are physical or virtual infrastructure needed to operate a
-  component
+* 3 core entities / model software | Backstage catalogue 
+  * **Components**
+    * := individual pieces of software
+      * _Examples:_ mobile feature, backend service, web site, data pipeline, ...
+  * **APIs**
+    * := boundaries between different components
+  * **Resources**
+    * := physical or virtual infrastructure / -- allows operating a -- component
 
 ![](../../assets/software-catalog/software-model-core-entities.drawio.svg)
 
 ### Component
 
-A component is a piece of software, for example a mobile feature, web site,
-backend service or data pipeline (list not exhaustive). A component can be
-tracked in source control, or use some existing open source or commercial
-software.
-
-A component can implement APIs for other components to consume. In turn it might
-consume APIs implemented by other components, or directly depend on components or
-resources that are attached to it at runtime.
+* ways to track it
+  * source control
+  * some existing open source or commercial software
+* can
+  * implement APIs / other components can consume
+  * consume APIs / -- implemented by -- other components
+  * depend on components or resources / attached to it | runtime
 
 ### API
 
-APIs form an important (maybe the most important) abstraction that allows large
-software ecosystems to scale. Thus, APIs are a first class citizen in the
-Backstage model and the primary way to discover existing functionality in the
-ecosystem.
-
-APIs are implemented by components and form boundaries between components. They
-might be defined using an RPC IDL (e.g., Protobuf, GraphQL, ...), a data schema
-(e.g., Avro, TFRecord, ...), or as code interfaces. In any case, APIs exposed by
-components need to be in a known machine-readable format so we can build further
-tooling and analysis on top.
-
-APIs have a visibility: they are either public (making them available for any
-other component to consume), restricted (only available to an allowlisted set of
-consumers), or private (only available within their system). As public APIs are
-going to be the primary way interaction between components, Backstage supports
-documenting, indexing and searching all APIs so we can browse them as
-developers.
+* == abstraction /
+  * allows
+    * scaling large software ecosystems -> 
+      * 1@ class citizen | Backstage model
+      * primary way to discover existing functionality | ecosystem
+  * -- implemented by -- components
+  * ways to define them
+    * RPC IDL (e.g., Protobuf, GraphQL, ...),
+    * a data schema (e.g., Avro, TFRecord, ...),
+    * code interfaces
+  * requirements 
+    * | known machine-readable format
+      * -> possible to build | top, further
+        * tooling
+        * analysis
+  * supported
+    * documenting
+    * indexing
+    * searching
+* visibility degrees
+  * public
+    * == available for ANY other component -- to -- consume
+      * 👁️ -> main way interaction between components 👁️
+  * restricted
+    * == ONLY available | listed set of consumers
+  * private
+    * == ONLY available | their system
 
 ### Resource
 
+* TODO:
 Resources are the infrastructure a component needs to operate at runtime, like
 BigTable databases, Pub/Sub topics, S3 buckets or CDNs. Modelling them together
 with components and systems will better allow us to visualize resource
