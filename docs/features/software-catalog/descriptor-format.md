@@ -220,41 +220,37 @@ spec:
   * machines and other components -- to reference the -- entity
     * _Example:_ URLs or other entity specification files
 
-### `namespace` [optional]
+### `metadata.namespace` [optional]
+
+* ID of a namespace / entity belongs to
+  * optional
+    * if you do NOT specify -> `"default"`
+    * recommendation
+      * 👁️ NOT specify 👁️
+  * case insensitive
+  * rule set
+    * String / length [1, 63]
+    * sequences of `[a-zA-Z0-9]` / possibly separated by `-`
+    * _Example:_ `tracking-services`, `payment`
+  * rendered as lower case | most places 
+* uses
+  * NO special semantics
+  * reserved for future adjustments
+
+### `metadata.uid` [output]
+
+* == automatically generated globally unique ID / entity
+  * once entity enters | DDBB -> it's created -- by the -- DDBB engine
+    * if you unregister & re-register the exact same file -> different `uid` generated 
+  * NOT specified as input data
+  * change (== NOT stable) | time
+  * uses
+    * NOTHING
+    * if you want to refer to an entity / some identifier ->  use [string-form entity reference](references.md#string-references)
+
+### `metadata.title` [optional]
 
 * TODO:
-The ID of a namespace that the entity belongs to. This field is optional, and
-currently has no special semantics apart from bounding the name uniqueness
-constraint if specified. It is reserved for future use and may get broader
-semantic implication later.
-
-For now, it is recommended to not specify a namespace unless you have specific
-need to do so. This means the entity belongs to the `"default"` namespace.
-
-Namespaces must be sequences of `[a-zA-Z0-9]`, possibly separated by `-`, at
-most 63 characters in total. Namespace names are case insensitive and will be rendered as lower case in most places.
-
-Example: `tracking-services`, `payment`
-
-### `uid` [output]
-
-Each entity gets an automatically generated globally unique ID when it first
-enters the database. This field is not meant to be specified as input data, but
-is rather created by the database engine itself when producing the output entity.
-
-Note that `uid` values are _not_ to be seen as stable, and should _not_ be used
-as external references to an entity. The `uid` can change over time even when a
-human observer might think that it wouldn't. As one of many examples,
-unregistering and re-registering the exact same file will result in a different
-`uid` value even though everything else is the same. Therefore there is very
-little, if any, reason to read or use this field externally.
-
-If you want to refer to an entity by some form of an identifier, you should
-always use [string-form entity reference](references.md#string-references)
-instead.
-
-### `title` [optional]
-
 A display name of the entity, to be presented in user interfaces instead of the
 `name` property above, when available.
 
