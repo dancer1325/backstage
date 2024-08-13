@@ -6,22 +6,20 @@ sidebar_label: YAML File Format
 description: Documentation on Descriptor Format of Catalog Entities which describes the default data shape and semantics of catalog entities
 ---
 
-This section describes the default data shape and semantics of catalog entities.
-
-This both applies to objects given to and returned from the software catalog
-API, as well as to the descriptor files that the software catalog can ingest
-natively. In the API request/response cycle, a JSON representation is used,
-while the descriptor files are on YAML format to be more easily maintainable by
-humans. However, the structure and semantics are the same in both cases.
-
-Although it's possible to name catalog entity descriptor files however you wish,
-we recommend that you name them `catalog-info.yaml`.
+* goal
+  * default data shape and semantics of 
+    * catalog entities / given to and returned -- from -- the software catalog API
+      * .json
+    * the descriptor files / software catalog can ingest natively
+      * .yaml
+      * recommendations 
+        * 👁️ name `catalog-info.yaml` 👁️
 
 ## Contents
 
 - [Overall Shape Of An Entity](#overall-shape-of-an-entity)
-- [Common to All Kinds: The Envelope](#common-to-all-kinds-the-envelope)
-- [Common to All Kinds: The Metadata](#common-to-all-kinds-the-metadata)
+- [Common to All Kinds: The Envelope == `apiVersion`, `kind`, `metadata` `spec`](#common-to-all-kinds-the-envelope)
+- [Common to All Kinds: `metadata`](#common-to-all-kinds-the-metadata)
 - [Common to All Kinds: Relations](#common-to-all-kinds-relations)
 - [Common to All Kinds: Status](#common-to-all-kinds-status)
 - [Kind: Component](#kind-component)
@@ -36,100 +34,119 @@ we recommend that you name them `catalog-info.yaml`.
 
 ## Overall Shape Of An Entity
 
-The following is an example of a descriptor file for a Component entity:
+* _Example:_ descriptor file -- for a -- Component entity
 
-```yaml
-apiVersion: backstage.io/v1alpha1
-kind: Component
-metadata:
-  name: artist-web
-  description: The place to be, for great artists
-  labels:
-    example.com/custom: custom_label_value
-  annotations:
-    example.com/service-discovery: artistweb
-    circleci.com/project-slug: github/example-org/artist-website
-  tags:
-    - java
-  links:
-    - url: https://admin.example-org.com
-      title: Admin Dashboard
-      icon: dashboard
-      type: admin-dashboard
-spec:
-  type: website
-  lifecycle: production
-  owner: artist-relations-team
-  system: public-websites
-```
+  ```yaml
+  apiVersion: backstage.io/v1alpha1
+  kind: Component
+  metadata:
+    name: artist-web
+    description: The place to be, for great artists
+    labels:
+      example.com/custom: custom_label_value
+    annotations:
+      example.com/service-discovery: artistweb
+      circleci.com/project-slug: github/example-org/artist-website
+    tags:
+      - java
+    links:
+      - url: https://admin.example-org.com
+        title: Admin Dashboard
+        icon: dashboard
+        type: admin-dashboard
+  spec:
+    type: website
+    lifecycle: production
+    owner: artist-relations-team
+    system: public-websites
+  ```
 
-This is the same entity as returned in JSON from the software catalog API:
+* _Example:_ == previous one, BUT returned in JSON -- from the -- software catalog API
 
-```json
-{
-  "apiVersion": "backstage.io/v1alpha1",
-  "kind": "Component",
-  "metadata": {
-    "annotations": {
-      "backstage.io/managed-by-location": "file:/tmp/catalog-info.yaml",
-      "example.com/service-discovery": "artistweb",
-      "circleci.com/project-slug": "github/example-org/artist-website"
+  ```json
+  {
+    "apiVersion": "backstage.io/v1alpha1",
+    "kind": "Component",
+    "metadata": {
+      "annotations": {
+        "backstage.io/managed-by-location": "file:/tmp/catalog-info.yaml",
+        "example.com/service-discovery": "artistweb",
+        "circleci.com/project-slug": "github/example-org/artist-website"
+      },
+      "description": "The place to be, for great artists",
+      "etag": "ZjU2MWRkZWUtMmMxZS00YTZiLWFmMWMtOTE1NGNiZDdlYzNk",
+      "labels": {
+        "example.com/custom": "custom_label_value"
+      },
+      "links": [
+        {
+          "url": "https://admin.example-org.com",
+          "title": "Admin Dashboard",
+          "icon": "dashboard",
+          "type": "admin-dashboard"
+        }
+      ],
+      "tags": ["java"],
+      "name": "artist-web",
+      "uid": "2152f463-549d-4d8d-a94d-ce2b7676c6e2"
     },
-    "description": "The place to be, for great artists",
-    "etag": "ZjU2MWRkZWUtMmMxZS00YTZiLWFmMWMtOTE1NGNiZDdlYzNk",
-    "labels": {
-      "example.com/custom": "custom_label_value"
-    },
-    "links": [
-      {
-        "url": "https://admin.example-org.com",
-        "title": "Admin Dashboard",
-        "icon": "dashboard",
-        "type": "admin-dashboard"
-      }
-    ],
-    "tags": ["java"],
-    "name": "artist-web",
-    "uid": "2152f463-549d-4d8d-a94d-ce2b7676c6e2"
-  },
-  "spec": {
-    "lifecycle": "production",
-    "owner": "artist-relations-team",
-    "type": "website",
-    "system": "public-websites"
+    "spec": {
+      "lifecycle": "production",
+      "owner": "artist-relations-team",
+      "type": "website",
+      "system": "public-websites"
+    }
   }
-}
-```
+  ```
 
-The root fields `apiVersion`, `kind`, `metadata`, and `spec` are part of the
-_envelope_, defining the overall structure of all kinds of entity. Likewise,
-some metadata fields like `name`, `labels`, and `annotations` are of special
-significance and have reserved purposes and distinct shapes.
-
-See below for details about these fields.
+* root fields / define the overall structure of ALL kinds of entity
+  * `apiVersion`,
+  * `kind`,
+  * `metadata`,
+  * `spec`
+* relevant metadata fields
+  * `name`,
+  * `labels`,
+  * `annotations`
 
 ## Substitutions In The Descriptor Format
 
-The descriptor format supports substitutions using `$text`, `$json`, and
-`$yaml`.
+* content
+  * allowed
+    * absolute URL
+    * relative references
+      * -- relative to the -- `catalog-info.yaml` location
+  * if target != normal integration points (_Example:_ `github.com`) -> add an entry | `backend.reading.allow`
+    * _Example:_
 
-Placeholders like `$json: https://example.com/entity.json` are substituted by
-the content of the referenced file. Files can be referenced from any configured
-integration similar to locations by passing an absolute URL. It's also possible
-to reference relative files like `./referenced.yaml` from the same location.
-Relative references are handled relative to the folder of the
-`catalog-info.yaml` that contains the placeholder. There are three different
-types of placeholders:
+    ```yml
+    backend:
+      baseUrl: ...
+      reading:
+        allow:
+          - host: example.com
+          - host: '*.examples.org'
+          - host: example.net
+            paths: ['/api/']
+    ```
 
-- `$text`: Interprets the contents of the referenced file as plain text and
-  embeds it as a string.
-- `$json`: Interprets the contents of the referenced file as JSON and embeds the
-  parsed structure.
-- `$yaml`: Interprets the contents of the referenced file as YAML and embeds the
-  parsed structure.
-
-For example, this can be used to load the definition of an API entity from a web
-server and embed it as a string in the field `spec.definition`:
+* via
+  * `$text`
+    * content -- is 
+      * interpreted as -- .txt
+      * embedded as -- string
+  * `$json`,
+    * content -- is 
+      * interpreted as -- .json
+      * embedded the -- parsed structure
+    * _Example:_ `$json: https://example.com/entity.json`
+  * `$yaml`
+    * content -- is
+      * interpreted as -- .yaml
+      * embedded the -- parsed structure
+* uses
+  * | `spec.definition`
+    * _Example:_  load the definition of an API entity -- from a -- web server & embed it as a string | field 
 
 ```yaml
 apiVersion: backstage.io/v1alpha1
@@ -145,100 +162,67 @@ spec:
     $text: https://petstore.swagger.io/v2/swagger.json
 ```
 
-Note that to be able to read from targets that are outside of the normal
-integration points such as `github.com`, you'll need to explicitly allow it by
-adding an entry in the `backend.reading.allow` list. Paths can be specified to
-further restrict targets For example:
-
-```yml
-backend:
-  baseUrl: ...
-  reading:
-    allow:
-      - host: example.com
-      - host: '*.examples.org'
-      - host: example.net
-        paths: ['/api/']
-```
-
-## Common to All Kinds: The Envelope
-
-The root envelope object has the following structure.
+## Common to All Kinds: The Envelope == `apiVersion`, `kind`, `metadata`, `spec`
 
 ### `apiVersion` and `kind` [required]
 
-The `kind` is the high level entity type being described.
-[ADR005](../../architecture-decisions/adr005-catalog-core-entities.md) describes
-a number of core kinds that plugins can know of and understand, but an
-organization using Backstage is free to also add entities of other kinds to the
-catalog.
-
-The perhaps most central kind of entity, that the catalog focuses on in the
-initial phase, is `Component` ([see below](#kind-component)).
-
-The `apiVersion` is the version of specification format for that particular
-entity that the specification is made against. The version is used for being
-able to evolve the format, and the tuple of `apiVersion` and `kind` should be
-enough for a parser to know how to interpret the contents of the rest of the
-data.
-
-Backstage specific entities have an `apiVersion` that is prefixed with
-`backstage.io/`, to distinguish them from other types of object that share the
-same type of structure. This may be relevant when co-hosting these
-specifications with e.g. Kubernetes object manifests, or when an organization
-adds their own specific kinds of entity to the catalog.
-
-Early versions of the catalog will be using alpha/beta versions, e.g.
-`backstage.io/v1alpha1`, to signal that the format may still change. After that,
-we will be using `backstage.io/v1` and up.
+* `kind`
+  * == high level entity type / being described
+    * [ADR005](../../architecture-decisions/adr005-catalog-core-entities.md)
+      * == core kinds / plugins can know + other kinds / can be added
+    * `Component`
+      * most central kind of entity
+      * ([Check](#kind-component))
+* `apiVersion`
+  * := version of specification format / particular entity 
+    * `backstage.io/` 
+      * prefix for Backstage specific entities
+      * based on the versions
+        * `backstage.io/v1alpha1`  -- for -- early versions
+        * `backstage.io/v1`  -- for -- stable versions
+  * uses
+    * evolve the format
+    * \+ `kind` -> parser know how to interpret the content
 
 ### `metadata` [required]
 
-A structure that contains metadata about the entity, i.e. things that aren't
-directly part of the entity specification itself. See below for more details
-about this structure.
+* == metadata about the entity
+  * == -- NOT directly part of the -- entity specification itself
 
 ### `spec` [varies]
 
-The actual specification data that describes the entity.
+* == actual specification data / -- describes the -- entity
+  * NOT present | ALL kinds 
+* depends on
+  * `apiVersion`
+  * `kind`
 
-The precise structure of the `spec` depends on the `apiVersion` and `kind`
-combination, and some kinds may not even have a `spec` at all. See further down
-in this document for the specification structure of specific kinds.
+## Common to All Kinds: `metadata`
 
-## Common to All Kinds: The Metadata
+* Check before
+* == reserved fields / specific meaning + others / you added
+  * others / you added -- could be NOT understood by -- general plugins & tools
+    * Check [Extending the model](extending-the-model.md)
 
-The `metadata` root field has a number of reserved fields with specific meaning,
-described below.
+### `metadata.name` [required]
 
-In addition to these, you may add any number of other fields directly under
-`metadata`, but be aware that general plugins and tools may not be able to
-understand their semantics. See [Extending the model](extending-the-model.md)
-for more information.
-
-### `name` [required]
-
-The name of the entity. This name is both meant for human eyes to recognize the
-entity, and for machines and other components to reference the entity (e.g. in
-URLs or from other entity specification files).
-
-Names must be unique per kind, within a given namespace (if specified), at any
-point in time. This uniqueness constraint is case insensitive. Names may be
-reused at a later time, after an entity is deleted from the registry.
-
-Names are required to follow a certain format. Entities that do not follow those
-rules will not be accepted for registration in the catalog. The ruleset is
-configurable to fit your organization's needs, but the default behavior is as
-follows.
-
-- Strings of length at least 1, and at most 63
-- Must consist of sequences of `[a-z0-9A-Z]` possibly separated by one of
-  `[-_.]`
-
-Example: `visits-tracking-service`, `CircleciBuildsDumpV2_avro_gcs`
+* name of the entity /
+  * requirements
+    * unique / kind | namespace at ANY point in time
+      * after certain entity is deleted -> names can be reused
+    * case insensitive
+    * rule set
+      * String / length [1, 63]
+      * sequences of `[a-z0-9A-Z]` / can be separated by `[-_.]`
+      * _Example:_ `visits-tracking-service`, `CircleciBuildsDumpV2_avro_gcs`
+* uses
+  * human eyes to recognize
+  * machines and other components -- to reference the -- entity
+    * _Example:_ URLs or other entity specification files
 
 ### `namespace` [optional]
 
+* TODO:
 The ID of a namespace that the entity belongs to. This field is optional, and
 currently has no special semantics apart from bounding the name uniqueness
 constraint if specified. It is reserved for future use and may get broader
