@@ -29,7 +29,22 @@ description: The life cycle of entities, from being introduced into the catalog,
       * PREVIOUSLY, NOT
 * main customizations | software catalog
   * _Entity providers_
-    * initial raw entity data -- are feed | catalog
+    * := class / implements `EntityProvider`
+    * in charge of
+      * fetching data -- from -- external sources (1! way to enter to the system)
+      * translating data -> _unprocessed entities_ == entity objects
+      * once entities are added or removed -- notify to the -- BBDD
+        * if you mark for deletion the entity -> ALL auxiliary data is ALSO purged
+    * specific number installed | catalog deployment
+    * ways to add more
+      * -- pass to -- catalog builder | backend initialization code
+    * BBDD keeps track entities / entity provider
+      * == entities / -- belong to each -- entity provider
+      * 👁️NO 2 providers -- can put the -- same entity 👁️
+    * by default, exist 2
+      * one / -- related to -- user registered locations
+        * _Example:_ URLs to .yaml
+      * one / -- related to -- static locations | app-config
   * _Policies_
     * establish baseline rules -- about the -- shape of entities
   * _Processors_, 
@@ -55,33 +70,14 @@ description: The life cycle of entities, from being introduced into the catalog,
 
 ![General overview](../../assets/features/catalog/life-of-an-entity_overview.svg)
 
-
 ## Ingestion
 
+
 * TODO:
-Each catalog deployment has a number of _entity providers_ installed. They are
-responsible for fetching data from external authoritative sources in any way
-that they see fit, translating those into entity objects, and notifying the
-database when those entities are added or removed. These are the _unprocessed
-entities_ that will be subject to later processing (see below), and they form
-the very basis of existence for entities. If there were no entity providers, no
-entities would ever enter the system.
-
-The database always keeps track of the set of entities that belong to each
-provider; no two providers can try to output the same entity. And when a
-provider signals the removal of an entity, then that leads to an _eager
-deletion_: the entity and all auxiliary data that it has led to in the database
-is immediately purged.
-
 ![Ingestion overview](../../assets/features/catalog/life-of-an-entity_ingestion.svg)
 
-There are two providers installed by default: the one that deals with user
-registered locations (e.g. URLs to YAML files), and the one that deals with
-static locations in the app-config. You can add more third party providers by
-passing them to the catalog builder in your backend initialization code, and you
-can easily write your own.
 
-An entity provider is a class that implements the `EntityProvider` interface. It
+It
 has three main parts:
 
 - The identity: Each provider instance has a unique, stable identifier that the
