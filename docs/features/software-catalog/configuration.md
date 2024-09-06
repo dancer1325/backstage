@@ -6,10 +6,12 @@ description: Documentation on Software Catalog Configuration
 
 ## Processors
 
-The catalog has a concept of _processors_ to perform catalog ingestion tasks,
-such as reading raw entity data from a remote source, parsing it, transforming
-it, and validating it. These processors are configured under the
-`catalog.processors` configuration key.
+* allows
+  * ingesting tasks | catalog
+  * TODO:
+  such as reading raw entity data from a remote source, parsing it, transforming
+  it, and validating it. These processors are configured under the
+  `catalog.processors` configuration key.
 
 ### Static Location Configuration
 
