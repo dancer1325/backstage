@@ -1,17 +1,24 @@
 # storybook
 
-This package provides a Storybook build for Backstage. See https://backstage.io/storybook/.
+* Storybook build for Backstage
+* https://backstage.io/storybook/
 
 ## Usage
 
-To run the storybook locally, call `yarn storybook` in repo root. This will show the default set of stories that we publish to https://backstage.io/storybook
+* `yarn storybook` | repo root
+  * run the storybook locally
+  * show the default set of stories / published to https://backstage.io/storybook
+* if you want to show own stories -> pass >=1 package paths -- as an -- argument
+  * _Example:_ show "plugins/search" story 
 
-If you want to show stories other than the default set, you can pass one or more package paths as an argument when calling storybook, for example:
-
-```sh
-yarn storybook plugins/search
-```
+    ```sh
+    yarn storybook plugins/search
+    ```
 
 ## Why is this not part of `@backstage/core-components`?
 
-This separate storybook package exists because of dependency conflicts with `@backstage/cli`. It uses `nohoist` to avoid the conflicts, and since you can only use that in private packages it has to be separated out of `@backstage/core-components`.
+* dependency conflicts with `@backstage/cli` 
+  * `nohoist`
+    * avoid the conflicts
+* separated out of `@backstage/core-components`
+  * Reason: 🧠you can ONLY use it | private packages 🧠
