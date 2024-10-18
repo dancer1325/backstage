@@ -4,15 +4,30 @@ title: Overview
 description: A high level overview of the Backstage permission framework
 ---
 
-[The previous section](../auth/index.md) covered the various _authentication_ methods of Backstage, but Backstage can also _authorize_ specific data, APIs, or interface actions - meaning that Backstage has the ability to enforce rules about what type of access is allowed for a given user of a system.
-
-By default, Backstage endpoints are not protected, and all actions are available to anyone. However, configuring which users can access which resources and actions is a common need for many organizations. The permission framework allows integrators to achieve this through the use of granular permissioning for those resources and actions.
-
-The permission framework was designed with a few key properties in mind:
-
-- Flexibility: the framework allows integrators to configure many different authorization methods. This could include implementations like role-based access control (RBAC), attribute-based access control (ABAC), bespoke logic expressed in code, or integrations with external authorization providers.
-
-- Usability: the permission framework allows integrators to focus on configuring what they care about (the permission policy) by providing all of its moving parts out of the box. It also allows plugin authors to integrate support for permissions in their plugins without having to make any changes in Backstage core.
+* [Backstage authentication methods](../auth/index.md)
+* goal here
+  * Backstage _authorization_
+    * == specify data, APIs, or interface actions -- about type of -- allowed access / given user
+* Backstage endpoints
+  * NOT protected
+    * == ALL actions -- are available to -- anyone
+    * HOWEVER, it's a common need / many organizations
+* permission framework
+  * allows
+    * protecting Backstage endpoints -- via -- granular permissioning / those resources and actions
+  * main design properties
+    * Flexibility
+      * == configure different authorization methods -- via -- integrators, to
+        * role-based access control (RBAC)
+        * attribute-based access control (ABAC),
+        * bespoke logic expressed in code
+        * -- integrations with -- external authorization providers
+    * usability
+      * -- focus on -- configuring the permission policy
+        * Reason: 🧠ALL of its moving parts -- out of the -- box 🧠
+        * -- via --
+          * integrators
+          * plugin authors / -- integrate support for -- permissions
 
 ## How does it work?
 
@@ -38,6 +53,5 @@ The permission framework was designed with a few key properties in mind:
 
 ## How do I get started?
 
-See the "[getting started](./getting-started.md)" permission documentation for Backstage integrators.
-
-If you are a plugin author, see the permission [documentation for plugin authors](plugin-authors/01-setup.md) on how to integrate permissions into your plugin.
+* [getting started](./getting-started.md)
+* if you are a plugin author -> [documentation for plugin authors](plugin-authors/01-setup.md)
