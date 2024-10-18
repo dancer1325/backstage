@@ -4,15 +4,9 @@ title: Getting Started
 description: How to get started with the permission framework as an integrator
 ---
 
-If you prefer to watch a video instead, you can start with this video introduction:
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/EQr9tFClgG0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
-:::note Note
-
-This video was recorded in the January 2022 Contributors Session using `@backstage/create-app@0.4.14`. Some aspects of the demo may have changed in later releases.
-
-:::
+* https://www.youtube.com/embed/EQr9tFClgG0
+  * `@backstage/create-app@0.4.14`
+  * TODO:
 
 Backstage integrators control permissions by writing a policy. In general terms, a policy is simply an async function which receives a request to authorize a specific action for a user and (optional) resource, and returns a decision on whether to authorize that permission. Integrators can implement their own policies from scratch, or adopt reusable policies written by others.
 
@@ -26,9 +20,17 @@ The permissions framework itself is new to Backstage and still evolving quickly.
 
 ### Enable service-to-service authentication
 
-Service-to-service authentication allows Backstage backend code to verify that a given request originates from elsewhere in the Backstage backend. This is useful for tasks like collation of catalog entities in the search index. This type of request shouldn’t be permissioned, so it’s important to configure this feature before trying to use the permissions framework.
-
-To set up service-to-service authentication, follow the [service-to-service authentication docs](../auth/service-to-service-auth.md).
+* Service-to-service authentication
+  * allows
+    * Backstage backend code -- can verify that a -- given request -- originates from -- elsewhere | Backstage backend 
+      * 
+  * use cases
+    * tasks | search index 
+      * _Example:_ collation of catalog entities
+  * uses
+    * configure | before trying to use the permissions framework
+      * Reason: 🧠otherwise, the request should NOT be permission 🧠 
+  * [how to set up](../auth/service-to-service-auth.md)
 
 ### Supply an identity resolver to populate group membership on sign in
 
