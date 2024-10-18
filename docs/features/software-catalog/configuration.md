@@ -8,46 +8,43 @@ description: Documentation on Software Catalog Configuration
 
 * allows
   * ingesting tasks | catalog
-  * TODO:
-  such as reading raw entity data from a remote source, parsing it, transforming
-  it, and validating it. These processors are configured under the
-  `catalog.processors` configuration key.
+    * _Example:_ reading raw entity data -- from a -- remote source, parsing it, transforming
+  it, and validating it
+* are configured | `catalog.processors`
 
 ### Static Location Configuration
 
-The simplest configuration for the catalog, as shown in the default
-`@backstage/create-app` template, is to declaratively add locations pointing to
-YAML files with [static configuration](../../conf/index.md).
+* 👀simplest configuration for the catalog 👀
+  * _Example:_ `@backstage/create-app` template, is to declaratively add locations pointing to
+  YAML files with [static configuration](../../conf/index.md).
+* they are added -- via -- `catalog.locations`
+  * types
+    * `url`
+      * -- is handled by -- `UrlReaderProcessor`
+        * := standard processor / included with the catalog
+        * -> NO needed processor configuration
+      * requirements
+        * [integration](../../integrations/index.md) -- to retrieve a -- given URL
+          * _Example:_ configure the [GitHub integration](../../integrations/github/locations.md)
 
-Locations are added to the catalog under the `catalog.locations` key:
-
-```yaml
-catalog:
-  locations:
-    - type: url
-      target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/components/artist-lookup-component.yaml
-```
-
-The `url` type locations are handled by a standard processor included with the
-catalog (`UrlReaderProcessor`), so no processor configuration is needed. This
-processor _does however_ need an [integration](../../integrations/index.md) to
-understand how to retrieve a given URL. For the example above, you would need to
-configure the [GitHub integration](../../integrations/github/locations.md) to
-read files from github.com.
-
-The locations added through static configuration cannot be removed through the
-catalog locations API. To remove these locations, you must remove them from the
-configuration.
-
-Syntax errors or other types of errors present in `catalog-info.yaml` files will
-be logged for investigation. Errors do not cause processing to abort.
-
-When multiple `catalog-info.yaml` files with the same `metadata.name` property
-are discovered, one will be processed and all others will be skipped. This
-action is logged for further investigation.
+            ```yaml
+            catalog:
+              locations:
+                - type: url
+                  target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/components/artist-lookup-component.yaml
+            ```
+* can NOT be removed -- through the -- catalog locations API
+  * -> you MUST remove them | configuration
+* Syntax errors or other types of errors | `catalog-info.yaml`
+  * logged for investigation
+  * NOT cause aborting
+* if MULTIPLE `catalog-info.yaml` files / SAME `metadata.name` -> 
+  * 1! will be processed
+  * OTHERS will be skipped
 
 ### Local File (`type: file`) Configurations
 
+* TODO:
 In addition to url locations, you can use the `file` location type to bring in content from the local file system. You should only use this for local development, test setups, and example data, not for production data.
 You are also not able to use placeholders in them like `$text`. You can however reference other files relative to the current file. See the full [catalog example data set here](https://github.com/backstage/backstage/tree/master/packages/catalog-model/examples) for an extensive example.
 
