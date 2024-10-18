@@ -44,34 +44,30 @@ description: The Backstage Software Catalog
   * creating new components -- through -- Backstage
     * TODO:
   * -- integrating with an -- [external source](external-integrations.md)
-    * TODO:
-
 
 ### Creating new components through Backstage
-TODO:
 
-All software created through the
-[Backstage Software Templates](../software-templates/index.md) are automatically
-registered in the catalog.
+* ALL software -- created through the -- [Backstage Software Templates](../software-templates/index.md) -> are automatically
+registered | catalog
 
 ### Static catalog configuration
 
-In addition to manually registering components, it is also possible to register
-components through [static configuration](../../conf/index.md). For example, the
-above example can be added using the following configuration:
+* alternative to 
+  * manually registering components
+* [static configuration](../../conf/index.md)
+* _Example:_
 
-```yaml
-catalog:
-  locations:
-    - type: url
-      target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/components/artist-lookup-component.yaml
-```
-
-More information about catalog configuration can be found
-[here](configuration.md).
+  ```yaml
+  catalog:
+    locations:
+      - type: url
+        target: https://github.com/backstage/backstage/blob/master/packages/catalog-model/examples/components/artist-lookup-component.yaml
+  ```
+* [catalog configuration information](configuration.md)
 
 ### Updating component metadata
 
+* TODO:
 Teams owning the components are responsible for maintaining the metadata about
 them, and do so using their normal Git workflow.
 
