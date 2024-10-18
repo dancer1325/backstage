@@ -4,58 +4,52 @@ title: Defining Configuration for your Plugin
 description: Documentation on Defining Configuration for your Plugin
 ---
 
-Configuration in Backstage is organized via a configuration schema, which in
-turn is defined using a superset of
-[JSON Schema Draft-07](https://json-schema.org/specification-links.html#draft-7).
-Each plugin or package within a Backstage app can contribute to the schema,
-which during validation is stitched together into a single schema.
+* Configuration in Backstage -- is organized via a -- configuration schema /
+  * -- is defined via a superset of -- [JSON Schema Draft-07](https://json-schema.org/specification-links.html#draft-7)
+  * Each plugin or package | Backstage app -- can contribute to the -- configuration schema
 
 ## Schema Collection and Definition
 
-Schemas are collected from all packages and dependencies in each repo that are a
-part of the Backstage ecosystem, including the root package and transitive
-dependencies. The current definition of "part of the ecosystem" is that a
-package has at least one dependency in the `@backstage` namespace or a
-`"configSchema"` field in `package.json`, but this is subject to change.
+* Schemas -- are collected from -- ALL packages (ALSO the root) and dependencies (ALSO transitive) | EACH repo /
+part of the Backstage ecosystem
+  * "part of the Backstage ecosystem" == package / has
+    * \>=1 dependency | `@backstage` namespace or
+    * `"configSchema"` field | `package.json` / can contain
+      * inlined JSON schema
+      * -- relative path to a -- schema file / supported
+        * `.json`
+        * `.d.ts`
+      * _Example:_ 
+      ```jsonc title="package.json"
+      {
+        // ...
+        // CRUTIAL to include the configSchema relative HERE in "files"
+        "files": [
+          // ...
+          "config.d.ts"
+        ],
+        "configSchema": "config.d.ts"
+      }
+      ```
 
-Each package is searched for a schema at a single point of entry, a top-level
-`"configSchema"` field in `package.json`. The field can either contain an
-inlined JSON schema, or a relative path to a schema file. Supported schema file
-formats are `.json` or `.d.ts`.
+      ```ts, name="config.d.ts"
+      // 1! `Config` MUST be exported
+      export interface Config {
+        app: {
+          /**
+           * Frontend root URL
+           * @visibility frontend
+           */
+          baseUrl: string;
+      
+          // Use @items.<name> to assign annotations to primitive array items
+          /** @items.visibility frontend */
+          myItems: string[];
+        };
+      }
+      ```
 
-```jsonc title="package.json"
-{
-  // ...
-  "files": [
-    // ...
-    "config.d.ts"
-  ],
-  "configSchema": "config.d.ts"
-}
-```
-
-> When defining a schema file, be sure to include the file in your
-> `package.json` > `"files"` field as well!
-
-TypeScript configuration schema files should export a single `Config` type, for
-example:
-
-```ts
-export interface Config {
-  app: {
-    /**
-     * Frontend root URL
-     * @visibility frontend
-     */
-    baseUrl: string;
-
-    // Use @items.<name> to assign annotations to primitive array items
-    /** @items.visibility frontend */
-    myItems: string[];
-  };
-}
-```
-
+* TODO:
 Separate `.json` schema files can use a top-level
 `"$schema": "https://backstage.io/schema/config-v1"` declaration in order to
 receive schema validation and autocompletion. For example:
@@ -144,15 +138,11 @@ export interface Config {
 }
 ```
 
-## Validation
+## Validation of the schemas
 
-Schemas can be validated using the `backstage-cli config:check` command. If you
-want to validate anything else than the default `app-config.yaml`, be sure to
-pass in all of the configuration files as `--config <path>` options as well.
-
-To validate and examine the frontend configuration, use the
-`backstage-cli config:print --frontend` command. Just like for validation you
-may need to pass in all files using one or multiple `--config <path>` options.
+* -- via -- `backstage-cli config:check`
+* if you want to validate the frontend configuration -> use
+`backstage-cli config:print --frontend`
 
 ## Guidelines
 
