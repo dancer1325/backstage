@@ -1,10 +1,14 @@
 # Catalog Backend Module to resolve $refs in yaml documents
 
-This is an extension module to the Catalog backend, providing extensions to resolve $refs in yaml documents.
-
-With this you can split your yaml documents into multiple files and reference them. They will be bundled, using an UrlReader, during processing and stored as a single specification.
-
-This is useful for OpenAPI and AsyncAPI specifications.
+* == extension module to the Catalog backend / resolve $refs | ".yaml"
+  * allows
+    * ".yaml" -- can be split into -- multiple files & reference them
+      * how does it work?
+        * -- via -- UrlReader -> they are bundled
+        * -- stored as a -- 1! specification
+  * uses
+    * OpenAPI specifications
+    * AsyncAPI specifications
 
 ## Installation
 
@@ -21,65 +25,69 @@ yarn --cwd packages/backend add @backstage/plugin-catalog-backend-module-openapi
 backend.add(import('@backstage/plugin-catalog-backend-module-openapi'));
 ```
 
-This will add the `jsonSchemaRefPlaceholderResolver` for
-the placeholder resolver keys `asyncapi` and `openapi`.
+* -> `jsonSchemaRefPlaceholderResolver` -- is added for the -- placeholder resolver keys
+  * `asyncapi`
+    * == `$asyncapi` placeholder is used | referencing your AsyncAPI specification
+  * `openapi`
+    * == `$openapi` placeholder is used | referencing your OpenAPI specification 
+    * _Example:_
 
-This allows you to use the `$openapi` placeholder when referencing your OpenAPI specification and `$asyncapi` when referencing your AsyncAPI specifications. This will then resolve all `$ref` instances in your specification.
-
-You can also use this resolver for other kind of yaml files to resolve $ref pointer.
-
-```yaml
-apiVersion: backstage.io/v1alpha1
-kind: API
-metadata:
-  name: example
-  description: Example API
-spec:
-  type: openapi
-  lifecycle: production
-  owner: team
-  definition:
-    $openapi: ./spec/openapi.yaml # by using $openapi Backstage will now resolve all $ref instances
-```
+    ```yaml
+    apiVersion: backstage.io/v1alpha1
+    kind: API
+    metadata:
+      name: example
+      description: Example API
+    spec:
+      type: openapi
+      lifecycle: production
+      owner: team
+      definition:
+        $openapi: ./spec/openapi.yaml # by using $openapi Backstage will now resolve all $ref instances
+    ```
 
 ### Adding the plugin to your `packages/backend` (old backend system)
 
 #### **jsonSchemaRefPlaceholderResolver**
 
-The placeholder resolver can be added by importing `jsonSchemaRefPlaceholderResolver` in `src/plugins/catalog.ts` in your `backend` package and adding the following.
+* how to add the placeholder resolver?
+  * import `jsonSchemaRefPlaceholderResolver` | `backend` package's `src/plugins/catalog.ts`
+  * add 
 
-```ts
-builder.setPlaceholderResolver('openapi', jsonSchemaRefPlaceholderResolver);
-builder.setPlaceholderResolver('asyncapi', jsonSchemaRefPlaceholderResolver);
-```
+  ```ts
+  builder.setPlaceholderResolver('openapi', jsonSchemaRefPlaceholderResolver);
+  builder.setPlaceholderResolver('asyncapi', jsonSchemaRefPlaceholderResolver);
+  ```
+* allows using
+  * `$asyncapi` placeholder is used | referencing your AsyncAPI specification
+  * `$openapi` placeholder is used | referencing your OpenAPI specification
+    * _Example:_
 
-This allows you to use the `$openapi` placeholder when referencing your OpenAPI specification and `$asyncapi` when referencing your AsyncAPI specifications. This will then resolve all `$ref` instances in your specification.
-
-You can also use this resolver for other kind of yaml files to resolve $ref pointer.
-
-```yaml
-apiVersion: backstage.io/v1alpha1
-kind: API
-metadata:
-  name: example
-  description: Example API
-spec:
-  type: openapi
-  lifecycle: production
-  owner: team
-  definition:
-    $openapi: ./spec/openapi.yaml # by using $openapi Backstage will now resolve all $ref instances
-```
+    ```yaml
+    apiVersion: backstage.io/v1alpha1
+    kind: API
+    metadata:
+      name: example
+      description: Example API
+    spec:
+      type: openapi
+      lifecycle: production
+      owner: team
+      definition:
+        $openapi: ./spec/openapi.yaml # by using $openapi Backstage will now resolve all $ref instances
+    ```
 
 #### **OpenAPIRefProcessor** (deprecated)
 
-The processor can be added by importing `OpenApiRefProcessor` in `src/plugins/catalog.ts` in your `backend` package and adding the following.
+* steps
+  * import `OpenApiRefProcessor` | `backend` package's `src/plugins/catalog.ts`
+  * add
 
-```ts
-builder.addProcessor(
-  OpenApiRefProcessor.fromConfig(env.config, {
-    logger: env.logger,
-    reader: env.reader,
-  }),
-);
-```
+  ```ts
+  builder.addProcessor(
+    OpenApiRefProcessor.fromConfig(env.config, {
+      logger: env.logger,
+      reader: env.reader,
+    }),
+  );
+  ```
