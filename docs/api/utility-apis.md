@@ -115,9 +115,10 @@ using the type embedded within the
 
 ## Registering API Factories
 
-The responsibility for adding Utility APIs to a Backstage app lies in three
-different locations: the Backstage core library, each plugin included in the
-app, and the app itself.
+* Utility APIs to a Backstage app -- are added -- | 3 different locations
+  * Backstage core library,
+  * each plugin included in the app,
+  * app itself
 
 ### Core APIs
 
