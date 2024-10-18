@@ -6,46 +6,54 @@ description: Documentation on Static Configuration in Backstage
 
 ## Summary
 
-Backstage ships with a flexible configuration system that provides a simple way
-to configure Backstage apps and plugins for both local development and
-production deployments. It helps get you up and running fast while adapting
-Backstage for your specific environment. It also serves as a tool for plugin
-authors to use to make it simple to pick up and install a plugin, while still
-allowing for customization.
+* Backstage
+  * -- ships with a -- flexible configuration system / 
+    * simple way to configure | local development & production deployments  
+      * Backstage apps
+      * Backstage plugins 
+    * -> helps get you up & running fast
+  * uses
+    * == tool for plugin authors / 
+      * simple to pick up & install a plugin
+      * allows for customization
 
 ## Supplying Configuration
 
-Configuration is stored in YAML files where the defaults are `app-config.yaml`
-and `app-config.local.yaml` for local overrides. Other sets of files can by
-loaded by passing `--config <path>` flags. The configuration files themselves
-contain plain YAML, but with support for loading in data and secrets from
-various sources using for example `$env` and `$file` keys.
-
-It is also possible to supply configuration through environment variables, for
-example `APP_CONFIG_app_baseUrl=https://staging.example.com`. However these
-should be used sparingly, usually just for temporary overrides during
-development or small tweaks to be able to reuse deployment artifacts in
-different environments.
-
-The configuration is shared between the frontend and backend, meaning that
-values that are common between the two only need to be defined once. Such as the
-`backend.baseUrl`.
-
-For more details, see [Writing Configuration](./writing.md).
+* ways to supply configuration
+  * stored | YAML files
+    * `app-config.yaml`
+      * default
+    * `app-config.local.yaml`
+      * uses
+        * local overrides
+    * others
+      * -- via passing -- `--config <path>`
+    * allows
+      * loading in data and secrets -- from -- various sources
+        * _Example:_ using `$env` & `$file` keys
+  * environment variables
+    * _Example:_ `APP_CONFIG_app_baseUrl=https://staging.example.com`
+    * 👀recommended ocasionally 👀
+      * temporary overrides -- during -- development
+      * reuse deployment artifacts | different environments
+* configuration / common between frontend and backend -> needs to be defined 1! time
+  * Reason: 🧠 it's shared 🧠
+  * _Example:_ `backend.baseUrl`
+* [Writing Configuration](./writing.md)
 
 ## Configuration Schema
 
-The configuration is validated using JSON Schema definitions. Each plugin and
-package can provide pieces of the configuration schema, which are stitched
-together to form a complete schema during validation. The configuration schema
-is also used to select what configuration is available in the frontend using a
-custom `visibility` keyword, as configuration is by default only available in
-the backend.
-
-You can validate your configuration against the schema using
-`backstage-cli config:check`, and define a schema for your own plugin either
-using JSON Schema or TypeScript. For more information, see
-[Defining Configuration](./defining.md).
+* == plugin`s pieces + package`s pieces 
+* uses
+  * select what configuration is available | frontend
+    * custom `visibility` keyword is by default ONLY available | backend
+* ways to validate your configuration schema 
+  * JSON Schema definitions 
+  * `backstage-cli config:check`
+* [Defining Configuration](./defining.md)
+  * the schema is defined -- via --
+    * JSON Schema or
+    * TypeScript
 
 ## Reading Configuration
 
