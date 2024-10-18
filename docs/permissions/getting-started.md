@@ -116,16 +116,15 @@ The permissions framework uses a new `permission-backend` plugin to accept autho
 
 ### 2. Enable and test the permissions system
 
-Now that the permission backend is running, it’s time to enable the permissions framework and make sure it’s working properly.
 
-1. Set the property `permission.enabled` to `true` in `app-config.yaml`.
-
+*
    ```yaml title="app-config.yaml"
    permission:
      enabled: true
    ```
 
-2. Update the PermissionPolicy in `packages/backend/src/plugins/permission.ts` to disable a permission that’s easy for us to test. This policy rejects any attempt to delete a catalog entity:
+* update the PermissionPolicy | `packages/backend/src/plugins/permission.ts`
+  * _Example:_ disable a permission / easy to test -- as -- delete a catalog entity
 
    ```ts title="packages/backend/src/plugins/permission.ts"
    import { createRouter } from '@backstage/plugin-permission-backend';
@@ -161,8 +160,12 @@ Now that the permission backend is running, it’s time to enable the permission
    }
    ```
 
-3. Now that you’ve made this change, you should find that the unregister entity menu option on the catalog entity page is disabled.
+* check it
+  * _Example:_ unregister entity menu option | catalog entity page, is disabled
 
 ![Entity detail page showing disabled unregister entity context menu entry](../assets/permissions/disabled-unregister-entity.png)
 
-Now that the framework is fully configured, you can craft a permission policy that works best for your organization by utilizing a provided authorization method or by [writing your own policy](./writing-a-policy.md)!
+* 👀framework is fully configured 👀
+  * == you can craft a permission policy / works best for your organization -- via --
+    * provided authorization method or
+    * [writing your own policy](./writing-a-policy.md)
