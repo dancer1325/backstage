@@ -1,32 +1,33 @@
 # API Documentation
 
-> Disclaimer:
-> If you are looking for documentation on the experimental new frontend system support, please go [here](./README-alpha.md).
-
-This is an extension for the catalog plugin that provides components to discover and display API entities.
-APIs define the interface between components, see the [system model](https://backstage.io/docs/features/software-catalog/system-model) for details.
-They are defined in machine readable formats and provide a human readable documentation.
-
-The plugin provides a standalone list of APIs, as well as an integration into the API tab of a catalog entity.
-
-![Standalone API list](./docs/api_list.png)
-![OpenAPI Definition](./docs/openapi_definition.png)
-![Integration into components](./docs/entity_tab_api.png)
-
-Right now, the following API formats are supported:
-
-- [OpenAPI](https://swagger.io/specification/) 2 & 3
-- [AsyncAPI](https://www.asyncapi.com/docs/reference/specification/latest) 2 & 3
-- [GraphQL](https://graphql.org/learn/schema/)
-
-Other formats are displayed as plain text, but this can easily be extended.
-
-To fill the catalog with APIs, [provide entities of kind API](https://backstage.io/docs/features/software-catalog/descriptor-format#kind-api).
-To link that a component provides or consumes an API, see the [`providesApis`](https://backstage.io/docs/features/software-catalog/descriptor-format#specprovidesapis-optional) and [`consumesApis`](https://backstage.io/docs/features/software-catalog/descriptor-format#specconsumesapis-optional) properties on the Component kind.
+* if you are looking for documentation about experimental new frontend system support -> go [here](./README-alpha.md)
+* goal here
+  * extension for the catalog plugin / provides components -- to --
+    * discover API entities
+    * display API entities
+* APIs
+  * == interface between components / [system model](https://backstage.io/docs/features/software-catalog/system-model)
+    * defined in machine readable formats
+    * provide a human readable documentation
+  * supported API formats
+    * [OpenAPI](https://swagger.io/specification/) 2 & 3
+    * [AsyncAPI](https://www.asyncapi.com/docs/reference/specification/latest) 2 & 3
+    * [GraphQL](https://graphql.org/learn/schema/)
+    * can be extended / other formats -- are displayed as -- plain text
+  * if you want to fill the catalog with APIs -> [provide entities of kind API](https://backstage.io/docs/features/software-catalog/descriptor-format#kind-api)
+  * if you want to link that a component provides or consumes an API ->
+    * [`providesApis`](https://backstage.io/docs/features/software-catalog/descriptor-format#specprovidesapis-optional) | Component kind
+    * [`consumesApis`](https://backstage.io/docs/features/software-catalog/descriptor-format#specconsumesapis-optional) | Component kind
+* Plugin provides
+  * standalone list of APIs 
+    ![Standalone API list](./docs/api_list.png)
+    ![OpenAPI Definition](./docs/openapi_definition.png)
+  * integration | catalog entity's API tab 
+    ![Integration into components](./docs/entity_tab_api.png)
 
 ## Getting Started
 
-> The plugin is already added when using `npx @backstage/create-app` so you can skip these steps.
+* if you use `npx @backstage/create-app` -> plugin is ALREADY added -> next steps can be skipped
 
 1. Install the API docs plugin
 
@@ -35,7 +36,7 @@ To link that a component provides or consumes an API, see the [`providesApis`](h
 yarn --cwd packages/app add @backstage/plugin-api-docs
 ```
 
-2. Add the `ApiExplorerPage` extension to the app:
+2. Add the `ApiExplorerPage` extension | app
 
 ```tsx
 // In packages/app/src/App.tsx
@@ -45,65 +46,66 @@ import { ApiExplorerPage } from '@backstage/plugin-api-docs';
 <Route path="/api-docs" element={<ApiExplorerPage />} />;
 ```
 
-3. Add one of the provided widgets to the EntityPage:
+3. Add one of the provided widgets | EntityPage
 
-```tsx
-// packages/app/src/components/catalog/EntityPage.tsx
-
-import {
-  EntityAboutCard,
-  EntityApiDefinitionCard,
-  EntityConsumingComponentsCard,
-  EntityProvidingComponentsCard,
-} from '@backstage/plugin-api-docs';
-
-const apiPage = (
-  <EntityLayout>
-    <EntityLayout.Route path="/" title="Overview">
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={6}>
-          <EntityAboutCard />
-        </Grid>
-        <Grid container>
-          <Grid item md={12}>
-            <Grid item xs={12} md={6}>
-              <EntityProvidingComponentsCard />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <EntityConsumingComponentsCard />
+  ```tsx
+  // packages/app/src/components/catalog/EntityPage.tsx
+  
+  import {
+    EntityAboutCard,
+    EntityApiDefinitionCard,
+    EntityConsumingComponentsCard,
+    EntityProvidingComponentsCard,
+  } from '@backstage/plugin-api-docs';
+  
+  const apiPage = (
+    <EntityLayout>
+      <EntityLayout.Route path="/" title="Overview">
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={6}>
+            <EntityAboutCard />
+          </Grid>
+          <Grid container>
+            <Grid item md={12}>
+              <Grid item xs={12} md={6}>
+                <EntityProvidingComponentsCard />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <EntityConsumingComponentsCard />
+              </Grid>
             </Grid>
           </Grid>
         </Grid>
-      </Grid>
-    </EntityLayout.Route>
-
-    <EntityLayout.Route path="/definition" title="Definition">
-      <Grid container spacing={3}>
-        <Grid item xs={12}>
-          <EntityApiDefinitionCard />
+      </EntityLayout.Route>
+  
+      <EntityLayout.Route path="/definition" title="Definition">
+        <Grid container spacing={3}>
+          <Grid item xs={12}>
+            <EntityApiDefinitionCard />
+          </Grid>
         </Grid>
-      </Grid>
-    </EntityLayout.Route>
-  </EntityLayout>
-);
+      </EntityLayout.Route>
+    </EntityLayout>
+  );
+  
+  // ...
+  
+  export const entityPage = (
+    <EntitySwitch>
+      // ...
+      <EntitySwitch.Case if={isKind('api')} children={apiPage} />
+      // ...
+    </EntitySwitch>
+  );
+  ```
 
-// ...
-
-export const entityPage = (
-  <EntitySwitch>
-    // ...
-    <EntitySwitch.Case if={isKind('api')} children={apiPage} />
-    // ...
-  </EntitySwitch>
-);
-```
-
-There are other components to discover in [`./src/components`](./src/components) that are also added by the default app.
+  👀[`./src/components`](./src/components) are ALSO added by the default app 👀
 
 ## Customizations
 
 ### Custom API Renderings
 
+* TODO:
 You can add support for additional API types by providing a custom implementation for the `apiDocsConfigRef`.
 You can also use this to override the rendering of one of the already supported types.
 
