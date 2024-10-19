@@ -6,44 +6,47 @@ description: Documentation on Writing Backstage Configuration Files
 
 ## File Format
 
-Configuration is stored in YAML format in `app-config.yaml` files. This
-configuration is shared between the frontend and backend and it looks something
-like this:
+* Configuration
+  * stored | `app-config.yaml` files
+  * -- is shared between the --
+    * frontend
+    * backend
+  * _Example:_ 
 
-```yaml
-app:
-  title: Backstage Example App
-  baseUrl: http://localhost:3000
+  ```yaml
+  app:
+    title: Backstage Example App
+    baseUrl: http://localhost:3000
+  
+  backend:
+    listen: 0.0.0.0:7007
+    baseUrl: http://localhost:7007
+  
+  organization:
+    name: CNCF
+  
+  proxy:
+    /my/api:
+      target: https://example.com/api/
+      changeOrigin: true
+      pathRewrite:
+        ^/proxy/my/api/: /
+  ```
 
-backend:
-  listen: 0.0.0.0:7007
-  baseUrl: http://localhost:7007
+  * are typically checked in
+  * stored | repo / houses rest of the Backstage application
+  * particular configuration / is available to each Backstage app -- depends on -- installed
+    * plugins
+    * packages
+  * if you want to view the configuration reference / your own project -> run
 
-organization:
-  name: CNCF
-
-proxy:
-  /my/api:
-    target: https://example.com/api/
-    changeOrigin: true
-    pathRewrite:
-      ^/proxy/my/api/: /
-```
-
-Configuration files are typically checked in and stored in the repo that houses
-the rest of the Backstage application.
-
-The particular configuration that is available to each Backstage app depends on
-what plugins and packages are installed. To view the configuration reference for
-your own project, including what configuration keys available and whether they
-are needed by the frontend, use the following command:
-
-```sh
-yarn backstage-cli config:docs
-```
+    ```sh
+    yarn backstage-cli config:docs
+    ```
 
 ## Environment Variable Overrides
 
+* TODO:
 Individual configuration values can be overridden using environment variables
 prefixed with `APP_CONFIG_`. Everything following that prefix in the environment
 variable name will be used as the config key, with `_` replaced by `.`. For
@@ -67,53 +70,52 @@ production build.
 
 ## Configuration Files
 
-It is possible to have multiple configuration files (bundled and/or remote\*),
-both to support different environments, but also to define configuration that is
-local to specific packages. The configuration files to load are selected using a
-`--config <local-path|url>` flag, and it is possible to load any number of
-files. Paths are relative to the working directory of the executed process, for
-example `package/backend`. This means that to select a config file in the repo
-root when running the backend, you would use `--config ../../my-config.yaml`,
-and for config file on a config server you would use
-`--config https://some.domain.io/app-config.yaml`
+* \>1, it's possible to have
+  * ways
+    * bundled
+    * remote
+  * uses
+    * support different environments
+    * define configuration / local to specific packages
+  * `--config <localRelativePath|url>`
+    * way to load several
+    * `localRelativePath`
+      * -- relative to the -- working directory of the executed process
+        * _Example:_ `package/backend`
+      * _Example:_ `--config ../../my-config.yaml`
+    * `url`
+      * _Example:_ `--config https://some.domain.io/app-config.yaml`
+      * requirements
+        * set the remote option | loadBackendConfig call
+    * if NOT specified -> load 
+      * `app-config.local.yaml`, if it exists
+      * else -> `app-config.yaml` 
+    * 👀if it's specified / NOT the default `app-config.yaml` passed -> NOT loaded 👀
+    * _Example:_
 
-**Note**: In case URLs are passed, it is also needed to set the remote option in
-the loadBackendConfig call.
+    ```shell
+    yarn start --config ../../app-config.yaml --config ../../app-config.staging.yaml --config https://some.domain.io/app-config.yaml
+    ```
 
-If no `config` flags are specified, the default behavior is to load
-`app-config.yaml` and, if it exists, `app-config.local.yaml` from the repo root.
-In the provided project setup, `app-config.local.yaml` is `.gitignore`'d, making
-it a good place to add config overrides and secrets for local development.
+* `app-config.local.yaml`
+  * add to `.gitignore`
+  * uses
+    * config
+    * secrets for local development
 
-Note that if any config flags are provided, the default `app-config.yaml` files
-are NOT loaded. To include them you need to explicitly include them with a flag,
-for example:
+* 👀rules to merge ALL loaded configuration files👀
+  * configurations / higher priority -> override configurations / lower priority
+  * primitive values -- are completely replaced -- by arrays & their contents
+  * objects are merged together deeply
+    * == if any of the included configs contain a value / given path -> it will be found
+  * `null` value | config file == explicit absence of configuration
+    * == reading will NOT fall back to a lower priority config
 
-```shell
-yarn start --config ../../app-config.yaml --config ../../app-config.staging.yaml --config https://some.domain.io/app-config.yaml
-```
-
-All loaded configuration files are merged together using the following rules:
-
-- Configurations have different priority, higher priority means you replace
-  values from configurations with lower priority.
-- Primitive values are completely replaced, as are arrays and all of their
-  contents.
-- Objects are merged together deeply, meaning that if any of the included
-  configs contain a value for a given path, it will be found.
-- A `null` value in a config file will be treated as an explicit absence of
-  configuration. This means that the reading will not fall back to a lower priority
-  config, but it will still be treated as if the configuration was not present.
-
-The priority of the configurations is determined by the following rules, in
-order:
-
-- Configuration from the `APP_CONFIG_` environment variables has the highest
-  priority, followed by files.
-- Files loaded with config flags are ordered by priority, where the last flag
-  has the highest priority.
-- If no config flags are provided, `app-config.local.yaml` has higher priority
-  than `app-config.yaml`.
+* 👀priority rules of the configurations👀
+  * `APP_CONFIG_` environment variables priority > files priority
+  * files / loaded -- via -- `--config` are passed by low -- to -> high priority
+    * == last one passed has the highest priority
+  * if NO `--config` passed -> `app-config.local.yaml` priority > `app-config.yaml` priority
 
 ## Includes and Dynamic Data
 
