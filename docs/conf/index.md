@@ -43,7 +43,7 @@ description: Documentation on Static Configuration in Backstage
 
 ## Configuration Schema
 
-* == plugin`s pieces + package`s pieces 
+* == plugin's pieces + package's pieces 
 * uses
   * select what configuration is available | frontend
     * custom `visibility` keyword is by default ONLY available | backend
