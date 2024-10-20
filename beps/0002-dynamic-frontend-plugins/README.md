@@ -33,15 +33,18 @@ When editing BEPs, aim for tightly-scoped, single-topic PRs to keep discussions 
 
 ## Summary
 
-<!--
-The summary of the BEP is a few paragraphs long and give a high-level overview of the features to be implemented. It should be possible to read *only* the summary and understand what the BEP is proposing to accomplish and what impact it has for users.
--->
-
-The dynamic frontend plugins feature is a way of loading additional frontend plugins at runtime, without the requirement of rebuilding and restarting a running Backstage instance. It also provides a method for packaging and distributing plugins as standalone artifacts, which can be installed directly into Backstage.
-
-This system should significantly improve frontend plugin management for Backstage instances, and makes it possible to deploy changes to the app without rebuilding the app itself.
-
-The dynamic plugins leverage the declarative nature of the new frontend system to define what a plugin is and how it is integrated into the rest of the app.
+* dynamic frontend plugins
+  * feature /
+    * allows
+      * loading additional frontend plugins | runtime / WITHOUT
+        * rebuilding the running Backstage instance
+        * restarting a running Backstage instance
+      * packaging
+      * distributing plugins -- as -- standalone artifacts / -- can be installed directly -- | Backstage
+  * declarative nature
+    * == define
+      * what a plugin is
+      * how the plugin -- is integrated into the -- rest of the app
 
 ## Motivation
 
@@ -101,14 +104,18 @@ implementation.
 
 ### Definition of UI dynamic plugin
 
-A dynamic UI plugin (from now just plugin) is a plugin that is not part of the output of a backstage instance build. The plugin and its assets are injected into backstage at runtime. In this case, its injected into the browser at some point during user session.
-
-From the user POV, there is no difference between classic and dynamic plugins.
-
-The difference is known only to maintainers and should be limited to
-
-- build requirements
-- integration into backstage
+* dynamic UI plugin 
+  * (from now just plugin)
+  * == plugin /
+    * -- NOT part of the -- backstage instance build's output
+    * plugin + its assets -- are injected into -- backstage (browser) | runtime (== user session)
+  * classic vs dynamic plugins
+    * | user POV
+      * NO difference
+    * | maintainers POV
+      * -- should be limited to --
+        * build requirements
+        * integration into backstage
 
 ### Dynamic loading tool
 
