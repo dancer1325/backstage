@@ -1,43 +1,45 @@
 # Catalog Backend
 
-This is the backend for the default Backstage [software catalog](http://backstage.io/docs/features/software-catalog/).
-This provides an API for consumers such as the frontend [catalog plugin](https://github.com/backstage/backstage/tree/master/plugins/catalog).
-
-It comes with a builtin database-backed implementation of the catalog that can
-store and serve your catalog for you.
-
-It can also act as a bridge to your existing catalog solutions, either ingesting
-data to store in the database, or by effectively proxying calls to an
-external catalog service.
+* `@backstage/plugin-catalog-backend` package
+* == backend -- for the -- default Backstage [software catalog](http://backstage.io/docs/features/software-catalog/) /
+  * provides
+    * API -- for -- consumers
+      * _Example:_ [FE catalog plugin](https://github.com/backstage/backstage/tree/master/plugins/catalog)
+    * builtin database-backed implementation -- of the -- catalog / 
+      * can
+        * store
+        * serve your catalog for you
+  * uses
+    * as a bridge -- to your -- existing catalog solutions
+      * ingesting data / store | database
+      * proxying calls -- to an -- external catalog service
 
 ## Installation
 
-This `@backstage/plugin-catalog-backend` package comes installed by default in
-any Backstage application created with `npx @backstage/create-app`, so
-installation is not usually required.
-
-To check if you already have the package, look under
-`packages/backend/package.json`, in the `dependencies` block, for
-`@backstage/plugin-catalog-backend`. The instructions below walk through
-restoring the plugin, if you previously removed it.
+* if Backstage application is created with `npx @backstage/create-app` -> installed by default
+  * == NOT required installation
+* this package is | `packages/backend/package.json` 's `dependencies` block 
+  * check if it's here
 
 ### Install the package
 
-```bash
-# From your Backstage root directory
-yarn --cwd packages/backend add @backstage/plugin-catalog-backend
-```
+* 👀check previous notes, to check if it's ALREADY included 👀
+* steps
 
-Then add the plugin to your backend, typically in `packages/backend/src/index.ts`:
+  ```bash
+  # From your Backstage root directory
+  yarn --cwd packages/backend add @backstage/plugin-catalog-backend
+  ```
 
-```ts
-const backend = createBackend();
-// ...
-backend.add(import('@backstage/plugin-catalog-backend/alpha'));
-```
+  ```ts, fileName=packages/backend/src/index.ts
+  const backend = createBackend();
+  // ...
+  backend.add(import('@backstage/plugin-catalog-backend/alpha'));
+  ```
 
 #### Old backend system
 
+* TODO:
 In the old backend system there's a bit more wiring required. You'll need to
 create a file called `packages/backend/src/plugins/catalog.ts` with contents
 matching [catalog.ts in the create-app template](https://github.com/backstage/backstage/blob/ad9314d3a7e0405719ba93badf96e97adde8ef83/packages/create-app/templates/default-app/packages/backend/src/plugins/catalog.ts).
@@ -64,30 +66,34 @@ async function main() {
 
 ### Adding catalog entities
 
-At this point the `catalog-backend` is installed in your backend package, but
-you will not have any catalog entities loaded. See [Catalog Configuration](https://backstage.io/docs/features/software-catalog/configuration)
-for how to add locations, or copy the catalog locations from the [create-app template](https://github.com/backstage/backstage/blob/master/packages/create-app/templates/default-app/app-config.yaml.hbs)
-to get up and running quickly.
+* requirements
+  * `catalog-backend` installed | your backend package
+* catalog entities
+  * NO 1 so far
+  * if you want to add ->
+    * check [Catalog Configuration](https://backstage.io/docs/features/software-catalog/configuration)
+    * [copy the catalog locations -- from the -- create-app template](https://github.com/backstage/backstage/blob/master/packages/create-app/templates/default-app/app-config.yaml.hbs)
 
 ## Development
 
-This backend plugin can be started in a standalone mode from directly in this
-package with `yarn start`. However, it will have limited functionality and that
-process is most convenient when developing the catalog backend plugin itself.
-
-To evaluate the catalog and have a greater amount of functionality available,
-run the entire Backstage example application from the root folder:
-
-```bash
-# in one terminal window, run this from from the very root of the Backstage project
-cd packages/backend
-yarn start
-```
-
-This will launch both frontend and backend in the same window, populated with
-some example entities.
+* `yarn start` | own package
+  * allows
+    * ⭐️starting in a standalone mode ⭐️
+      * -> limited functionality and that
+      * uses
+        * developing the catalog backend plugin itself
+*
+  ```bash
+  # in one terminal window, run this from from the very root of the Backstage project
+  cd packages/backend
+  yarn start
+  ``` 
+  * == run the entire Backstage example application 
+    * == FE + Backend / -- populated with -- SOME example entities
+  * allows
+    * evaluating the catalog & have a greater amount of functionality
 
 ## Links
 
-- [catalog](https://github.com/backstage/backstage/tree/master/plugins/catalog)
-  is the frontend interface for this plugin.
+* [catalog](https://github.com/backstage/backstage/tree/master/plugins/catalog)
+  * == ⭐️this plugin's FE interface ⭐️
