@@ -44,76 +44,92 @@ description: Documentation on Software Catalog Configuration
 
 ### Local File (`type: file`) Configurations
 
-* TODO:
-In addition to url locations, you can use the `file` location type to bring in content from the local file system. You should only use this for local development, test setups, and example data, not for production data.
-You are also not able to use placeholders in them like `$text`. You can however reference other files relative to the current file. See the full [catalog example data set here](https://github.com/backstage/backstage/tree/master/packages/catalog-model/examples) for an extensive example.
-
-Here is an example pulling in the `all.yaml` file from the examples folder. Note the use of `../../` to go up two levels from the current execution path of the backend. This is typically `packages/backend/`.
-
-```yaml
-catalog:
-  locations:
-    - type: file
-      target: ../../examples/all.yaml
-```
+* `locations[*].type=file`
+  * allows
+    * bringing in content -- from the -- local file system 
+  * uses
+    * local development
+    * test setups
+    * example data
+      * ⚠️NOT for production data ⚠️
+  * `target`
+    * does NOT accept
+      * placeholders 
+        * _Example:_ `$text`
+    * reference other files / -- relative to the -- current file
+* _Examples:_
+  * [catalog example](https://github.com/backstage/backstage/tree/master/packages/catalog-model/examples)
+  * 
+    ```yaml
+    catalog:
+      locations:
+        - type: file
+          target: ../../examples/all.yaml       # `../../`    is normally `packages/backend/` 
+    ```
 
 ### Integration Processors
 
-Integrations may simply provide a mechanism to handle `url` location type for an
-external provider or they may also include additional processors out of the
-box, such as the GitHub [discovery](../../integrations/github/discovery.md)
-processor that scans a GitHub organization for
-[entity descriptor files](descriptor-format.md).
-
-Check the [integrations](../../integrations/index.md) documentation to see what
-is offered by each integration.
+* Integrations
+  * provide
+    * mechanism -- to handle -- `locations[*].type=url` -- for an -- external provider 
+  * [integrations documentation](../../integrations/index.md) 
+* way to handle external providers
+  * -- via --
+    * integration processors or
+    * integration processors + additional processors (_Example:_ GitHub [discovery](../../integrations/github/discovery.md))
 
 ### Custom Processors
 
-To ingest entities from an existing system already tracking software, you can
-also write a _custom processor_ to convert between the existing system and
-Backstage's descriptor format. This is documented in
-[External Integrations](external-integrations.md).
+* use cases
+  * ingest entities -- from an -- existing system / ALREADY tracking software
+    * existing system -- is converted to -- Backstage's descriptor format
+* [External Integrations documentation](external-integrations.md)
 
 ## Catalog Rules
 
-By default, the catalog will only allow the ingestion of entities with the kind
-`Component`, `API`, and `Location`. In order to allow entities of other kinds to
-be added, you need to add rules to the catalog. Rules are added either in a
-separate `catalog.rules` key or added to statically configured locations.
+* ONLY  allowed entities / can be ingested
+  * by default
+    * `Component`
+    * `API`
+    * `Location`
+  * 👀if you want to ingest others -> you need to add rules | catalog👀
+    * allowed entities
+      * | ANY location
+        * `Component`
+        * `API`
+        * `Location`
+        * `Template`
+      * | `org-data.yaml`
+        * `Group`
+        * -- are read as a -- statically configured location
+    * ways to add
+      * | SEPARATE `catalog.rules` key or
+        * 👀if it's present -> replace others 👀
+          * _Example:_ configuration / reject ANY kind of entities
 
-For example, given the following configuration:
+            ```yaml
+            catalog:
+              rules: []
+            ```
 
-```yaml
-catalog:
-  rules:
-    - allow: [Component, API, Location, Template]
+      * | statically configured locations
+        * == `catalog.locations[*].rules`
 
-  locations:
-    - type: url
-      target: https://github.com/org/example/blob/master/org-data.yaml
-      rules:
-        - allow: [Group]
-```
-
-We are able to add entities of kind `Component`, `API`, `Location`, or
-`Template` from any location, and `Group` entities from the `org-data.yaml`,
-which will also be read as a statically configured location.
-
-Note that if the `catalog.rules` key is present it will replace the default
-value, meaning that you need to add rules for the default kinds if you want
-those to still be allowed.
-
-The following configuration will reject any kind of entities from being added to
-the catalog:
-
-```yaml
-catalog:
-  rules: []
-```
+          ```yaml
+          catalog:
+            rules:
+              - allow: [Component, API, Location, Template]
+    
+            locations:
+              - type: url
+                target: https://github.com/org/example/blob/master/org-data.yaml
+                rules:
+                  - allow: [Group]
+          ```
 
 ## Readonly mode
 
+* TODO:
 Processors provide a good way to automate the ingestion of entities when combined
 with [Static Location Configuration](#static-location-configuration) or a
 discovery processor like
