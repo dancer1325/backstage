@@ -31,6 +31,15 @@ export interface Config {
           tokenSignedResponseAlg?: string;
           additionalScopes?: string | string[];
           prompt?: string;
+          signIn?: {
+            resolvers: Array<
+              | {
+                  resolver: 'emailLocalPartMatchingUserEntityName';
+                  allowedDomains?: string[];
+                }
+              | { resolver: 'emailMatchingUserEntityProfileEmail' }
+            >;
+          };
         };
       };
     };

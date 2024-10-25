@@ -29,7 +29,7 @@ jest.mock('@backstage/plugin-scaffolder-node', () => {
 import { createPublishBitbucketServerPullRequestAction } from './bitbucketServerPullRequest';
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
-import { setupRequestMockHandlers } from '@backstage/backend-test-utils';
+import { registerMswTestHooks } from '@backstage/backend-test-utils';
 import { ScmIntegrations } from '@backstage/integration';
 import { ConfigReader } from '@backstage/config';
 import yaml from 'yaml';
@@ -191,7 +191,7 @@ describe('publish:bitbucketServer:pull-request', () => {
   };
 
   const server = setupServer();
-  setupRequestMockHandlers(server);
+  registerMswTestHooks(server);
 
   beforeEach(() => {
     jest.resetAllMocks();
@@ -366,7 +366,7 @@ describe('publish:bitbucketServer:pull-request', () => {
   });
 
   it(`should ${examples[4].description}`, async () => {
-    expect.assertions(7);
+    expect.assertions(8);
     server.use(
       rest.get(
         'https://no-credentials.bitbucket.com/rest/api/1.0/projects/project/repos/repo/branches',
@@ -389,6 +389,7 @@ describe('publish:bitbucketServer:pull-request', () => {
             toRef: { displayId: string };
             fromRef: { displayId: string };
             description: string;
+            reviewers: [{ user: { name: string } }];
           };
           expect(requestBody.title).toBe('My pull request');
           expect(requestBody.fromRef.displayId).toBe('my-feature-branch');
@@ -396,6 +397,10 @@ describe('publish:bitbucketServer:pull-request', () => {
           expect(requestBody.description).toBe(
             'This is a detailed description of my pull request',
           );
+          expect(requestBody.reviewers).toEqual([
+            { user: { name: 'reviewer1' } },
+            { user: { name: 'reviewer2' } },
+          ]);
           expect(req.headers.get('Authorization')).toBe(
             `Bearer ${yaml.parse(examples[4].example).steps[0].input.token}`,
           );

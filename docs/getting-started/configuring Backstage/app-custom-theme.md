@@ -48,6 +48,8 @@ import { createApp } from '@backstage/app-defaults';
 import { ThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import LightIcon from '@material-ui/icons/WbSunny';
+import { UnifiedThemeProvider} from '@backstage/theme';
+import { myTheme } from './themes/myTheme';
 
 const app = createApp({
   apis: ...,
@@ -64,7 +66,7 @@ const app = createApp({
 })
 ```
 
-Note that your list of custom themes overrides the default themes. If you still want to use the default themes, they are exported as `themes.light` and `themes.light` from [`@backstage/theme`](https://www.npmjs.com/package/@backstage/theme).
+Note that your list of custom themes overrides the default themes. If you still want to use the default themes, they are exported as `themes.light` and `themes.dark` from [`@backstage/theme`](https://www.npmjs.com/package/@backstage/theme).
 
 ## Example of a custom theme
 

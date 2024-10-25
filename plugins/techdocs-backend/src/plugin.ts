@@ -16,33 +16,35 @@
 
 import {
   cacheToPluginCacheManager,
-  DockerContainerRunner,
   loggerToWinstonLogger,
 } from '@backstage/backend-common';
 import {
   coreServices,
   createBackendPlugin,
 } from '@backstage/backend-plugin-api';
-
 import {
   DocsBuildStrategy,
   Generators,
   PreparerBase,
   Preparers,
   Publisher,
+  PublisherBase,
+  PublisherSettings,
+  PublisherType,
   RemoteProtocol,
   techdocsBuildsExtensionPoint,
   TechdocsGenerator,
   techdocsGeneratorExtensionPoint,
   techdocsPreparerExtensionPoint,
+  techdocsPublisherExtensionPoint,
 } from '@backstage/plugin-techdocs-node';
-import Docker from 'dockerode';
-import { createRouter } from '@backstage/plugin-techdocs-backend';
+import { createRouter } from './service';
+import { catalogServiceRef } from '@backstage/plugin-catalog-node/alpha';
 import * as winston from 'winston';
 
 /**
  * The TechDocs plugin is responsible for serving and building documentation for any entity.
- * @alpha
+ * @public
  */
 export const techdocsPlugin = createBackendPlugin({
   pluginId: 'techdocs',
@@ -87,6 +89,23 @@ export const techdocsPlugin = createBackendPlugin({
       },
     });
 
+    let customTechdocsPublisher: PublisherBase | undefined;
+    const publisherSettings: PublisherSettings = {};
+    env.registerExtensionPoint(techdocsPublisherExtensionPoint, {
+      registerPublisher(type: PublisherType, publisher: PublisherBase) {
+        if (customTechdocsPublisher) {
+          throw new Error(`Publisher for type ${type} is already registered`);
+        }
+        customTechdocsPublisher = publisher;
+      },
+      registerPublisherSettings<T extends keyof PublisherSettings>(
+        publisher: T,
+        settings: PublisherSettings[T],
+      ) {
+        publisherSettings[publisher] = settings;
+      },
+    });
+
     env.registerInit({
       deps: {
         config: coreServices.rootConfig,
@@ -97,6 +116,7 @@ export const techdocsPlugin = createBackendPlugin({
         cache: coreServices.cache,
         httpAuth: coreServices.httpAuth,
         auth: coreServices.auth,
+        catalog: catalogServiceRef,
       },
       async init({
         config,
@@ -107,6 +127,7 @@ export const techdocsPlugin = createBackendPlugin({
         cache,
         httpAuth,
         auth,
+        catalog,
       }) {
         const winstonLogger = loggerToWinstonLogger(logger);
         // Preparers are responsible for fetching source files for documentation.
@@ -118,14 +139,9 @@ export const techdocsPlugin = createBackendPlugin({
           preparers.register(protocol, preparer);
         }
 
-        // Docker client (conditionally) used by the generators, based on techdocs.generators config.
-        const dockerClient = new Docker();
-        const containerRunner = new DockerContainerRunner({ dockerClient });
-
         // Generators are used for generating documentation sites.
         const generators = await Generators.fromConfig(config, {
           logger: winstonLogger,
-          containerRunner,
           customGenerator: customTechdocsGenerator,
         });
 
@@ -135,6 +151,8 @@ export const techdocsPlugin = createBackendPlugin({
         const publisher = await Publisher.fromConfig(config, {
           logger: winstonLogger,
           discovery: discovery,
+          customPublisher: customTechdocsPublisher,
+          publisherSettings,
         });
 
         // checks if the publisher is working and logs the result
@@ -154,6 +172,7 @@ export const techdocsPlugin = createBackendPlugin({
             discovery,
             httpAuth,
             auth,
+            catalogClient: catalog,
           }),
         );
 

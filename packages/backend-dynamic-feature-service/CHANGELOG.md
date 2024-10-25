@@ -1,5 +1,576 @@
 # @backstage/backend-dynamic-feature-service
 
+## 0.4.4-next.0
+
+### Patch Changes
+
+- 8593dfa: Improve the way alpha packages are supported when loading dynamic backend plugins.
+  The `ScannedPluginPackage` descriptor of dynamic backend plugins loaded from their alpha `package.json` now contain both the main package manifest and the alpha manifest. Previously it used to contain only the content of the alpha `package.json`, which is nearly empty.
+  This will make it easier to use or display metadata of loaded dynamic backend plugins, which is contained in the main manifest.
+- Updated dependencies
+  - @backstage/plugin-events-node@0.4.3-next.0
+  - @backstage/plugin-events-backend@0.3.15-next.0
+  - @backstage/plugin-auth-node@0.5.4-next.0
+  - @backstage/backend-defaults@0.5.3-next.0
+  - @backstage/backend-app-api@1.0.2-next.0
+  - @backstage/backend-plugin-api@1.0.2-next.0
+  - @backstage/cli-common@0.1.14
+  - @backstage/cli-node@0.2.9
+  - @backstage/config@1.2.0
+  - @backstage/config-loader@1.9.1
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+  - @backstage/plugin-app-node@0.1.27-next.0
+  - @backstage/plugin-catalog-backend@1.27.2-next.0
+  - @backstage/plugin-permission-common@0.8.1
+  - @backstage/plugin-permission-node@0.8.5-next.0
+  - @backstage/plugin-scaffolder-node@0.5.1-next.0
+  - @backstage/plugin-search-backend-node@1.3.5-next.0
+  - @backstage/plugin-search-common@1.2.14
+
+## 0.4.2
+
+### Patch Changes
+
+- d18d494: Enhance and simplify the activation of the dynamic plugins feature:
+
+  - The dynamic plugins service (which implements the `DynamicPluginsProvider`) is restored, since it is required for plugins to depend on it in order to get the details of loaded dynamic plugins (possibly with loading errors to be surfaced in some UI).
+  - A new all-in-one feature loader (`dynamicPluginsFeatureLoader`) is provided that allows a 1-liner activation of both the dynamic features and additional services or plugins required to have the dynamic plugins work correctly with dynamic plugins config schemas. Previous service factories or feature loaders are deprecated.
+
+- e6c0550: Enhance the API of the `DynamicPluginProvider` (available as a service) to:
+
+  - expose the new `getScannedPackage()` method that returns the `ScannedPluginPackage` from which a given plugin has been loaded,
+  - add an optional `includeFailed` argument in the plugins list retrieval methods, to include the plugins that could be successfully loaded (`false` by default).
+
+- 4c89e47: Allow passing an async module loader in the `DynamicPluginsFeatureLoaderOptions`.
+- 094eaa3: Remove references to in-repo backend-common
+- 2f88f88: Updated backend installation instructions.
+- Updated dependencies
+  - @backstage/backend-defaults@0.5.1
+  - @backstage/cli-node@0.2.9
+  - @backstage/backend-app-api@1.0.1
+  - @backstage/plugin-scaffolder-node@0.5.0
+  - @backstage/plugin-auth-node@0.5.3
+  - @backstage/plugin-search-backend-node@1.3.3
+  - @backstage/plugin-catalog-backend@1.27.0
+  - @backstage/plugin-permission-node@0.8.4
+  - @backstage/plugin-events-backend@0.3.13
+  - @backstage/plugin-events-node@0.4.1
+  - @backstage/backend-plugin-api@1.0.1
+  - @backstage/cli-common@0.1.14
+  - @backstage/config@1.2.0
+  - @backstage/config-loader@1.9.1
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+  - @backstage/plugin-app-node@0.1.26
+  - @backstage/plugin-permission-common@0.8.1
+  - @backstage/plugin-search-common@1.2.14
+
+## 0.4.2-next.2
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/cli-node@0.2.9-next.0
+  - @backstage/backend-app-api@1.0.1-next.1
+  - @backstage/backend-defaults@0.5.1-next.2
+  - @backstage/plugin-auth-node@0.5.3-next.1
+  - @backstage/plugin-catalog-backend@1.26.2-next.2
+  - @backstage/plugin-scaffolder-node@0.5.0-next.2
+  - @backstage/backend-plugin-api@1.0.1-next.1
+  - @backstage/cli-common@0.1.14
+  - @backstage/config@1.2.0
+  - @backstage/config-loader@1.9.1
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+  - @backstage/plugin-app-node@0.1.26-next.1
+  - @backstage/plugin-events-backend@0.3.13-next.1
+  - @backstage/plugin-events-node@0.4.1-next.1
+  - @backstage/plugin-permission-common@0.8.1
+  - @backstage/plugin-permission-node@0.8.4-next.1
+  - @backstage/plugin-search-backend-node@1.3.3-next.2
+  - @backstage/plugin-search-common@1.2.14
+
+## 0.4.2-next.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/plugin-catalog-backend@1.26.2-next.1
+  - @backstage/backend-defaults@0.5.1-next.1
+  - @backstage/backend-app-api@1.0.1-next.0
+  - @backstage/backend-plugin-api@1.0.1-next.0
+  - @backstage/cli-common@0.1.14
+  - @backstage/cli-node@0.2.8
+  - @backstage/config@1.2.0
+  - @backstage/config-loader@1.9.1
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+  - @backstage/plugin-app-node@0.1.26-next.0
+  - @backstage/plugin-auth-node@0.5.3-next.0
+  - @backstage/plugin-events-backend@0.3.13-next.0
+  - @backstage/plugin-events-node@0.4.1-next.0
+  - @backstage/plugin-permission-common@0.8.1
+  - @backstage/plugin-permission-node@0.8.4-next.0
+  - @backstage/plugin-scaffolder-node@0.5.0-next.1
+  - @backstage/plugin-search-backend-node@1.3.3-next.1
+  - @backstage/plugin-search-common@1.2.14
+
+## 0.4.1-next.0
+
+### Patch Changes
+
+- 094eaa3: Remove references to in-repo backend-common
+- 2f88f88: Updated backend installation instructions.
+- Updated dependencies
+  - @backstage/plugin-scaffolder-node@0.5.0-next.0
+  - @backstage/plugin-search-backend-node@1.3.3-next.0
+  - @backstage/backend-defaults@0.5.1-next.0
+  - @backstage/backend-app-api@1.0.1-next.0
+  - @backstage/plugin-catalog-backend@1.26.1-next.0
+  - @backstage/plugin-permission-node@0.8.4-next.0
+  - @backstage/plugin-events-backend@0.3.13-next.0
+  - @backstage/plugin-events-node@0.4.1-next.0
+  - @backstage/plugin-auth-node@0.5.3-next.0
+  - @backstage/backend-plugin-api@1.0.1-next.0
+  - @backstage/cli-common@0.1.14
+  - @backstage/cli-node@0.2.8
+  - @backstage/config@1.2.0
+  - @backstage/config-loader@1.9.1
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+  - @backstage/plugin-app-node@0.1.26-next.0
+  - @backstage/plugin-permission-common@0.8.1
+  - @backstage/plugin-search-common@1.2.14
+
+## 0.4.0
+
+### Minor Changes
+
+- 9080f57: **BREAKING**: `dynamicPluginsServiceFactory` is no longer callable as a function. If you need to provide options to make a custom factory, use `dynamicPluginsSchemasServiceFactoryWithOptions` instead.
+
+### Patch Changes
+
+- cd38da8: Deprecate the `dynamicPluginsServiceRef`, `dynamicPluginsServiceFactory` and `dynamicPluginsServiceFactoryWithOptions` in favor of using the `dynamicPluginsFeatureDiscoveryLoader` to discover dynamic features in a new backend system.
+
+  See usage examples below:
+
+  Example using the `dynamicPluginsFeatureDiscoveryLoader` loader in a backend instance:
+
+  ```ts
+  import { createBackend } from '@backstage/backend-defaults';
+  import { dynamicPluginsFeatureDiscoveryLoader } from '@backstage/backend-dynamic-feature-service';
+  //...
+
+  const backend = createBackend();
+  backend.add(dynamicPluginsFeatureDiscoveryLoader);
+  //...
+  backend.start();
+  ```
+
+  Passing options to the `dynamicPluginsFeatureDiscoveryLoader` loader in a backend instance:
+
+  ```ts
+  import { createBackend } from '@backstage/backend-defaults';
+  import { dynamicPluginsFeatureDiscoveryLoader } from '@backstage/backend-dynamic-feature-service';
+  import { myCustomModuleLoader } from './myCustomModuleLoader';
+  //...
+
+  const backend = createBackend();
+  backend.add(
+    dynamicPluginsFeatureDiscoveryLoader({
+      moduleLoader: myCustomModuleLoader,
+    }),
+  );
+  //...
+  backend.start();
+  ```
+
+- e27f889: Relax type check for a plugin's default export to also accept a BackendFeature defined as a function instead of an object
+- d425fc4: Modules, plugins, and services are now `BackendFeature`, not a function that returns a feature.
+- Updated dependencies
+  - @backstage/backend-defaults@0.5.0
+  - @backstage/backend-common@0.25.0
+  - @backstage/backend-app-api@1.0.0
+  - @backstage/backend-plugin-api@1.0.0
+  - @backstage/plugin-auth-node@0.5.2
+  - @backstage/plugin-catalog-backend@1.26.0
+  - @backstage/plugin-app-node@0.1.25
+  - @backstage/cli-node@0.2.8
+  - @backstage/plugin-permission-node@0.8.3
+  - @backstage/plugin-events-backend@0.3.12
+  - @backstage/config-loader@1.9.1
+  - @backstage/plugin-events-node@0.4.0
+  - @backstage/cli-common@0.1.14
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+  - @backstage/plugin-permission-common@0.8.1
+  - @backstage/plugin-scaffolder-node@0.4.11
+  - @backstage/plugin-search-backend-node@1.3.2
+  - @backstage/plugin-search-common@1.2.14
+
+## 0.4.0-next.2
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-app-api@1.0.0-next.2
+  - @backstage/backend-common@0.25.0-next.2
+  - @backstage/backend-defaults@0.5.0-next.2
+  - @backstage/plugin-auth-node@0.5.2-next.2
+  - @backstage/backend-plugin-api@1.0.0-next.2
+  - @backstage/cli-node@0.2.8-next.0
+  - @backstage/plugin-catalog-backend@1.26.0-next.2
+  - @backstage/config-loader@1.9.1-next.0
+  - @backstage/plugin-events-backend@0.3.12-next.2
+  - @backstage/plugin-permission-node@0.8.3-next.2
+  - @backstage/cli-common@0.1.14
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+  - @backstage/plugin-app-node@0.1.25-next.2
+  - @backstage/plugin-events-node@0.4.0-next.2
+  - @backstage/plugin-permission-common@0.8.1
+  - @backstage/plugin-scaffolder-node@0.4.11-next.2
+  - @backstage/plugin-search-backend-node@1.3.2-next.2
+  - @backstage/plugin-search-common@1.2.14
+
+## 0.4.0-next.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-defaults@0.5.0-next.1
+  - @backstage/backend-common@0.25.0-next.1
+  - @backstage/plugin-auth-node@0.5.2-next.1
+  - @backstage/backend-app-api@0.10.0-next.1
+  - @backstage/plugin-catalog-backend@1.25.3-next.1
+  - @backstage/backend-plugin-api@0.9.0-next.1
+  - @backstage/cli-common@0.1.14
+  - @backstage/cli-node@0.2.7
+  - @backstage/config@1.2.0
+  - @backstage/config-loader@1.9.0
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+  - @backstage/plugin-app-node@0.1.25-next.1
+  - @backstage/plugin-events-backend@0.3.12-next.1
+  - @backstage/plugin-events-node@0.4.0-next.1
+  - @backstage/plugin-permission-common@0.8.1
+  - @backstage/plugin-permission-node@0.8.3-next.1
+  - @backstage/plugin-scaffolder-node@0.4.11-next.1
+  - @backstage/plugin-search-backend-node@1.3.2-next.1
+  - @backstage/plugin-search-common@1.2.14
+
+## 0.4.0-next.0
+
+### Minor Changes
+
+- 9080f57: **BREAKING**: `dynamicPluginsServiceFactory` is no longer callable as a function. If you need to provide options to make a custom factory, use `dynamicPluginsSchemasServiceFactoryWithOptions` instead.
+
+### Patch Changes
+
+- cd38da8: Deprecate the `dynamicPluginsServiceRef`, `dynamicPluginsServiceFactory` and `dynamicPluginsServiceFactoryWithOptions` in favor of using the `dynamicPluginsFeatureDiscoveryLoader` to discover dynamic features in a new backend system.
+
+  See usage examples below:
+
+  Example using the `dynamicPluginsFeatureDiscoveryLoader` loader in a backend instance:
+
+  ```ts
+  import { createBackend } from '@backstage/backend-defaults';
+  import { dynamicPluginsFeatureDiscoveryLoader } from '@backstage/backend-dynamic-feature-service';
+  //...
+
+  const backend = createBackend();
+  backend.add(dynamicPluginsFeatureDiscoveryLoader);
+  //...
+  backend.start();
+  ```
+
+  Passing options to the `dynamicPluginsFeatureDiscoveryLoader` loader in a backend instance:
+
+  ```ts
+  import { createBackend } from '@backstage/backend-defaults';
+  import { dynamicPluginsFeatureDiscoveryLoader } from '@backstage/backend-dynamic-feature-service';
+  import { myCustomModuleLoader } from './myCustomModuleLoader';
+  //...
+
+  const backend = createBackend();
+  backend.add(
+    dynamicPluginsFeatureDiscoveryLoader({
+      moduleLoader: myCustomModuleLoader,
+    }),
+  );
+  //...
+  backend.start();
+  ```
+
+- e27f889: Relax type check for a plugin's default export to also accept a BackendFeature defined as a function instead of an object
+- d425fc4: Modules, plugins, and services are now `BackendFeature`, not a function that returns a feature.
+- Updated dependencies
+  - @backstage/backend-app-api@0.10.0-next.0
+  - @backstage/backend-plugin-api@0.9.0-next.0
+  - @backstage/plugin-app-node@0.1.25-next.0
+  - @backstage/backend-defaults@0.5.0-next.0
+  - @backstage/plugin-permission-node@0.8.3-next.0
+  - @backstage/backend-common@0.25.0-next.0
+  - @backstage/plugin-catalog-backend@1.25.3-next.0
+  - @backstage/plugin-events-backend@0.3.12-next.0
+  - @backstage/plugin-events-node@0.4.0-next.0
+  - @backstage/plugin-auth-node@0.5.2-next.0
+  - @backstage/plugin-scaffolder-node@0.4.11-next.0
+  - @backstage/plugin-search-backend-node@1.3.2-next.0
+  - @backstage/cli-common@0.1.14
+  - @backstage/cli-node@0.2.7
+  - @backstage/config@1.2.0
+  - @backstage/config-loader@1.9.0
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+  - @backstage/plugin-permission-common@0.8.1
+  - @backstage/plugin-search-common@1.2.14
+
+## 0.3.0
+
+### Minor Changes
+
+- fc24d9e: Stop using `@backstage/backend-tasks` as it will be deleted in near future.
+
+### Patch Changes
+
+- 389f5a4: Update deprecated url-reader-related imports.
+- b63d378: Update internal imports
+- Updated dependencies
+  - @backstage/backend-defaults@0.4.2
+  - @backstage/backend-app-api@0.9.0
+  - @backstage/backend-plugin-api@0.8.0
+  - @backstage/backend-common@0.24.0
+  - @backstage/plugin-catalog-backend@1.25.0
+  - @backstage/plugin-search-backend-node@1.3.0
+  - @backstage/plugin-scaffolder-node@0.4.9
+  - @backstage/plugin-permission-common@0.8.1
+  - @backstage/config-loader@1.9.0
+  - @backstage/plugin-auth-node@0.5.0
+  - @backstage/plugin-permission-node@0.8.1
+  - @backstage/plugin-search-common@1.2.14
+  - @backstage/cli-common@0.1.14
+  - @backstage/cli-node@0.2.7
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+  - @backstage/plugin-app-node@0.1.23
+  - @backstage/plugin-events-backend@0.3.10
+  - @backstage/plugin-events-node@0.3.9
+
+## 0.2.16-next.3
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-plugin-api@0.8.0-next.3
+  - @backstage/backend-common@0.23.4-next.3
+  - @backstage/backend-app-api@0.8.1-next.3
+  - @backstage/backend-tasks@0.5.28-next.3
+  - @backstage/cli-common@0.1.14
+  - @backstage/cli-node@0.2.7
+  - @backstage/config@1.2.0
+  - @backstage/config-loader@1.9.0-next.2
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+  - @backstage/plugin-app-node@0.1.23-next.3
+  - @backstage/plugin-auth-node@0.5.0-next.3
+  - @backstage/plugin-catalog-backend@1.24.1-next.3
+  - @backstage/plugin-events-backend@0.3.10-next.3
+  - @backstage/plugin-events-node@0.3.9-next.3
+  - @backstage/plugin-permission-common@0.8.1-next.1
+  - @backstage/plugin-permission-node@0.8.1-next.3
+  - @backstage/plugin-scaffolder-node@0.4.9-next.3
+  - @backstage/plugin-search-backend-node@1.2.28-next.3
+  - @backstage/plugin-search-common@1.2.14-next.1
+
+## 0.2.16-next.2
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-plugin-api@0.8.0-next.2
+  - @backstage/backend-app-api@0.8.1-next.2
+  - @backstage/plugin-scaffolder-node@0.4.9-next.2
+  - @backstage/plugin-permission-common@0.8.1-next.1
+  - @backstage/backend-common@0.23.4-next.2
+  - @backstage/plugin-catalog-backend@1.24.1-next.2
+  - @backstage/config-loader@1.9.0-next.2
+  - @backstage/plugin-auth-node@0.5.0-next.2
+  - @backstage/plugin-permission-node@0.8.1-next.2
+  - @backstage/plugin-search-backend-node@1.2.28-next.2
+  - @backstage/plugin-search-common@1.2.14-next.1
+  - @backstage/backend-tasks@0.5.28-next.2
+  - @backstage/plugin-app-node@0.1.23-next.2
+  - @backstage/plugin-events-backend@0.3.10-next.2
+  - @backstage/plugin-events-node@0.3.9-next.2
+  - @backstage/cli-node@0.2.7
+  - @backstage/cli-common@0.1.14
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+
+## 0.2.16-next.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/config-loader@1.9.0-next.1
+  - @backstage/plugin-permission-common@0.8.1-next.0
+  - @backstage/plugin-catalog-backend@1.24.1-next.1
+  - @backstage/plugin-permission-node@0.8.1-next.1
+  - @backstage/backend-plugin-api@0.7.1-next.1
+  - @backstage/backend-app-api@0.8.1-next.1
+  - @backstage/backend-common@0.23.4-next.1
+  - @backstage/plugin-app-node@0.1.23-next.1
+  - @backstage/plugin-search-backend-node@1.2.28-next.1
+  - @backstage/plugin-search-common@1.2.14-next.0
+  - @backstage/backend-tasks@0.5.28-next.1
+  - @backstage/cli-common@0.1.14
+  - @backstage/cli-node@0.2.7
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+  - @backstage/plugin-auth-node@0.4.18-next.1
+  - @backstage/plugin-events-backend@0.3.10-next.1
+  - @backstage/plugin-events-node@0.3.9-next.1
+  - @backstage/plugin-scaffolder-node@0.4.9-next.1
+
+## 0.2.16-next.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-common@0.23.4-next.0
+  - @backstage/plugin-catalog-backend@1.24.1-next.0
+  - @backstage/config-loader@1.8.2-next.0
+  - @backstage/backend-app-api@0.8.1-next.0
+  - @backstage/backend-plugin-api@0.7.1-next.0
+  - @backstage/backend-tasks@0.5.28-next.0
+  - @backstage/cli-common@0.1.14
+  - @backstage/cli-node@0.2.7
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+  - @backstage/plugin-app-node@0.1.23-next.0
+  - @backstage/plugin-auth-node@0.4.18-next.0
+  - @backstage/plugin-events-backend@0.3.10-next.0
+  - @backstage/plugin-events-node@0.3.9-next.0
+  - @backstage/plugin-permission-common@0.8.0
+  - @backstage/plugin-permission-node@0.8.1-next.0
+  - @backstage/plugin-scaffolder-node@0.4.9-next.0
+  - @backstage/plugin-search-backend-node@1.2.28-next.0
+  - @backstage/plugin-search-common@1.2.13
+
+## 0.2.15
+
+### Patch Changes
+
+- b05e1e1: Service factories exported by this package have been updated to use the new service factory format that doesn't use a callback.
+- Updated dependencies
+  - @backstage/backend-plugin-api@0.7.0
+  - @backstage/backend-app-api@0.8.0
+  - @backstage/backend-common@0.23.3
+  - @backstage/cli-node@0.2.7
+  - @backstage/backend-tasks@0.5.27
+  - @backstage/plugin-permission-common@0.8.0
+  - @backstage/plugin-permission-node@0.8.0
+  - @backstage/plugin-scaffolder-node@0.4.8
+  - @backstage/plugin-events-node@0.3.8
+  - @backstage/plugin-auth-node@0.4.17
+  - @backstage/plugin-catalog-backend@1.24.0
+  - @backstage/plugin-app-node@0.1.22
+  - @backstage/plugin-events-backend@0.3.9
+  - @backstage/plugin-search-backend-node@1.2.27
+  - @backstage/config-loader@1.8.1
+  - @backstage/plugin-search-common@1.2.13
+  - @backstage/cli-common@0.1.14
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+
+## 0.2.15-next.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/plugin-catalog-backend@1.24.0-next.1
+  - @backstage/backend-common@0.23.3-next.1
+  - @backstage/backend-app-api@0.7.10-next.1
+  - @backstage/backend-plugin-api@0.6.22-next.1
+  - @backstage/backend-tasks@0.5.27-next.1
+  - @backstage/cli-common@0.1.14
+  - @backstage/cli-node@0.2.6
+  - @backstage/config@1.2.0
+  - @backstage/config-loader@1.8.1
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+  - @backstage/plugin-app-node@0.1.22-next.1
+  - @backstage/plugin-auth-node@0.4.17-next.1
+  - @backstage/plugin-events-backend@0.3.9-next.1
+  - @backstage/plugin-events-node@0.3.8-next.1
+  - @backstage/plugin-permission-common@0.7.14
+  - @backstage/plugin-permission-node@0.7.33-next.1
+  - @backstage/plugin-scaffolder-node@0.4.8-next.1
+  - @backstage/plugin-search-backend-node@1.2.27-next.1
+  - @backstage/plugin-search-common@1.2.12
+
+## 0.2.14-next.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-plugin-api@0.6.21-next.0
+  - @backstage/backend-common@0.23.2-next.0
+  - @backstage/backend-tasks@0.5.26-next.0
+  - @backstage/plugin-scaffolder-node@0.4.7-next.0
+  - @backstage/backend-app-api@0.7.9-next.0
+  - @backstage/plugin-app-node@0.1.21-next.0
+  - @backstage/plugin-auth-node@0.4.16-next.0
+  - @backstage/plugin-catalog-backend@1.23.2-next.0
+  - @backstage/plugin-events-backend@0.3.8-next.0
+  - @backstage/plugin-events-node@0.3.7-next.0
+  - @backstage/plugin-permission-node@0.7.32-next.0
+  - @backstage/plugin-search-backend-node@1.2.26-next.0
+  - @backstage/cli-common@0.1.14
+  - @backstage/cli-node@0.2.6
+  - @backstage/config@1.2.0
+  - @backstage/config-loader@1.8.1
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+  - @backstage/plugin-permission-common@0.7.14
+  - @backstage/plugin-search-common@1.2.12
+
+## 0.2.11
+
+### Patch Changes
+
+- 78a0b08: Internal refactor to handle `BackendFeature` contract change.
+- Updated dependencies
+  - @backstage/cli-node@0.2.6
+  - @backstage/backend-app-api@0.7.6
+  - @backstage/backend-common@0.23.0
+  - @backstage/backend-plugin-api@0.6.19
+  - @backstage/backend-tasks@0.5.24
+  - @backstage/plugin-auth-node@0.4.14
+  - @backstage/plugin-catalog-backend@1.23.0
+  - @backstage/plugin-events-backend@0.3.6
+  - @backstage/plugin-search-backend-node@1.2.24
+  - @backstage/plugin-events-node@0.3.5
+  - @backstage/plugin-permission-node@0.7.30
+  - @backstage/plugin-permission-common@0.7.14
+  - @backstage/plugin-scaffolder-node@0.4.5
+  - @backstage/plugin-search-common@1.2.12
+  - @backstage/plugin-app-node@0.1.19
+  - @backstage/cli-common@0.1.14
+  - @backstage/config-loader@1.8.1
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+
 ## 0.2.11-next.3
 
 ### Patch Changes

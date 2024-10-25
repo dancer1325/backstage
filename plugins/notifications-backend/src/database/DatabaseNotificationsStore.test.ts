@@ -18,6 +18,7 @@ import { DatabaseNotificationsStore } from './DatabaseNotificationsStore';
 import { Knex } from 'knex';
 import {
   Notification,
+  NotificationSettings,
   NotificationSeverity,
 } from '@backstage/plugin-notifications-common';
 
@@ -42,6 +43,7 @@ async function createStore(databaseId: TestDatabaseId) {
 const idOnly = (notification: Notification) => notification.id;
 
 const user = 'user:default/john.doe';
+const otherUser = 'user:default/jane.doe';
 
 const id0 = '08e0871e-e60a-4f68-8110-5ae3513f992e';
 const id1 = '01e0871e-e60a-4f68-8110-5ae3513f992e';
@@ -67,6 +69,7 @@ const testNotification1: Notification = {
     topic: 'efgh-topic',
     link: '/catalog',
     severity: 'critical',
+    icon: 'docs',
   },
 };
 const testNotification2: Notification = {
@@ -140,7 +143,7 @@ const testNotification7: Notification = {
 };
 const otherUserNotification: Notification = {
   id: id0,
-  user: 'user:default/jane.doe',
+  user: otherUser,
   created: new Date(now),
   origin: 'plugin-test',
   payload: {
@@ -148,6 +151,23 @@ const otherUserNotification: Notification = {
     link: '/catalog',
     severity: 'normal',
   },
+};
+const notificationSettings: NotificationSettings = {
+  channels: [
+    {
+      id: 'Web',
+      origins: [
+        {
+          id: 'plugin-test',
+          enabled: true,
+        },
+        {
+          id: 'plugin-test2',
+          enabled: false,
+        },
+      ],
+    },
+  ],
 };
 
 describe.each(databases.eachSupportedId())(
@@ -182,6 +202,7 @@ describe.each(databases.eachSupportedId())(
         expect(notification?.payload?.topic).toBe('efgh-topic');
         expect(notification?.payload?.link).toBe('/catalog');
         expect(notification?.payload?.severity).toBe('critical');
+        expect(notification?.payload?.icon).toBe('docs');
       });
     });
 
@@ -246,6 +267,34 @@ describe.each(databases.eachSupportedId())(
         expect(notifications.map(idOnly)).toEqual([id2, id3, id1]);
       });
 
+      it('should return correct broadcast notifications for different users', async () => {
+        await storage.saveNotification(testNotification1);
+        await storage.saveBroadcast(testNotification2);
+        await storage.saveNotification(testNotification3);
+        await storage.saveNotification(otherUserNotification);
+
+        await storage.markRead({ ids: [id1, id2], user });
+
+        const notifications = await storage.getNotifications({
+          user,
+        });
+        expect(notifications.map(idOnly)).toEqual([id2, id3, id1]);
+        expect(notifications[1].user).toBe(user);
+
+        let otherUserNotifications = await storage.getNotifications({
+          user: otherUser,
+        });
+        expect(otherUserNotifications.map(idOnly)).toEqual([id0, id2]);
+        expect(otherUserNotifications[1].user).toBeNull();
+
+        await storage.markRead({ ids: [id0, id2], user: otherUser });
+        otherUserNotifications = await storage.getNotifications({
+          user: otherUser,
+        });
+        expect(otherUserNotifications.map(idOnly)).toEqual([id0, id2]);
+        expect(otherUserNotifications[1].user).toBe(otherUser);
+      });
+
       it('should allow searching for notifications', async () => {
         await storage.saveNotification(testNotification2);
         await storage.saveBroadcast(testNotification1);
@@ -270,6 +319,20 @@ describe.each(databases.eachSupportedId())(
         });
         expect(notifications.length).toBe(1);
         expect(notifications.at(0)?.id).toEqual(id2);
+      });
+
+      it('should filter notifications based on topic', async () => {
+        await storage.saveNotification(testNotification1);
+        await storage.saveNotification(testNotification2);
+        await storage.saveNotification(testNotification3);
+
+        const notifications = await storage.getNotifications({
+          user,
+          topic: 'efgh-topic',
+        });
+
+        expect(notifications.length).toBe(1);
+        expect(notifications.at(0)?.id).toEqual(id1);
       });
     });
 
@@ -557,6 +620,23 @@ describe.each(databases.eachSupportedId())(
         const notification = await storage.getNotification({ id: id2 });
         expect(notification?.id).toEqual(id2);
       });
+
+      it('should consider user for broadcast by id', async () => {
+        await storage.saveBroadcast(testNotification1);
+
+        let notification = await storage.getNotification({ id: id1, user });
+        expect(notification?.id).toEqual(id1);
+        expect(notification?.user).toBeNull();
+        await storage.markRead({ ids: [id1], user });
+        notification = await storage.getNotification({ id: id1, user });
+        expect(notification?.user).toBe(user);
+
+        const otherNotification = await storage.getNotification({
+          id: id1,
+          user: otherUser,
+        });
+        expect(otherNotification?.user).toBeNull();
+      });
     });
 
     describe('markRead', () => {
@@ -648,6 +728,19 @@ describe.each(databases.eachSupportedId())(
         await storage.markUnsaved({ ids: [id1], user });
         const notification = await storage.getNotification({ id: id1 });
         expect(notification?.saved).toBeNull();
+      });
+    });
+
+    describe('settings', () => {
+      it('should save and load notification settings', async () => {
+        await storage.saveNotificationSettings({
+          user: 'user:default/test',
+          settings: notificationSettings,
+        });
+        const settings = await storage.getNotificationSettings({
+          user: 'user:default/test',
+        });
+        expect(settings).toEqual(notificationSettings);
       });
     });
   },

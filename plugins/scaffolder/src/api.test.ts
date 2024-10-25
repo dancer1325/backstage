@@ -16,7 +16,7 @@
 
 import { ConfigReader } from '@backstage/core-app-api';
 import { ScmIntegrations } from '@backstage/integration';
-import { MockFetchApi, setupRequestMockHandlers } from '@backstage/test-utils';
+import { MockFetchApi, registerMswTestHooks } from '@backstage/test-utils';
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 import { ScaffolderClient } from './api';
@@ -30,7 +30,7 @@ const mockFetchEventSource = fetchEventSource as jest.MockedFunction<
 const server = setupServer();
 
 describe('api', () => {
-  setupRequestMockHandlers(server);
+  registerMswTestHooks(server);
   const mockBaseUrl = 'http://backstage/api';
 
   const discoveryApi = { getBaseUrl: async () => mockBaseUrl };
@@ -356,6 +356,34 @@ describe('api', () => {
       const result = await apiClient.listTasks({ filterByOwnership: 'all' });
       expect(result).toHaveLength(2);
     });
+
+    it('should list tasks with limit and offset', async () => {
+      server.use(
+        rest.get(
+          `${mockBaseUrl}/v2/tasks?limit=5&offset=0`,
+          (_req, res, ctx) => {
+            return res(
+              ctx.json([
+                {
+                  createdBy: null,
+                },
+                {
+                  createdBy: null,
+                },
+              ]),
+            );
+          },
+        ),
+      );
+
+      const result = await apiClient.listTasks({
+        filterByOwnership: 'all',
+        limit: 5,
+        offset: 0,
+      });
+      expect(result).toHaveLength(2);
+    });
+
     it('should list task using the current user as owner', async () => {
       server.use(
         rest.get(`${mockBaseUrl}/v2/tasks`, (req, res, ctx) => {

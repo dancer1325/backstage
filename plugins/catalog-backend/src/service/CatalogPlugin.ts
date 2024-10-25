@@ -28,6 +28,8 @@ import {
   catalogPermissionExtensionPoint,
   CatalogProcessingExtensionPoint,
   catalogProcessingExtensionPoint,
+  CatalogLocationsExtensionPoint,
+  catalogLocationsExtensionPoint,
 } from '@backstage/plugin-catalog-node/alpha';
 import {
   CatalogProcessor,
@@ -40,6 +42,20 @@ import {
 import { merge } from 'lodash';
 import { Permission } from '@backstage/plugin-permission-common';
 import { ForwardedError } from '@backstage/errors';
+
+class CatalogLocationsExtensionPointImpl
+  implements CatalogLocationsExtensionPoint
+{
+  #locationTypes: string[] | undefined;
+
+  setAllowedLocationTypes(locationTypes: Array<string>) {
+    this.#locationTypes = locationTypes;
+  }
+
+  get allowedLocationTypes() {
+    return this.#locationTypes;
+  }
+}
 
 class CatalogProcessingExtensionPointImpl
   implements CatalogProcessingExtensionPoint
@@ -154,7 +170,7 @@ class CatalogModelExtensionPointImpl implements CatalogModelExtensionPoint {
 
 /**
  * Catalog plugin
- * @alpha
+ * @public
  */
 export const catalogPlugin = createBackendPlugin({
   pluginId: 'catalog',
@@ -198,6 +214,12 @@ export const catalogPlugin = createBackendPlugin({
 
     const modelExtensions = new CatalogModelExtensionPointImpl();
     env.registerExtensionPoint(catalogModelExtensionPoint, modelExtensions);
+
+    const locationTypeExtensions = new CatalogLocationsExtensionPointImpl();
+    env.registerExtensionPoint(
+      catalogLocationsExtensionPoint,
+      locationTypeExtensions,
+    );
 
     env.registerInit({
       deps: {
@@ -271,12 +293,21 @@ export const catalogPlugin = createBackendPlugin({
         builder.addPermissionRules(...permissionExtensions.permissionRules);
         builder.setFieldFormatValidators(modelExtensions.fieldValidators);
 
+        if (locationTypeExtensions.allowedLocationTypes) {
+          builder.setAllowedLocationTypes(
+            locationTypeExtensions.allowedLocationTypes,
+          );
+        }
+
         const { processingEngine, router } = await builder.build();
 
-        lifecycle.addStartupHook(async () => {
-          await processingEngine.start();
-        });
-        lifecycle.addShutdownHook(() => processingEngine.stop());
+        if (config.getOptional('catalog.processingInterval') ?? true) {
+          lifecycle.addStartupHook(async () => {
+            await processingEngine.start();
+          });
+          lifecycle.addShutdownHook(() => processingEngine.stop());
+        }
+
         httpRouter.use(router);
       },
     });

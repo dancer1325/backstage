@@ -24,7 +24,6 @@ import {
   getRepoSourceDirectory,
   commitAndPushBranch,
   addFiles,
-  createBranch as createGitBranch,
   cloneRepo,
   parseRepoUrl,
 } from '@backstage/plugin-scaffolder-node';
@@ -54,6 +53,7 @@ const createPullRequest = async (opts: {
     latestChangeset: string;
     isDefault: boolean;
   };
+  reviewers?: string[];
   authorization: string;
   apiBaseUrl: string;
 }) => {
@@ -64,6 +64,7 @@ const createPullRequest = async (opts: {
     description,
     toRef,
     fromRef,
+    reviewers,
     authorization,
     apiBaseUrl,
   } = opts;
@@ -80,6 +81,7 @@ const createPullRequest = async (opts: {
       locked: true,
       toRef: toRef,
       fromRef: fromRef,
+      reviewers: reviewers?.map(reviewer => ({ user: { name: reviewer } })),
     }),
     headers: {
       Authorization: authorization,
@@ -204,6 +206,43 @@ const createBranch = async (opts: {
 
   return await response.json();
 };
+const getDefaultBranch = async (opts: {
+  project: string;
+  repo: string;
+  authorization: string;
+  apiBaseUrl: string;
+}) => {
+  const { project, repo, authorization, apiBaseUrl } = opts;
+  let response: Response;
+
+  const options: RequestInit = {
+    method: 'GET',
+    headers: {
+      Authorization: authorization,
+      'Content-Type': 'application/json',
+    },
+  };
+
+  try {
+    response = await fetch(
+      `${apiBaseUrl}/projects/${project}/repos/${repo}/default-branch`,
+      options,
+    );
+  } catch (error) {
+    throw error;
+  }
+
+  const { displayId } = await response.json();
+  const defaultBranch = displayId;
+  if (!defaultBranch) {
+    throw new Error(`Could not fetch default branch for ${project}/${repo}`);
+  }
+  return defaultBranch;
+};
+const isApiBaseUrlHttps = (apiBaseUrl: string): boolean => {
+  const url = new URL(apiBaseUrl);
+  return url.protocol === 'https:';
+};
 /**
  * Creates a BitbucketServer Pull Request action.
  * @public
@@ -220,6 +259,7 @@ export function createPublishBitbucketServerPullRequestAction(options: {
     description?: string;
     targetBranch?: string;
     sourceBranch: string;
+    reviewers?: string[];
     token?: string;
     gitAuthorName?: string;
     gitAuthorEmail?: string;
@@ -255,6 +295,15 @@ export function createPublishBitbucketServerPullRequestAction(options: {
             type: 'string',
             description: 'Branch of repository to copy changes from',
           },
+          reviewers: {
+            title: 'Pull Request Reviewers',
+            type: 'array',
+            items: {
+              type: 'string',
+            },
+            description:
+              'The usernames of reviewers that will be added to the pull request',
+          },
           token: {
             title: 'Authorization Token',
             type: 'string',
@@ -288,8 +337,9 @@ export function createPublishBitbucketServerPullRequestAction(options: {
         repoUrl,
         title,
         description,
-        targetBranch = 'master',
+        targetBranch,
         sourceBranch,
+        reviewers,
         gitAuthorName,
         gitAuthorEmail,
       } = ctx.input;
@@ -326,10 +376,20 @@ export function createPublishBitbucketServerPullRequestAction(options: {
 
       const apiBaseUrl = integrationConfig.config.apiBaseUrl;
 
+      let finalTargetBranch = targetBranch;
+      if (!finalTargetBranch) {
+        finalTargetBranch = await getDefaultBranch({
+          project,
+          repo,
+          authorization,
+          apiBaseUrl,
+        });
+      }
+
       const toRef = await findBranches({
         project,
         repo,
-        branchName: targetBranch,
+        branchName: finalTargetBranch!,
         authorization,
         apiBaseUrl,
       });
@@ -358,7 +418,10 @@ export function createPublishBitbucketServerPullRequestAction(options: {
           startPoint: latestCommit,
         });
 
-        const remoteUrl = `https://${host}/scm/${project}/${repo}.git`;
+        const isHttps: boolean = isApiBaseUrlHttps(apiBaseUrl);
+        const remoteUrl = `${
+          isHttps ? 'https' : 'http'
+        }://${host}/scm/${project}/${repo}.git`;
 
         const auth = authConfig.token
           ? {
@@ -382,13 +445,6 @@ export function createPublishBitbucketServerPullRequestAction(options: {
         const sourceDir = getRepoSourceDirectory(ctx.workspacePath, undefined);
         await cloneRepo({
           url: remoteUrl,
-          dir: tempDir,
-          auth,
-          logger: ctx.logger,
-          ref: sourceBranch,
-        });
-
-        await createGitBranch({
           dir: tempDir,
           auth,
           logger: ctx.logger,
@@ -430,6 +486,7 @@ export function createPublishBitbucketServerPullRequestAction(options: {
         description,
         toRef,
         fromRef,
+        reviewers,
         authorization,
         apiBaseUrl,
       });

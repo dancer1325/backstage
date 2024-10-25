@@ -58,6 +58,8 @@ function registerPackageCommand(program: Command) {
     .description(
       'Additional properties that can be passed to @openapitools/openapi-generator-cli',
     )
+    .option('--watch')
+    .description('Watch the OpenAPI spec for changes and regenerate on save.')
     .action(
       lazy(() =>
         import('./package/schema/openapi/generate').then(m => m.command),
@@ -162,6 +164,23 @@ function registerRepoCommand(program: Command) {
     );
 }
 
+function registerLintCommand(program: Command) {
+  const lintCommand = program
+    .command('lint [command]')
+    .description('Tools for linting repository.');
+  lintCommand
+    .command('legacy-backend-exports [paths...]')
+    .description(
+      'Lint backend plugin packages for legacy exports and make sure it conforms to the new export pattern',
+    )
+    .action(
+      lazy(() =>
+        import(
+          './lint-legacy-backend-exports/lint-legacy-backend-exports'
+        ).then(m => m.lint),
+      ),
+    );
+}
 export function registerCommands(program: Command) {
   program
     .command('api-reports [paths...]')
@@ -208,6 +227,14 @@ export function registerCommands(program: Command) {
     .action(lazy(() => import('./type-deps/type-deps').then(m => m.default)));
 
   program
+    .command('peer-deps')
+    .description(
+      'Ensure your packages are using the correct peer dependency format.',
+    )
+    .option('--fix', 'Fix the issues found')
+    .action(lazy(() => import('./peer-deps/peer-deps').then(m => m.default)));
+
+  program
     .command('generate-catalog-info')
     .option(
       '--dry-run',
@@ -227,6 +254,37 @@ export function registerCommands(program: Command) {
     );
 
   program
+    .command('generate-patch <package>')
+    .requiredOption(
+      '--target <target-repo>',
+      'The target repository to generate patches for',
+    )
+    .option(
+      '--registry-url <registry-url>',
+      'The registry to use for downloading artifacts (default: https://registry.npmjs.org)',
+    )
+    .option(
+      '--base-version <version>',
+      'Override the base version to generate the patch towards instead',
+    )
+    .option(
+      '--query <query>',
+      'Only apply the patch for a specific version query in the target repository',
+    )
+    .option(
+      '--skip-install',
+      'Skip dependency installation in the target repository after applying the patch',
+    )
+    .description(
+      'Generate a patch for the selected package in the target repository',
+    )
+    .action(
+      lazy(() =>
+        import('./generate-patch/generate-patch').then(m => m.default),
+      ),
+    );
+
+  program
     .command('knip-reports [paths...]')
     .option('--ci', 'CI run checks that there is no changes on knip reports')
     .description('Generate a knip report for selected packages')
@@ -238,6 +296,7 @@ export function registerCommands(program: Command) {
 
   registerPackageCommand(program);
   registerRepoCommand(program);
+  registerLintCommand(program);
 }
 
 // Wraps an action function so that it always exits and handles errors

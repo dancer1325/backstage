@@ -15,40 +15,31 @@
  */
 
 import React from 'react';
-import { render, waitFor } from '@testing-library/react';
-import { CatalogApi } from '@backstage/catalog-client';
+import { waitFor } from '@testing-library/react';
+import { catalogApiMock } from '@backstage/plugin-catalog-react/testUtils';
 import { MyGroupsPicker } from './MyGroupsPicker';
-import { TestApiProvider } from '@backstage/test-utils';
-import { catalogApiRef } from '@backstage/plugin-catalog-react';
+import {
+  renderInTestApp,
+  TestApiProvider,
+  mockApis,
+} from '@backstage/test-utils';
+import {
+  catalogApiRef,
+  entityPresentationApiRef,
+} from '@backstage/plugin-catalog-react';
 import { Entity } from '@backstage/catalog-model';
 import {
   ErrorApi,
-  IdentityApi,
   errorApiRef,
   identityApiRef,
 } from '@backstage/core-plugin-api';
 import userEvent from '@testing-library/user-event';
 import { ScaffolderRJSFFieldProps as FieldProps } from '@backstage/plugin-scaffolder-react';
+import { DefaultEntityPresentationApi } from '@backstage/plugin-catalog';
 
-// Create a mock IdentityApi
-const mockIdentityApi: IdentityApi = {
-  getProfileInfo: () =>
-    Promise.resolve({
-      displayName: 'Bob',
-      email: 'bob@example.com',
-      picture: 'https://example.com/picture.jpg',
-    }),
-  getBackstageIdentity: () =>
-    Promise.resolve({
-      id: 'Bob',
-      idToken: 'token',
-      type: 'user',
-      userEntityRef: 'user:default/bob',
-      ownershipEntityRefs: ['group:default/group1', 'group:default/group2'],
-    }),
-  getCredentials: () => Promise.resolve({ token: 'token' }),
-  signOut: () => Promise.resolve(),
-};
+const mockIdentityApi = mockApis.identity({
+  userEntityRef: 'user:default/bob',
+});
 
 describe('<MyGroupsPicker />', () => {
   let entities: Entity[];
@@ -56,9 +47,9 @@ describe('<MyGroupsPicker />', () => {
   const schema = {};
   const required = false;
 
-  const catalogApi: jest.Mocked<CatalogApi> = {
+  const catalogApi = catalogApiMock.mock({
     getEntities: jest.fn(async () => ({ items: entities })),
-  } as any;
+  });
 
   const mockErrorApi: jest.Mocked<ErrorApi> = {
     post: jest.fn(),
@@ -92,7 +83,7 @@ describe('<MyGroupsPicker />', () => {
   });
 
   afterEach(() => {
-    jest.resetAllMocks();
+    jest.clearAllMocks();
   });
 
   it('should only return the groups a user is part of and not the groups a user is not part of', async () => {
@@ -111,12 +102,16 @@ describe('<MyGroupsPicker />', () => {
       required,
     } as unknown as FieldProps<string>;
 
-    render(
+    await renderInTestApp(
       <TestApiProvider
         apis={[
           [identityApiRef, mockIdentityApi],
           [catalogApiRef, catalogApi],
           [errorApiRef, mockErrorApi],
+          [
+            entityPresentationApiRef,
+            DefaultEntityPresentationApi.create({ catalogApi }),
+          ],
         ]}
       >
         <MyGroupsPicker {...props} />
@@ -183,12 +178,16 @@ describe('<MyGroupsPicker />', () => {
       required,
     } as unknown as FieldProps<string>;
 
-    const { queryByText, getByRole } = render(
+    const { queryByText, getByRole } = await renderInTestApp(
       <TestApiProvider
         apis={[
           [identityApiRef, mockIdentityApi],
           [catalogApiRef, catalogApi],
           [errorApiRef, mockErrorApi],
+          [
+            entityPresentationApiRef,
+            DefaultEntityPresentationApi.create({ catalogApi }),
+          ],
         ]}
       >
         <MyGroupsPicker {...props} />
@@ -240,12 +239,16 @@ describe('<MyGroupsPicker />', () => {
       required,
     } as unknown as FieldProps<string>;
 
-    const { getByRole } = render(
+    const { getByRole } = await renderInTestApp(
       <TestApiProvider
         apis={[
           [identityApiRef, mockIdentityApi],
           [catalogApiRef, catalogApi],
           [errorApiRef, mockErrorApi],
+          [
+            entityPresentationApiRef,
+            DefaultEntityPresentationApi.create({ catalogApi }),
+          ],
         ]}
       >
         <MyGroupsPicker {...props} />
@@ -300,12 +303,16 @@ describe('<MyGroupsPicker />', () => {
       formData: 'group:default/group1',
     } as unknown as FieldProps<string>;
 
-    const { getByRole } = render(
+    const { getByRole } = await renderInTestApp(
       <TestApiProvider
         apis={[
           [identityApiRef, mockIdentityApi],
           [catalogApiRef, catalogApi],
           [errorApiRef, mockErrorApi],
+          [
+            entityPresentationApiRef,
+            DefaultEntityPresentationApi.create({ catalogApi }),
+          ],
         ]}
       >
         <MyGroupsPicker {...props} />

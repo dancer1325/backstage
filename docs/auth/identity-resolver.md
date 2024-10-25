@@ -70,6 +70,14 @@ always be full entity references, as opposed to shorthands like just `jane` or
 
 ## Sign-in Resolvers
 
+:::warning
+Be careful when configuring Sign-in resolvers, as they are part of determining who
+has access to your Backstage instance, and with what identity. Always only configure
+**a single sign-in resolver for one of your auth providers**. The only reason to have
+more sign-in resolvers is if you want to allow your users to sign in to Backstage in
+multiple ways, but it increases the risk of account hijacking.
+:::
+
 Signing in a user into Backstage requires a mapping of the user identity from the
 third-party auth provider to a Backstage user identity. This mapping can vary quite
 a lot between different organizations and auth providers, and because of that there's
@@ -112,17 +120,38 @@ auth:
         signIn:
           resolvers:
             - resolver: usernameMatchingUserEntityName
-            - resolver: emailMatchingUserEntityProfileEmail
-            - resolver: emailLocalPartMatchingUserEntityName
 ```
-
-Note that in this instance it lists several resolvers, which means that the
-framework will try them one by one until one succeeds. If none of them do, the
-sign in attempt is rejected.
 
 The list of available resolvers is different for each provider, since they often
 depend on the information model returned from the upstream provider service.
 Consult the documentation of the respective provider to find the list.
+
+In the example above, the `usernameMatchingUserEntityName` is specific to the
+GitHub provider, but you could also choose to use the
+`emailMatchingUserEntityProfileEmail` or `emailLocalPartMatchingUserEntityName`
+resolvers, which are common to all auth providers.
+
+:::warning
+When using the `emailLocalPartMatchingUserEntityName` resolver it is strongly
+recommended to set the `allowedDomains` option to ensure that only authorized users
+are able to sign-in.
+:::
+
+If you are using the `emailLocalPartMatchingUserEntityName` resolver, it is
+recommended to also set the `allowedDomains` option, for example:
+
+```yaml title="Within the provider configuration"
+auth:
+  providers:
+    github:
+      development:
+        ...
+        signIn:
+          resolvers:
+            - resolver: emailLocalPartMatchingUserEntityName
+              allowedDomains:
+                - acme.org
+```
 
 ### Building Custom Resolvers
 
@@ -140,8 +169,26 @@ backend.add(import('@backstage/plugin-auth-backend-module-github-provider'));
 
 When you want to supply a custom sign-in resolver, as a general pattern you
 remove that last import and instead construct your own provider using the
-facilities from the same package. You can leave the config unchanged from
-before.
+facilities from the same package.
+
+Make sure that your `auth` config in your `app-config.yaml` does not contain
+any `resolvers` field - otherwise, they take priority.
+
+```yaml title="in e.g. app-config.yaml"
+auth:
+  environment: development
+  providers:
+    github:
+      development:
+        clientId: ${AUTH_GITHUB_CLIENT_ID}
+        clientSecret: ${AUTH_GITHUB_CLIENT_SECRET}
+        enterpriseInstanceUrl: ${AUTH_GITHUB_ENTERPRISE_INSTANCE_URL}
+/* highlight-remove-start */
+        signIn:
+          resolvers:
+            - resolver: usernameMatchingUserEntityName
+/* highlight-remove-end */
+```
 
 ```ts title="in packages/backend/src/index.ts"
 /* highlight-add-start */
@@ -191,7 +238,7 @@ backend.add(import('@backstage/plugin-auth-backend-module-github-provider'));
 backend.add(customAuth);
 ```
 
-Check out [the naming patterns article](../backend-system/architecture/07-naming-patterns.md) for what rules
+Check out [the naming patterns article](../backend-system/architecture/08-naming-patterns.md) for what rules
 apply regarding how to form valid IDs. In this example we also put the module
 declaration directly in `packages/backend/src/index.ts` but that's just for
 simplicity. You can place it anywhere you like, including in other packages, and
@@ -295,6 +342,12 @@ async signInResolver({ profile: { email} }, ctx) {
 ```
 
 ### Sign-In without Users in the Catalog
+
+:::warning
+Signing in users without verifying that they exist in the catalog can be
+dangerous. Take care to ensure that your custom resolvers only allow expected
+users to sign in, for example by checking email domains.
+:::
 
 While populating the catalog with organizational data unlocks more powerful ways
 to browse your software ecosystem, it might not always be a viable or prioritized
@@ -401,3 +454,22 @@ const customAuth = createBackendModule({
 ```
 
 Remember to `backend.add` the created module just like above.
+
+## Common Sign-In Resolver Errors
+
+There are two common Sign-In Resolver errors you might run into.
+
+First is: "The 'Auth Provider Name' provider is not configured to support sign-in". Here is what this looks like for the GitHub Auth provider:
+
+![The GitHub provider is not configured to support sign-in](../assets/auth/github-provider-not-configured-to-support-sign-in.png)
+
+This error can be caused by the following:
+
+- The `signIn.resolvers` have not be added to your Auth Provider configuration. Adding this will resolve the error.
+- There is a syntax error in your Auth Provider configuration. Running `yarn backstage-cli config:check --strict` will help identify the syntax error.
+
+The second common error is: "Failed to sign-in, unable to resolve user identity". Here is what this looks like for the GitHub Auth provider:
+
+![Failed to sign-in, unable to resolve user identity](../assets/auth/github-unable-to-reolve-identity.png)
+
+This error is caused by the Sign-In Resolver you configured being unable to find a matching User in the Catalog. To fix this you need to import User, and Group, data from some source of truth for this data at your Organization. To do this you can use one of the existing Org Data providers like the ones for [Entra ID (Azure AD/MS Graph)](../integrations/azure/org.md), [GitHub](../integrations/github/org.md), [GitLab](../integrations/gitlab/org.md), etc. or if none of those fit your needs you can create a [Custom Entity Provider](../features/software-catalog/external-integrations.md#custom-entity-providers).

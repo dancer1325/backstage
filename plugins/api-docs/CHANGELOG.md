@@ -1,5 +1,309 @@
 # @backstage/plugin-api-docs
 
+## 0.11.12-next.0
+
+### Patch Changes
+
+- 11f57de: bump `@asyncapi/react-component` to latest `2.x`
+- 3cd1dee: Uses theme values to style the API definition schema so that theme overrides apply.
+- Updated dependencies
+  - @backstage/core-components@0.16.0-next.0
+  - @backstage/catalog-model@1.7.0
+  - @backstage/core-compat-api@0.3.2-next.0
+  - @backstage/core-plugin-api@1.10.0
+  - @backstage/frontend-plugin-api@0.9.1-next.0
+  - @backstage/plugin-catalog@1.24.1-next.0
+  - @backstage/plugin-catalog-common@1.1.0
+  - @backstage/plugin-catalog-react@1.14.1-next.0
+  - @backstage/plugin-permission-react@0.4.27
+
+## 0.11.11
+
+### Patch Changes
+
+- e969dc7: Move `@types/react` to a peer dependency.
+- 46b5a20: Empty states updated with external link icon for learn more links
+- Updated dependencies
+  - @backstage/core-components@0.15.1
+  - @backstage/frontend-plugin-api@0.9.0
+  - @backstage/plugin-catalog@1.24.0
+  - @backstage/core-compat-api@0.3.1
+  - @backstage/core-plugin-api@1.10.0
+  - @backstage/plugin-permission-react@0.4.27
+  - @backstage/plugin-catalog-react@1.14.0
+  - @backstage/catalog-model@1.7.0
+  - @backstage/plugin-catalog-common@1.1.0
+
+## 0.11.11-next.2
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/plugin-catalog@1.24.0-next.2
+  - @backstage/plugin-catalog-react@1.14.0-next.2
+  - @backstage/catalog-model@1.7.0
+  - @backstage/core-compat-api@0.3.1-next.2
+  - @backstage/core-components@0.15.1-next.2
+  - @backstage/core-plugin-api@1.10.0-next.1
+  - @backstage/frontend-plugin-api@0.9.0-next.2
+  - @backstage/plugin-catalog-common@1.1.0
+  - @backstage/plugin-permission-react@0.4.27-next.1
+
+## 0.11.11-next.1
+
+### Patch Changes
+
+- e969dc7: Move `@types/react` to a peer dependency.
+- Updated dependencies
+  - @backstage/core-components@0.15.1-next.1
+  - @backstage/frontend-plugin-api@0.9.0-next.1
+  - @backstage/core-compat-api@0.3.1-next.1
+  - @backstage/core-plugin-api@1.10.0-next.1
+  - @backstage/plugin-permission-react@0.4.27-next.1
+  - @backstage/plugin-catalog-react@1.14.0-next.1
+  - @backstage/plugin-catalog@1.24.0-next.1
+  - @backstage/catalog-model@1.7.0
+  - @backstage/plugin-catalog-common@1.1.0
+
+## 0.11.10-next.0
+
+### Patch Changes
+
+- 46b5a20: Empty states updated with external link icon for learn more links
+- Updated dependencies
+  - @backstage/frontend-plugin-api@0.9.0-next.0
+  - @backstage/plugin-catalog@1.24.0-next.0
+  - @backstage/core-compat-api@0.3.1-next.0
+  - @backstage/core-components@0.15.1-next.0
+  - @backstage/core-plugin-api@1.10.0-next.0
+  - @backstage/plugin-catalog-react@1.13.1-next.0
+  - @backstage/catalog-model@1.7.0
+  - @backstage/plugin-catalog-common@1.1.0
+  - @backstage/plugin-permission-react@0.4.27-next.0
+
+## 0.11.9
+
+### Patch Changes
+
+- fec8b57: Updated exports to use the new type parameters for extensions and extension blueprints.
+- 836127c: Updated dependency `@testing-library/react` to `^16.0.0`.
+- 8a474f2: Updating docs to use `createFrontendModule` instead
+- Updated dependencies
+  - @backstage/core-components@0.15.0
+  - @backstage/plugin-catalog-react@1.13.0
+  - @backstage/plugin-catalog@1.23.0
+  - @backstage/frontend-plugin-api@0.8.0
+  - @backstage/core-compat-api@0.3.0
+  - @backstage/catalog-model@1.7.0
+  - @backstage/plugin-catalog-common@1.1.0
+  - @backstage/core-plugin-api@1.9.4
+  - @backstage/plugin-permission-react@0.4.26
+
+## 0.11.9-next.2
+
+### Patch Changes
+
+- 836127c: Updated dependency `@testing-library/react` to `^16.0.0`.
+- 8a474f2: Updating docs to use `createFrontendModule` instead
+- Updated dependencies
+  - @backstage/core-components@0.14.11-next.1
+  - @backstage/plugin-catalog-react@1.13.0-next.2
+  - @backstage/plugin-catalog@1.23.0-next.2
+  - @backstage/core-compat-api@0.3.0-next.2
+  - @backstage/core-plugin-api@1.9.4-next.0
+  - @backstage/frontend-plugin-api@0.8.0-next.2
+  - @backstage/plugin-permission-react@0.4.26-next.0
+  - @backstage/catalog-model@1.6.0
+  - @backstage/plugin-catalog-common@1.0.26
+
+## 0.11.9-next.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/frontend-plugin-api@0.8.0-next.1
+  - @backstage/core-compat-api@0.3.0-next.1
+  - @backstage/core-components@0.14.11-next.0
+  - @backstage/plugin-catalog-react@1.12.4-next.1
+  - @backstage/catalog-model@1.6.0
+  - @backstage/core-plugin-api@1.9.3
+  - @backstage/plugin-catalog@1.22.1-next.1
+  - @backstage/plugin-catalog-common@1.0.26
+  - @backstage/plugin-permission-react@0.4.25
+
+## 0.11.9-next.0
+
+### Patch Changes
+
+- fec8b57: Updated exports to use the new type parameters for extensions and extension blueprints.
+- Updated dependencies
+  - @backstage/frontend-plugin-api@0.8.0-next.0
+  - @backstage/core-compat-api@0.2.9-next.0
+  - @backstage/plugin-catalog-react@1.12.4-next.0
+  - @backstage/plugin-catalog@1.22.1-next.0
+  - @backstage/catalog-model@1.6.0
+  - @backstage/core-components@0.14.10
+  - @backstage/core-plugin-api@1.9.3
+  - @backstage/plugin-catalog-common@1.0.26
+  - @backstage/plugin-permission-react@0.4.25
+
+## 0.11.8
+
+### Patch Changes
+
+- 770ba02: `ConsumingComponentsCard` and `ProvidingComponentsCard` will now optionally accept `columns` to override which table columns are displayed
+- fe1fbb2: Migrating usages of the deprecated `createExtension` `v1` format to the newer `v2` format, and old `create*Extension` extension creators to blueprints.
+- ebfeb40: Added `resolvers` prop to `AsyncApiDefinitionWidget`. This allows to override the default http/https resolvers, for example to add authentication to requests to internal schema registries.
+- 4b6d2cb: Updated dependency `@graphiql/react` to `^0.23.0`.
+- 6582799: Add `tableOptions` to all tables and additionally `title` to API tables.
+- Updated dependencies
+  - @backstage/plugin-catalog@1.22.0
+  - @backstage/frontend-plugin-api@0.7.0
+  - @backstage/plugin-catalog-react@1.12.3
+  - @backstage/core-components@0.14.10
+  - @backstage/core-compat-api@0.2.8
+  - @backstage/catalog-model@1.6.0
+  - @backstage/core-plugin-api@1.9.3
+  - @backstage/plugin-catalog-common@1.0.26
+  - @backstage/plugin-permission-react@0.4.25
+
+## 0.11.8-next.3
+
+### Patch Changes
+
+- 6582799: Add `tableOptions` to all tables and additionally `title` to API tables.
+- Updated dependencies
+  - @backstage/frontend-plugin-api@0.7.0-next.3
+  - @backstage/plugin-catalog@1.22.0-next.3
+  - @backstage/catalog-model@1.6.0-next.0
+  - @backstage/core-compat-api@0.2.8-next.3
+  - @backstage/plugin-catalog-react@1.12.3-next.3
+  - @backstage/core-components@0.14.10-next.0
+  - @backstage/core-plugin-api@1.9.3
+  - @backstage/plugin-catalog-common@1.0.26-next.2
+  - @backstage/plugin-permission-react@0.4.25-next.1
+
+## 0.11.8-next.2
+
+### Patch Changes
+
+- 4b6d2cb: Updated dependency `@graphiql/react` to `^0.23.0`.
+- Updated dependencies
+  - @backstage/plugin-catalog@1.22.0-next.2
+  - @backstage/frontend-plugin-api@0.7.0-next.2
+  - @backstage/core-compat-api@0.2.8-next.2
+  - @backstage/plugin-catalog-react@1.12.3-next.2
+  - @backstage/plugin-catalog-common@1.0.26-next.1
+  - @backstage/plugin-permission-react@0.4.25-next.1
+  - @backstage/catalog-model@1.5.0
+  - @backstage/core-components@0.14.10-next.0
+  - @backstage/core-plugin-api@1.9.3
+
+## 0.11.8-next.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/plugin-catalog-react@1.12.3-next.1
+  - @backstage/frontend-plugin-api@0.6.8-next.1
+  - @backstage/core-compat-api@0.2.8-next.1
+  - @backstage/plugin-catalog@1.21.2-next.1
+  - @backstage/plugin-catalog-common@1.0.26-next.0
+  - @backstage/plugin-permission-react@0.4.25-next.0
+  - @backstage/catalog-model@1.5.0
+  - @backstage/core-components@0.14.10-next.0
+  - @backstage/core-plugin-api@1.9.3
+
+## 0.11.8-next.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/frontend-plugin-api@0.6.8-next.0
+  - @backstage/plugin-catalog-react@1.12.3-next.0
+  - @backstage/core-components@0.14.10-next.0
+  - @backstage/catalog-model@1.5.0
+  - @backstage/core-compat-api@0.2.8-next.0
+  - @backstage/core-plugin-api@1.9.3
+  - @backstage/plugin-catalog@1.21.2-next.0
+  - @backstage/plugin-catalog-common@1.0.25
+  - @backstage/plugin-permission-react@0.4.24
+
+## 0.11.7
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/core-components@0.14.9
+  - @backstage/plugin-catalog-react@1.12.2
+  - @backstage/plugin-catalog@1.21.1
+  - @backstage/plugin-permission-react@0.4.24
+  - @backstage/plugin-catalog-common@1.0.25
+  - @backstage/frontend-plugin-api@0.6.7
+  - @backstage/catalog-model@1.5.0
+  - @backstage/core-compat-api@0.2.7
+  - @backstage/core-plugin-api@1.9.3
+
+## 0.11.7-next.2
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/core-components@0.14.9-next.1
+  - @backstage/frontend-plugin-api@0.6.7-next.1
+  - @backstage/plugin-catalog@1.21.1-next.2
+  - @backstage/plugin-catalog-react@1.12.2-next.2
+  - @backstage/core-compat-api@0.2.7-next.1
+
+## 0.11.7-next.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/plugin-catalog-react@1.12.2-next.1
+  - @backstage/plugin-catalog@1.21.1-next.1
+  - @backstage/core-compat-api@0.2.7-next.0
+  - @backstage/core-components@0.14.9-next.0
+  - @backstage/core-plugin-api@1.9.3
+  - @backstage/catalog-model@1.5.0
+  - @backstage/frontend-plugin-api@0.6.7-next.0
+  - @backstage/plugin-catalog-common@1.0.24
+  - @backstage/plugin-permission-react@0.4.23
+
+## 0.11.7-next.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/core-components@0.14.9-next.0
+  - @backstage/plugin-catalog-react@1.12.2-next.0
+  - @backstage/plugin-catalog@1.21.1-next.0
+  - @backstage/frontend-plugin-api@0.6.7-next.0
+  - @backstage/core-compat-api@0.2.7-next.0
+  - @backstage/core-plugin-api@1.9.3
+  - @backstage/catalog-model@1.5.0
+  - @backstage/plugin-catalog-common@1.0.24
+  - @backstage/plugin-permission-react@0.4.23
+
+## 0.11.6
+
+### Patch Changes
+
+- 7f84039: The `registerComponent` external route will now by default bind to the catalog import page if it is available.
+- 9cdc651: Make sure that the toggle button state is properly reflected in API cards
+- d44a20a: Added additional plugin metadata to `package.json`.
+- 96cd13e: `DefaultApiExplorerPage` now accepts an optional `ownerPickerMode` for toggling the behavior of the `EntityOwnerPicker`, exposing a new mode `<DefaultApiExplorerPage ownerPickerMode="all" />` particularly suitable for larger catalogs. In this new mode, `EntityOwnerPicker` will display all the users and groups present in the catalog.
+- Updated dependencies
+  - @backstage/core-components@0.14.8
+  - @backstage/core-compat-api@0.2.6
+  - @backstage/core-plugin-api@1.9.3
+  - @backstage/plugin-permission-react@0.4.23
+  - @backstage/plugin-catalog-common@1.0.24
+  - @backstage/plugin-catalog-react@1.12.1
+  - @backstage/plugin-catalog@1.21.0
+  - @backstage/frontend-plugin-api@0.6.6
+  - @backstage/catalog-model@1.5.0
+
 ## 0.11.6-next.2
 
 ### Patch Changes

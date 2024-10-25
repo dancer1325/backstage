@@ -21,46 +21,53 @@ import {
   PassportProfile,
 } from '@backstage/plugin-auth-node';
 import { ExtendedMicrosoftStrategy } from './strategy';
-import { union } from 'lodash';
 
 /** @public */
 export const microsoftAuthenticator = createOAuthAuthenticator({
   defaultProfileTransform:
     PassportOAuthAuthenticatorHelper.defaultProfileTransform,
+  scopes: {
+    required: ['email', 'openid', 'offline_access', 'user.read'],
+    transform({ requested, granted, required, additional }) {
+      // Resources scopes are of the form `<resource>/<scope>`, and are handled
+      // separately from the normal scopes in the client. When request a
+      // resource scope we should only include forward the request scope along
+      // with offline_access.
+      const hasResourceScope = Array.from(requested).some(s => s.includes('/'));
+      if (hasResourceScope) {
+        return [...requested, 'offline_access'];
+      }
+      return [...requested, ...granted, ...required, ...additional];
+    },
+  },
   initialize({ callbackUrl, config }) {
     const clientId = config.getString('clientId');
     const clientSecret = config.getString('clientSecret');
     const tenantId = config.getString('tenantId');
     const domainHint = config.getOptionalString('domainHint');
-    const scope = union(
-      ['user.read'],
-      config.getOptionalStringArray('additionalScopes'),
+    const skipUserProfile =
+      config.getOptionalBoolean('skipUserProfile') ?? false;
+
+    const strategy = new ExtendedMicrosoftStrategy(
+      {
+        clientID: clientId,
+        clientSecret: clientSecret,
+        callbackURL: callbackUrl,
+        tenant: tenantId,
+      },
+      (
+        accessToken: string,
+        refreshToken: string,
+        params: any,
+        fullProfile: PassportProfile,
+        done: PassportOAuthDoneCallback,
+      ) => {
+        done(undefined, { fullProfile, params, accessToken }, { refreshToken });
+      },
     );
 
-    const helper = PassportOAuthAuthenticatorHelper.from(
-      new ExtendedMicrosoftStrategy(
-        {
-          clientID: clientId,
-          clientSecret: clientSecret,
-          callbackURL: callbackUrl,
-          tenant: tenantId,
-          scope: scope,
-        },
-        (
-          accessToken: string,
-          refreshToken: string,
-          params: any,
-          fullProfile: PassportProfile,
-          done: PassportOAuthDoneCallback,
-        ) => {
-          done(
-            undefined,
-            { fullProfile, params, accessToken },
-            { refreshToken },
-          );
-        },
-      ),
-    );
+    strategy.setSkipUserProfile(skipUserProfile);
+    const helper = PassportOAuthAuthenticatorHelper.from(strategy);
 
     return {
       helper,

@@ -1,5 +1,188 @@
 # @backstage/plugin-techdocs-react
 
+## 1.2.10-next.0
+
+### Patch Changes
+
+- 4a2f73a: Fix an issue that caused the current documentation page to be re-rendered when navigating to
+  another one.
+- Updated dependencies
+  - @backstage/core-components@0.16.0-next.0
+  - @backstage/catalog-model@1.7.0
+  - @backstage/config@1.2.0
+  - @backstage/core-plugin-api@1.10.0
+  - @backstage/version-bridge@1.0.10
+
+## 1.2.9
+
+### Patch Changes
+
+- e969dc7: Move `@types/react` to a peer dependency.
+- Updated dependencies
+  - @backstage/core-components@0.15.1
+  - @backstage/core-plugin-api@1.10.0
+  - @backstage/version-bridge@1.0.10
+  - @backstage/catalog-model@1.7.0
+  - @backstage/config@1.2.0
+
+## 1.2.9-next.2
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/catalog-model@1.7.0
+  - @backstage/config@1.2.0
+  - @backstage/core-components@0.15.1-next.2
+  - @backstage/core-plugin-api@1.10.0-next.1
+  - @backstage/version-bridge@1.0.10-next.0
+
+## 1.2.9-next.1
+
+### Patch Changes
+
+- e969dc7: Move `@types/react` to a peer dependency.
+- Updated dependencies
+  - @backstage/core-components@0.15.1-next.1
+  - @backstage/core-plugin-api@1.10.0-next.1
+  - @backstage/version-bridge@1.0.10-next.0
+  - @backstage/catalog-model@1.7.0
+  - @backstage/config@1.2.0
+
+## 1.2.9-next.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/core-components@0.15.1-next.0
+  - @backstage/core-plugin-api@1.10.0-next.0
+  - @backstage/catalog-model@1.7.0
+  - @backstage/config@1.2.0
+  - @backstage/version-bridge@1.0.9
+
+## 1.2.8
+
+### Patch Changes
+
+- 5ee3d27: Fixed issue in useShadowRootElements which could lead to unlimited render loops
+- 836127c: Updated dependency `@testing-library/react` to `^16.0.0`.
+- Updated dependencies
+  - @backstage/core-components@0.15.0
+  - @backstage/catalog-model@1.7.0
+  - @backstage/core-plugin-api@1.9.4
+  - @backstage/version-bridge@1.0.9
+  - @backstage/config@1.2.0
+
+## 1.2.8-next.2
+
+### Patch Changes
+
+- 836127c: Updated dependency `@testing-library/react` to `^16.0.0`.
+- Updated dependencies
+  - @backstage/core-components@0.14.11-next.1
+  - @backstage/core-plugin-api@1.9.4-next.0
+  - @backstage/version-bridge@1.0.9-next.0
+  - @backstage/catalog-model@1.6.0
+  - @backstage/config@1.2.0
+
+## 1.2.8-next.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/core-components@0.14.11-next.0
+  - @backstage/catalog-model@1.6.0
+  - @backstage/config@1.2.0
+  - @backstage/core-plugin-api@1.9.3
+  - @backstage/version-bridge@1.0.8
+
+## 1.2.8-next.0
+
+### Patch Changes
+
+- 5ee3d27: Fixed issue in useShadowRootElements which could lead to unlimited render loops
+- Updated dependencies
+  - @backstage/catalog-model@1.6.0
+  - @backstage/config@1.2.0
+  - @backstage/core-components@0.14.10
+  - @backstage/core-plugin-api@1.9.3
+  - @backstage/version-bridge@1.0.8
+
+## 1.2.7
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/core-components@0.14.10
+  - @backstage/catalog-model@1.6.0
+  - @backstage/config@1.2.0
+  - @backstage/core-plugin-api@1.9.3
+  - @backstage/version-bridge@1.0.8
+
+## 1.2.7-next.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/catalog-model@1.6.0-next.0
+  - @backstage/config@1.2.0
+  - @backstage/core-components@0.14.10-next.0
+  - @backstage/core-plugin-api@1.9.3
+  - @backstage/version-bridge@1.0.8
+
+## 1.2.7-next.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/core-components@0.14.10-next.0
+  - @backstage/catalog-model@1.5.0
+  - @backstage/config@1.2.0
+  - @backstage/core-plugin-api@1.9.3
+  - @backstage/version-bridge@1.0.8
+
+## 1.2.6
+
+### Patch Changes
+
+- 8ac9ce5: Resolved the issue where changes in TechDoc add-ons, including the TextSize add-on, were not reapplying during navigation
+- Updated dependencies
+  - @backstage/core-components@0.14.9
+  - @backstage/catalog-model@1.5.0
+  - @backstage/config@1.2.0
+  - @backstage/core-plugin-api@1.9.3
+  - @backstage/version-bridge@1.0.8
+
+## 1.2.6-next.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/core-components@0.14.9-next.1
+
+## 1.2.6-next.0
+
+### Patch Changes
+
+- 8ac9ce5: Fixed a bug with the TechDocsReaderPageProvider not re-rendering when setShadowDom is called, meaning that the useShadowDom hooks were inconsistent. This issue caused the TextSize addon changes not to reapply during navigation.
+- Updated dependencies
+  - @backstage/core-components@0.14.9-next.0
+  - @backstage/core-plugin-api@1.9.3
+  - @backstage/catalog-model@1.5.0
+  - @backstage/config@1.2.0
+  - @backstage/version-bridge@1.0.8
+
+## 1.2.5
+
+### Patch Changes
+
+- d44a20a: Added additional plugin metadata to `package.json`.
+- Updated dependencies
+  - @backstage/core-components@0.14.8
+  - @backstage/core-plugin-api@1.9.3
+  - @backstage/catalog-model@1.5.0
+  - @backstage/config@1.2.0
+  - @backstage/version-bridge@1.0.8
+
 ## 1.2.5-next.2
 
 ### Patch Changes

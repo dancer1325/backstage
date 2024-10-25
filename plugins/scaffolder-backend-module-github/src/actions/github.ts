@@ -86,6 +86,7 @@ export function createPublishGithubAction(options: {
     requiredStatusCheckContexts?: string[];
     requireBranchesToBeUpToDate?: boolean;
     requiredConversationResolution?: boolean;
+    requireLastPushApproval?: boolean;
     repoVisibility?: 'private' | 'internal' | 'public';
     collaborators?: Array<
       | {
@@ -114,6 +115,7 @@ export function createPublishGithubAction(options: {
       includeClaimKeys?: string[];
     };
     requiredCommitSigning?: boolean;
+    customProperties?: { [key: string]: string };
   }>({
     id: 'publish:github',
     description:
@@ -137,6 +139,7 @@ export function createPublishGithubAction(options: {
           requireBranchesToBeUpToDate: inputProps.requireBranchesToBeUpToDate,
           requiredConversationResolution:
             inputProps.requiredConversationResolution,
+          requireLastPushApproval: inputProps.requireLastPushApproval,
           repoVisibility: inputProps.repoVisibility,
           defaultBranch: inputProps.defaultBranch,
           protectDefaultBranch: inputProps.protectDefaultBranch,
@@ -162,6 +165,7 @@ export function createPublishGithubAction(options: {
           secrets: inputProps.secrets,
           oidcCustomization: inputProps.oidcCustomization,
           requiredCommitSigning: inputProps.requiredCommitSigning,
+          customProperties: inputProps.customProperties,
         },
       },
       output: {
@@ -187,6 +191,7 @@ export function createPublishGithubAction(options: {
         requiredStatusCheckContexts = [],
         requireBranchesToBeUpToDate = true,
         requiredConversationResolution = false,
+        requireLastPushApproval = false,
         repoVisibility = 'private',
         defaultBranch = 'master',
         protectDefaultBranch = true,
@@ -210,6 +215,7 @@ export function createPublishGithubAction(options: {
         secrets,
         oidcCustomization,
         token: providedToken,
+        customProperties,
         requiredCommitSigning = false,
       } = ctx.input;
 
@@ -250,6 +256,7 @@ export function createPublishGithubAction(options: {
         repoVariables,
         secrets,
         oidcCustomization,
+        customProperties,
         ctx.logger,
       );
 
@@ -274,6 +281,7 @@ export function createPublishGithubAction(options: {
         requiredStatusCheckContexts,
         requireBranchesToBeUpToDate,
         requiredConversationResolution,
+        requireLastPushApproval,
         config,
         ctx.logger,
         gitCommitMessage,

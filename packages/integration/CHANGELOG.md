@@ -1,5 +1,147 @@
 # @backstage/integration
 
+## 1.15.1
+
+### Patch Changes
+
+- 720a2f9: Updated dependency `git-url-parse` to `^15.0.0`.
+- 920004b: Updating error message for getProjectId when fetching Gitlab project from its url to be more accurate
+- 090e49a: Updated functions parseHarnessUrl, getHarnessLatestCommitUrl, getHarnessFileContentsUrl and getHarnessArchiveUrl to fix parsing of urls
+- Updated dependencies
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+
+## 1.15.1-next.1
+
+### Patch Changes
+
+- 720a2f9: Updated dependency `git-url-parse` to `^15.0.0`.
+- Updated dependencies
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+
+## 1.15.1-next.0
+
+### Patch Changes
+
+- 920004b: Updating error message for getProjectId when fetching Gitlab project from its url to be more accurate
+- 090e49a: Updated functions parseHarnessUrl, getHarnessLatestCommitUrl, getHarnessFileContentsUrl and getHarnessArchiveUrl to fix parsing of urls
+- Updated dependencies
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+
+## 1.15.0
+
+### Minor Changes
+
+- 1573014: The Gerrit integration can now resolve Gitiles urls that point to the following
+  refs:
+
+  - HEAD
+  - A SHA
+  - Tag
+  - Branch
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+
+## 1.15.0-next.0
+
+### Minor Changes
+
+- 1573014: The Gerrit integration can now resolve Gitiles urls that point to the following
+  refs:
+
+  - HEAD
+  - A SHA
+  - Tag
+  - Branch
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+
+## 1.14.0
+
+### Minor Changes
+
+- 78c1329: Updated `GitlabUrlReader.readUrl` and `GitlabUrlReader.readTree` to accept a user-provided token, supporting both bearer and private tokens.
+
+### Patch Changes
+
+- c591670: Updated functions for `getHarnessEditContentsUrl`, `getHarnessFileContentsUrl`, `getHarnessArchiveUrl`, `getHarnessLatestCommitUrl` and `parseHarnessUrl` to handle account and org level urls
+- Updated dependencies
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+
+## 1.14.0-next.0
+
+### Minor Changes
+
+- 78c1329: Updated `GitlabUrlReader.readUrl` and `GitlabUrlReader.readTree` to accept a user-provided token, supporting both bearer and private tokens.
+
+### Patch Changes
+
+- c591670: Updated functions for `getHarnessEditContentsUrl`, `getHarnessFileContentsUrl`, `getHarnessArchiveUrl`, `getHarnessLatestCommitUrl` and `parseHarnessUrl` to handle account and org level urls
+- Updated dependencies
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+
+## 1.13.0
+
+### Minor Changes
+
+- b5deed0: Add support for `token` for `bitbucketCloud` integration
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+
+## 1.13.0-next.0
+
+### Minor Changes
+
+- b5deed0: Add support for `token` for `bitbucketCloud` integration
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+
+## 1.12.0
+
+### Minor Changes
+
+- be1014d: **BREAKING** Removed deprecated code from when casing was changed from `GitHub` to `Github` nearly two years ago. The following items have been removed:
+
+  - `getGitHubFileFetchUrl` (use `getGithubFileFetchUrl` instead)
+  - `GitHubIntegrationConfig` (use `GithubIntegrationConfig` instead)
+  - `GitHubIntegration` (use `GithubIntegration` instead)
+  - `readGitHubIntegrationConfig` (use `readGithubIntegrationConfig` instead)
+  - `readGitHubIntegrationConfigs` (use `readGithubIntegrationConfigs` instead)
+  - `replaceGitHubUrlType` (use `replaceGithubUrlType` instead)
+
+- 395b973: Implemented `readTree` for Harness provider to support TechDocs functionality
+- 662dce8: **BREAKING**: `gitilesBaseUrl` is now mandatory for the Gerrit integration. The
+  ability to override this requirement using the `DISABLE_GERRIT_GITILES_REQUIREMENT`
+  environment variable has been removed.
+
+### Patch Changes
+
+- 509e08c: Updated function for getHarnessEditContentsUrl
+- 23ee9ab: Fix AWS CodeCommit integration by allowing to change the host
+- Updated dependencies
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+
 ## 1.12.0-next.1
 
 ### Minor Changes

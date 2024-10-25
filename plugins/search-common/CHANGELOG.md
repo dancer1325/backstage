@@ -1,5 +1,48 @@
 # @backstage/plugin-search-common
 
+## 1.2.14
+
+### Patch Changes
+
+- 3123c16: Fix package metadata
+- Updated dependencies
+  - @backstage/plugin-permission-common@0.8.1
+  - @backstage/types@1.1.1
+
+## 1.2.14-next.1
+
+### Patch Changes
+
+- 3123c16: Fix package metadata
+- Updated dependencies
+  - @backstage/plugin-permission-common@0.8.1-next.1
+  - @backstage/types@1.1.1
+
+## 1.2.14-next.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/plugin-permission-common@0.8.1-next.0
+  - @backstage/types@1.1.1
+
+## 1.2.13
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/plugin-permission-common@0.8.0
+  - @backstage/types@1.1.1
+
+## 1.2.12
+
+### Patch Changes
+
+- d44a20a: Added additional plugin metadata to `package.json`.
+- Updated dependencies
+  - @backstage/plugin-permission-common@0.7.14
+  - @backstage/types@1.1.1
+
 ## 1.2.12-next.0
 
 ### Patch Changes

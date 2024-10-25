@@ -32,6 +32,7 @@ export type {
 export type { RootConfigService } from './RootConfigService';
 export type { DatabaseService } from './DatabaseService';
 export type { DiscoveryService } from './DiscoveryService';
+export type { RootHealthService } from './RootHealthService';
 export type {
   HttpRouterService,
   HttpRouterServiceAuthPolicy,
@@ -63,17 +64,7 @@ export type {
   SchedulerServiceTaskScheduleDefinition,
   SchedulerServiceTaskScheduleDefinitionConfig,
 } from './SchedulerService';
-export type { TokenManagerService } from './TokenManagerService';
 export type {
-  ReadTreeOptions,
-  ReadTreeResponse,
-  ReadTreeResponseDirOptions,
-  ReadTreeResponseFile,
-  ReadUrlResponse,
-  ReadUrlOptions,
-  SearchOptions,
-  SearchResponse,
-  SearchResponseFile,
   UrlReaderServiceReadTreeOptions,
   UrlReaderServiceReadTreeResponse,
   UrlReaderServiceReadTreeResponseDirOptions,
@@ -86,4 +77,3 @@ export type {
   UrlReaderService,
 } from './UrlReaderService';
 export type { BackstageUserInfo, UserInfoService } from './UserInfoService';
-export type { IdentityService } from './IdentityService';

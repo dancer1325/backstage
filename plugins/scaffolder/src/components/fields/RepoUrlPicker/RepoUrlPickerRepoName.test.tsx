@@ -15,13 +15,16 @@
  */
 import React from 'react';
 import { RepoUrlPickerRepoName } from './RepoUrlPickerRepoName';
-import { render, fireEvent } from '@testing-library/react';
+import { fireEvent } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { act } from 'react-dom/test-utils';
+import { renderInTestApp } from '@backstage/test-utils';
 
 describe('RepoUrlPickerRepoName', () => {
   it('should call onChange with the first allowed repo if there is none set already', async () => {
     const onChange = jest.fn();
 
-    render(
+    await renderInTestApp(
       <RepoUrlPickerRepoName
         onChange={onChange}
         allowedRepos={['foo', 'bar']}
@@ -37,7 +40,7 @@ describe('RepoUrlPickerRepoName', () => {
 
     const onChange = jest.fn();
 
-    const { getByRole } = render(
+    const { getByRole } = await renderInTestApp(
       <RepoUrlPickerRepoName
         onChange={onChange}
         allowedRepos={allowedRepos}
@@ -57,7 +60,7 @@ describe('RepoUrlPickerRepoName', () => {
   it('should render a normal text area when no options are passed', async () => {
     const onChange = jest.fn();
 
-    const { getByRole } = render(
+    const { getByRole } = await renderInTestApp(
       <RepoUrlPickerRepoName
         onChange={onChange}
         allowedRepos={[]}
@@ -69,8 +72,39 @@ describe('RepoUrlPickerRepoName', () => {
 
     expect(textArea).toBeVisible();
 
-    fireEvent.change(textArea, { target: { value: 'foo' } });
+    act(() => {
+      textArea.focus();
+      fireEvent.change(textArea, { target: { value: 'foo' } });
+      textArea.blur();
+    });
 
     expect(onChange).toHaveBeenCalledWith('foo');
+  });
+
+  it('should autocomplete with provided availableRepos', async () => {
+    const availableRepos = ['foo', 'bar'];
+
+    const onChange = jest.fn();
+
+    const { getByRole, getByText } = await renderInTestApp(
+      <RepoUrlPickerRepoName
+        onChange={onChange}
+        availableRepos={availableRepos}
+        rawErrors={[]}
+      />,
+    );
+
+    // Open the Autocomplete dropdown
+    const input = getByRole('textbox');
+    await userEvent.click(input);
+
+    // Verify that available repos are shown
+    for (const repo of availableRepos) {
+      expect(getByText(repo)).toBeInTheDocument();
+    }
+
+    // Verify that selecting an option calls onChange
+    await userEvent.click(getByText(availableRepos[0]));
+    expect(onChange).toHaveBeenCalledWith(availableRepos[0]);
   });
 });

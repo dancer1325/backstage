@@ -24,7 +24,7 @@ import lodashSet from 'lodash/set';
 import cloneDeep from 'lodash/cloneDeep';
 import { buildOrgHierarchy } from './org';
 import { LdapClient } from './client';
-import { GroupConfig, UserConfig } from './config';
+import { GroupConfig, UserConfig, VendorConfig } from './config';
 import {
   LDAP_DN_ANNOTATION,
   LDAP_RDN_ANNOTATION,
@@ -80,7 +80,10 @@ export async function defaultUserTransformer(
     entity.metadata.annotations![LDAP_UUID_ANNOTATION] = v;
   });
   mapStringAttr(entry, vendor, vendor.dnAttributeName, v => {
-    entity.metadata.annotations![LDAP_DN_ANNOTATION] = v;
+    entity.metadata.annotations![LDAP_DN_ANNOTATION] = getCaseSensitivityValue(
+      v,
+      vendor,
+    );
   });
   mapStringAttr(entry, vendor, map.displayName, v => {
     entity.spec.profile!.displayName = v;
@@ -104,32 +107,45 @@ export async function defaultUserTransformer(
  */
 export async function readLdapUsers(
   client: LdapClient,
-  config: UserConfig,
+  userConfig: UserConfig[],
+  vendorConfig: VendorConfig | undefined,
   opts?: { transformer?: UserTransformer },
 ): Promise<{
   users: UserEntity[]; // With all relations empty
   userMemberOf: Map<string, Set<string>>; // DN -> DN or UUID of groups
 }> {
-  const { dn, options, map } = config;
-  const vendor = await client.getVendor();
-
+  if (userConfig.length === 0) {
+    return { users: [], userMemberOf: new Map() };
+  }
   const entities: UserEntity[] = [];
   const userMemberOf: Map<string, Set<string>> = new Map();
-
+  const vendorDefaults = await client.getVendor();
+  const vendor: LdapVendor = {
+    dnAttributeName:
+      vendorConfig?.dnAttributeName ?? vendorDefaults.dnAttributeName,
+    uuidAttributeName:
+      vendorConfig?.uuidAttributeName ?? vendorDefaults.uuidAttributeName,
+    dnCaseSensitive:
+      vendorConfig?.dnCaseSensitive ?? vendorDefaults.dnCaseSensitive,
+    decodeStringAttribute: vendorDefaults.decodeStringAttribute,
+  };
   const transformer = opts?.transformer ?? defaultUserTransformer;
 
-  await client.searchStreaming(dn, options, async user => {
-    const entity = await transformer(vendor, config, user);
+  for (const cfg of userConfig) {
+    const { dn, options, map } = cfg;
+    await client.searchStreaming(dn, options, async user => {
+      const entity = await transformer(vendor, cfg, user);
 
-    if (!entity) {
-      return;
-    }
+      if (!entity) {
+        return;
+      }
 
-    mapReferencesAttr(user, vendor, map.memberOf, (myDn, vs) => {
-      ensureItems(userMemberOf, myDn, vs);
+      mapReferencesAttr(user, vendor, map.memberOf, (myDn, vs) => {
+        ensureItems(userMemberOf, myDn, vs);
+      });
+      entities.push(entity);
     });
-    entities.push(entity);
-  });
+  }
 
   return { users: entities, userMemberOf };
 }
@@ -179,7 +195,10 @@ export async function defaultGroupTransformer(
     entity.metadata.annotations![LDAP_UUID_ANNOTATION] = v;
   });
   mapStringAttr(entry, vendor, vendor.dnAttributeName, v => {
-    entity.metadata.annotations![LDAP_DN_ANNOTATION] = v;
+    entity.metadata.annotations![LDAP_DN_ANNOTATION] = getCaseSensitivityValue(
+      v,
+      vendor,
+    );
   });
   mapStringAttr(entry, vendor, map.type, v => {
     entity.spec.type = v;
@@ -206,7 +225,8 @@ export async function defaultGroupTransformer(
  */
 export async function readLdapGroups(
   client: LdapClient,
-  config: GroupConfig,
+  groupConfig: GroupConfig[],
+  vendorConfig: VendorConfig | undefined,
   opts?: {
     transformer?: GroupTransformer;
   },
@@ -215,35 +235,50 @@ export async function readLdapGroups(
   groupMemberOf: Map<string, Set<string>>; // DN -> DN or UUID of groups
   groupMember: Map<string, Set<string>>; // DN -> DN or UUID of groups & users
 }> {
+  if (groupConfig.length === 0) {
+    return { groups: [], groupMemberOf: new Map(), groupMember: new Map() };
+  }
   const groups: GroupEntity[] = [];
   const groupMemberOf: Map<string, Set<string>> = new Map();
   const groupMember: Map<string, Set<string>> = new Map();
 
-  const { dn, map, options } = config;
-  const vendor = await client.getVendor();
+  const vendorDefaults = await client.getVendor();
+  const vendor: LdapVendor = {
+    dnAttributeName:
+      vendorConfig?.dnAttributeName ?? vendorDefaults.dnAttributeName,
+    uuidAttributeName:
+      vendorConfig?.uuidAttributeName ?? vendorDefaults.uuidAttributeName,
+    dnCaseSensitive:
+      vendorConfig?.dnCaseSensitive ?? vendorDefaults.dnCaseSensitive,
+    decodeStringAttribute: vendorDefaults.decodeStringAttribute,
+  };
 
   const transformer = opts?.transformer ?? defaultGroupTransformer;
 
-  await client.searchStreaming(dn, options, async entry => {
-    if (!entry) {
-      return;
-    }
+  for (const cfg of groupConfig) {
+    const { dn, map, options } = cfg;
 
-    const entity = await transformer(vendor, config, entry);
+    await client.searchStreaming(dn, options, async entry => {
+      if (!entry) {
+        return;
+      }
 
-    if (!entity) {
-      return;
-    }
+      const entity = await transformer(vendor, cfg, entry);
 
-    mapReferencesAttr(entry, vendor, map.memberOf, (myDn, vs) => {
-      ensureItems(groupMemberOf, myDn, vs);
+      if (!entity) {
+        return;
+      }
+
+      mapReferencesAttr(entry, vendor, map.memberOf, (myDn, vs) => {
+        ensureItems(groupMemberOf, myDn, vs);
+      });
+      mapReferencesAttr(entry, vendor, map.members, (myDn, vs) => {
+        ensureItems(groupMember, myDn, vs);
+      });
+
+      groups.push(entity);
     });
-    mapReferencesAttr(entry, vendor, map.members, (myDn, vs) => {
-      ensureItems(groupMember, myDn, vs);
-    });
-
-    groups.push(entity);
-  });
+  }
 
   return {
     groups,
@@ -264,8 +299,9 @@ export async function readLdapGroups(
  */
 export async function readLdapOrg(
   client: LdapClient,
-  userConfig: UserConfig,
-  groupConfig: GroupConfig,
+  userConfig: UserConfig[],
+  groupConfig: GroupConfig[],
+  vendorConfig: VendorConfig | undefined,
   options: {
     groupTransformer?: GroupTransformer;
     userTransformer?: UserTransformer;
@@ -278,12 +314,18 @@ export async function readLdapOrg(
   // Invokes the above "raw" read functions and stitches together the results
   // with all relations etc filled in.
 
-  const { users, userMemberOf } = await readLdapUsers(client, userConfig, {
-    transformer: options?.userTransformer,
-  });
+  const { users, userMemberOf } = await readLdapUsers(
+    client,
+    userConfig,
+    vendorConfig,
+    {
+      transformer: options?.userTransformer,
+    },
+  );
   const { groups, groupMemberOf, groupMember } = await readLdapGroups(
     client,
     groupConfig,
+    vendorConfig,
     { transformer: options?.groupTransformer },
   );
 
@@ -309,9 +351,23 @@ function mapReferencesAttr(
     const values = vendor.decodeStringAttribute(entry, attributeName);
     const dn = vendor.decodeStringAttribute(entry, vendor.dnAttributeName);
     if (values && dn && dn.length === 1) {
-      setter(dn[0], values);
+      if (vendor.dnCaseSensitive) {
+        setter(
+          dn[0].toLocaleLowerCase('en-US'),
+          values.map(v => v.toLocaleLowerCase('en-US')),
+        );
+      } else {
+        setter(dn[0], values);
+      }
     }
   }
+}
+
+/** Validates value exists and if required forced sensitivty value to lowercase */
+function getCaseSensitivityValue(value: string, vendor: LdapVendor) {
+  return value && vendor.dnCaseSensitive
+    ? value.toLocaleLowerCase('en-US')
+    : value;
 }
 
 // Inserts a number of values in a key-values mapping

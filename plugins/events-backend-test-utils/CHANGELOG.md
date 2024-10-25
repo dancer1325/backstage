@@ -1,5 +1,125 @@
 # @backstage/plugin-events-backend-test-utils
 
+## 0.1.38-next.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/plugin-events-node@0.4.3-next.0
+
+## 0.1.36
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/plugin-events-node@0.4.1
+
+## 0.1.36-next.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/plugin-events-node@0.4.1-next.1
+
+## 0.1.36-next.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/plugin-events-node@0.4.1-next.0
+
+## 0.1.35
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/plugin-events-node@0.4.0
+
+## 0.1.35-next.2
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/plugin-events-node@0.4.0-next.2
+
+## 0.1.35-next.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/plugin-events-node@0.4.0-next.1
+
+## 0.1.35-next.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/plugin-events-node@0.4.0-next.0
+
+## 0.1.33
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/plugin-events-node@0.3.9
+
+## 0.1.33-next.3
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/plugin-events-node@0.3.9-next.3
+
+## 0.1.33-next.2
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/plugin-events-node@0.3.9-next.2
+
+## 0.1.33-next.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/plugin-events-node@0.3.9-next.1
+
+## 0.1.33-next.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/plugin-events-node@0.3.9-next.0
+
+## 0.1.32
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/plugin-events-node@0.3.8
+
+## 0.1.32-next.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/plugin-events-node@0.3.8-next.1
+
+## 0.1.31-next.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/plugin-events-node@0.3.7-next.0
+
+## 0.1.29
+
+### Patch Changes
+
+- d44a20a: Added additional plugin metadata to `package.json`.
+- Updated dependencies
+  - @backstage/plugin-events-node@0.3.5
+
 ## 0.1.29-next.2
 
 ### Patch Changes

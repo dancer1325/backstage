@@ -20,7 +20,7 @@ import {
 } from '@backstage/backend-plugin-api';
 import { catalogServiceRef } from '@backstage/plugin-catalog-node/alpha';
 
-import { KubernetesBuilder } from '@backstage/plugin-kubernetes-backend';
+import { KubernetesBuilder } from './service';
 
 import {
   type AuthenticationStrategy,
@@ -139,9 +139,8 @@ class AuthStrategy implements KubernetesAuthStrategyExtensionPoint {
 
 /**
  * This is the backend plugin that provides the Kubernetes integration.
- * @alpha
+ * @public
  */
-
 export const kubernetesPlugin = createBackendPlugin({
   pluginId: 'kubernetes',
   register(env) {
@@ -193,27 +192,33 @@ export const kubernetesPlugin = createBackendPlugin({
         auth,
         httpAuth,
       }) {
-        // TODO: expose all of the customization & extension points of the builder here
-        const builder: KubernetesBuilder = KubernetesBuilder.createBuilder({
-          logger,
-          config,
-          catalogApi,
-          permissions,
-          discovery,
-          auth,
-          httpAuth,
-        })
-          .setObjectsProvider(extPointObjectsProvider.getObjectsProvider())
-          .setClusterSupplier(extPointClusterSuplier.getClusterSupplier())
-          .setFetcher(extPointFetcher.getFetcher())
-          .setServiceLocator(extPointServiceLocator.getServiceLocator());
+        if (config.has('kubernetes')) {
+          // TODO: expose all of the customization & extension points of the builder here
+          const builder: KubernetesBuilder = KubernetesBuilder.createBuilder({
+            logger,
+            config,
+            catalogApi,
+            permissions,
+            discovery,
+            auth,
+            httpAuth,
+          })
+            .setObjectsProvider(extPointObjectsProvider.getObjectsProvider())
+            .setClusterSupplier(extPointClusterSuplier.getClusterSupplier())
+            .setFetcher(extPointFetcher.getFetcher())
+            .setServiceLocator(extPointServiceLocator.getServiceLocator());
 
-        AuthStrategy.addAuthStrategiesFromArray(
-          extPointAuthStrategy.getAuthenticationStrategies(),
-          builder,
-        );
-        const { router } = await builder.build();
-        http.use(router);
+          AuthStrategy.addAuthStrategiesFromArray(
+            extPointAuthStrategy.getAuthenticationStrategies(),
+            builder,
+          );
+          const { router } = await builder.build();
+          http.use(router);
+        } else {
+          logger.warn(
+            'Failed to initialize kubernetes backend: valid kubernetes config is missing',
+          );
+        }
       },
     });
   },

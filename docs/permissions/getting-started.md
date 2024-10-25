@@ -40,34 +40,40 @@ Like many other parts of Backstage, the permissions framework relies on informat
 
 [The IdentityResolver docs](../auth/identity-resolver.md) describe the process for resolving group membership on sign in.
 
-## Optionally add cookie-based authentication
+## Test Permission Policy
 
-Asset requests initiated by the browser will not include a token in the `Authorization` header. If these requests check authorization through the permission framework, as done in plugins like TechDocs, then you'll need to set up cookie-based authentication. Refer to the ["Authenticate API requests"](https://github.com/backstage/backstage/blob/master/contrib/docs/tutorials/authenticate-api-requests.md) tutorial for a demonstration on how to implement this behavior.
+To help validate the permission framework is setup we'll create a Test Permission Policy:
 
-## Integrating the permission framework with your Backstage instance
+1. Backstage ships with a default Allow All Policy, we want to remove that as it would override our Test Permission Policy. To do this remove the following line:
 
-### 1. Set up the permission backend
-
-The permissions framework uses a new `permission-backend` plugin to accept authorization requests from other plugins across your Backstage instance. The Backstage backend does not include this permission backend by default, so you will need to add it:
-
-1. Add `@backstage/plugin-permission-backend` as a dependency of your Backstage backend:
-
-   ```bash
-   # From your Backstage root directory
-   yarn --cwd packages/backend add @backstage/plugin-permission-backend
+   ```ts title="packages/backend/src/index.ts"
+   // permission plugin
+   backend.add(import('@backstage/plugin-permission-backend'));
+   /* highlight-remove-start */
+   backend.add(
+     import('@backstage/plugin-permission-backend-module-allow-all-policy'),
+   );
+   /* highlight-remove-end */
    ```
 
-2. Add the following to a new file, `packages/backend/src/plugins/permission.ts`. This adds the permission-backend router, and configures it with a policy which allows everything.
+2. Now we need to add the `@backstage/backend-plugin-api` package:
 
-   ```typescript title="packages/backend/src/plugins/permission.ts"
-   import { createRouter } from '@backstage/plugin-permission-backend';
+   ```bash title="from your Backstage root directory"
+   yarn --cwd packages/backend add @backstage/backend-plugin-api
+   ```
+
+3. Next we will create an `extensions` folder under `packages/backend/src`
+4. In this new `extensions` folder we will add a new file called: `permissionsPolicyExtension.ts`
+5. Copy the following into the new `permissionsPolicyExtension.ts` file:
+
+   ```ts title="packages/backend/src/extensions/permissionsPolicyExtension.ts"
+   import { createBackendModule } from '@backstage/backend-plugin-api';
    import {
-     AuthorizeResult,
      PolicyDecision,
+     AuthorizeResult,
    } from '@backstage/plugin-permission-common';
    import { PermissionPolicy } from '@backstage/plugin-permission-node';
-   import { Router } from 'express';
-   import { PluginEnvironment } from '../types';
+   import { policyExtensionPoint } from '@backstage/plugin-permission-node/alpha';
 
    class TestPermissionPolicy implements PermissionPolicy {
      async handle(): Promise<PolicyDecision> {
@@ -75,44 +81,30 @@ The permissions framework uses a new `permission-backend` plugin to accept autho
      }
    }
 
-   export default async function createPlugin(
-     env: PluginEnvironment,
-   ): Promise<Router> {
-     return await createRouter({
-       config: env.config,
-       logger: env.logger,
-       discovery: env.discovery,
-       policy: new TestPermissionPolicy(),
-       identity: env.identity,
-     });
-   }
+   export default createBackendModule({
+     pluginId: 'permission',
+     moduleId: 'permission-policy',
+     register(reg) {
+       reg.registerInit({
+         deps: { policy: policyExtensionPoint },
+         async init({ policy }) {
+           policy.setPolicy(new TestPermissionPolicy());
+         },
+       });
+     },
+   });
    ```
 
-3. Wire up the permission policy in `packages/backend/src/index.ts`. [The index in the example backend](https://github.com/backstage/backstage/blob/master/packages/backend/src/index.ts) shows how to do this. You’ll need to import the module from the previous step, create a plugin environment, and add the router to the express app:
+6. We now need to register this in the backend. We will do this by adding the follow line:
 
    ```ts title="packages/backend/src/index.ts"
-   import proxy from './plugins/proxy';
-   import techdocs from './plugins/techdocs';
-   import search from './plugins/search';
+   // permission plugin
+   backend.add(import('@backstage/plugin-permission-backend'));
    /* highlight-add-next-line */
-   import permission from './plugins/permission';
-
-   async function main() {
-     const techdocsEnv = useHotMemoize(module, () => createEnv('techdocs'));
-     const searchEnv = useHotMemoize(module, () => createEnv('search'));
-     const appEnv = useHotMemoize(module, () => createEnv('app'));
-     /* highlight-add-next-line */
-     const permissionEnv = useHotMemoize(module, () => createEnv('permission'));
-     // ..
-
-     apiRouter.use('/techdocs', await techdocs(techdocsEnv));
-     apiRouter.use('/proxy', await proxy(proxyEnv));
-     apiRouter.use('/search', await search(searchEnv));
-     /* highlight-add-next-line */
-     apiRouter.use('/permission', await permission(permissionEnv));
-     // ..
-   }
+   backend.add(import('./extensions/permissionsPolicyExtension'));
    ```
+
+You now have a Test Permission Policy in place, this will help us test that the permission framework is working in the next section.
 
 ### 2. Enable and test the permissions system
 

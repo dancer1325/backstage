@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-import { LocalStorageFeatureFlags, NoOpAnalyticsApi } from '../apis';
+import { LocalStorageFeatureFlags } from '../apis';
 import {
-  MockAnalyticsApi,
+  mockApis,
   renderWithEffects,
   withLogCollector,
+  registerMswTestHooks,
 } from '@backstage/test-utils';
-import { screen, waitFor, act } from '@testing-library/react';
+import { screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { setupServer } from 'msw/node';
+import { rest } from 'msw';
 import React, { PropsWithChildren, ReactNode } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import {
@@ -51,9 +54,12 @@ import {
 } from '@backstage/core-plugin-api/alpha';
 
 describe('Integration Test', () => {
+  const server = setupServer();
+  registerMswTestHooks(server);
+
   const noOpAnalyticsApi = createApiFactory(
     analyticsApiRef,
-    new NoOpAnalyticsApi(),
+    mockApis.analytics(),
   );
   const noopErrorApi = createApiFactory(errorApiRef, {
     error$() {
@@ -569,7 +575,7 @@ describe('Integration Test', () => {
   });
 
   it('should track route changes via analytics api', async () => {
-    const mockAnalyticsApi = new MockAnalyticsApi();
+    const mockAnalyticsApi = mockApis.analytics();
     const apis = [createApiFactory(analyticsApiRef, mockAnalyticsApi)];
     const app = new AppManager({
       apis,
@@ -602,26 +608,27 @@ describe('Integration Test', () => {
     );
 
     // Capture initial and subsequent navigation events with expected context.
-    const capturedEvents = mockAnalyticsApi.getEvents();
-    expect(capturedEvents[0]).toMatchObject({
+    expect(mockAnalyticsApi.captureEvent).toHaveBeenCalledTimes(2);
+    expect(mockAnalyticsApi.captureEvent).toHaveBeenNthCalledWith(1, {
       action: 'navigate',
       subject: '/',
+      attributes: {},
       context: {
         extension: 'App',
         pluginId: 'blob',
         routeRef: 'ref-1-2',
       },
     });
-    expect(capturedEvents[1]).toMatchObject({
+    expect(mockAnalyticsApi.captureEvent).toHaveBeenNthCalledWith(2, {
       action: 'navigate',
       subject: '/foo',
+      attributes: {},
       context: {
         extension: 'App',
         pluginId: 'plugin2',
         routeRef: 'ref-2',
       },
     });
-    expect(capturedEvents).toHaveLength(2);
   });
 
   it('should throw some error when the route has duplicate params', async () => {
@@ -847,6 +854,17 @@ describe('Integration Test', () => {
   });
 
   it('should clear app cookie when the user logs out', async () => {
+    const logoutSignal = jest.fn();
+    server.use(
+      rest.delete(
+        'http://localhost:7007/app/.backstage/auth/v1/cookie',
+        (_req, res, ctx) => {
+          logoutSignal();
+          return res(ctx.status(200));
+        },
+      ),
+    );
+
     const meta = global.document.createElement('meta');
     meta.name = 'backstage-app-mode';
     meta.content = 'protected';
@@ -860,9 +878,9 @@ describe('Integration Test', () => {
         }),
       }),
     };
-    const discoveryApiMock = {
-      getBaseUrl: jest.fn().mockResolvedValue('http://localhost:7007/app'),
-    };
+    const discoveryApiMock = mockApis.discovery.mock({
+      getBaseUrl: async () => 'http://localhost:7007/app',
+    });
 
     const app = new AppManager({
       icons,
@@ -901,12 +919,7 @@ describe('Integration Test', () => {
       await userEvent.click(screen.getByText('Sign Out'));
     });
 
-    await waitFor(() =>
-      expect(fetchApiMock.fetch).toHaveBeenCalledWith(
-        'http://localhost:7007/app/.backstage/auth/v1/cookie',
-        { method: 'DELETE' },
-      ),
-    );
+    expect(logoutSignal).toHaveBeenCalled();
 
     global.document.head.removeChild(meta);
   });

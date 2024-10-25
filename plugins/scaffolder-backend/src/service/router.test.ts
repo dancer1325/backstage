@@ -18,9 +18,7 @@ import {
   DatabaseManager,
   loggerToWinstonLogger,
   PluginDatabaseManager,
-  UrlReaders,
 } from '@backstage/backend-common';
-import { CatalogApi } from '@backstage/catalog-client';
 import { ConfigReader } from '@backstage/config';
 import { TemplateEntityV1beta3 } from '@backstage/plugin-scaffolder-common';
 import express from 'express';
@@ -45,7 +43,14 @@ import {
   AuthorizeResult,
   PermissionEvaluator,
 } from '@backstage/plugin-permission-common';
-import { mockCredentials, mockServices } from '@backstage/backend-test-utils';
+import {
+  mockCredentials,
+  mockErrorHandler,
+  mockServices,
+} from '@backstage/backend-test-utils';
+import { AutocompleteHandler } from '@backstage/plugin-scaffolder-node/alpha';
+import { UrlReaders } from '@backstage/backend-defaults/urlReader';
+import { catalogServiceMock } from '@backstage/plugin-catalog-node/testUtils';
 
 const mockAccess = jest.fn();
 
@@ -86,7 +91,7 @@ describe('createRouter', () => {
   let app: express.Express;
   let loggerSpy: jest.SpyInstance;
   let taskBroker: TaskBroker;
-  const catalogClient = { getEntityByRef: jest.fn() } as unknown as CatalogApi;
+  const catalogClient = catalogServiceMock.mock();
   const permissionApi = {
     authorize: jest.fn(),
     authorizeConditional: jest.fn(),
@@ -209,21 +214,19 @@ describe('createRouter', () => {
       });
       app = express().use(router);
 
-      jest
-        .spyOn(catalogClient, 'getEntityByRef')
-        .mockImplementation(async ref => {
-          const { kind } = parseEntityRef(ref);
+      catalogClient.getEntityByRef.mockImplementation(async ref => {
+        const { kind } = parseEntityRef(ref);
 
-          if (kind.toLocaleLowerCase() === 'template') {
-            return getMockTemplate();
-          }
+        if (kind.toLocaleLowerCase() === 'template') {
+          return getMockTemplate();
+        }
 
-          if (kind.toLocaleLowerCase() === 'user') {
-            return mockUser;
-          }
+        if (kind.toLocaleLowerCase() === 'user') {
+          return mockUser;
+        }
 
-          throw new Error(`no mock found for kind: ${kind}`);
-        });
+        throw new Error(`no mock found for kind: ${kind}`);
+      });
 
       jest
         .spyOn(permissionApi, 'authorizeConditional')
@@ -394,11 +397,13 @@ describe('createRouter', () => {
               createdBy: '',
             },
           ],
+          totalTasks: 1,
         });
 
         const response = await request(app).get(`/v2/tasks`);
         expect(taskBroker.list).toHaveBeenCalledWith({
-          createdBy: undefined,
+          filters: {},
+          pagination: {},
         });
         expect(response.status).toEqual(200);
         expect(response.body).toStrictEqual({
@@ -411,6 +416,7 @@ describe('createRouter', () => {
               createdBy: '',
             },
           ],
+          totalTasks: 1,
         });
       });
 
@@ -427,14 +433,12 @@ describe('createRouter', () => {
               createdBy: 'user:default/foo',
             },
           ],
+          totalTasks: 1,
         });
 
         const response = await request(app).get(
-          `/v2/tasks?createdBy=user:default/foo`,
+          `/v2/tasks?createdBy=user:default/foo&createdBy=user:default/bar&status=completed&status=open&limit=1&offset=0&order=desc:created_at`,
         );
-        expect(taskBroker.list).toHaveBeenCalledWith({
-          createdBy: 'user:default/foo',
-        });
 
         expect(response.status).toEqual(200);
         expect(response.body).toStrictEqual({
@@ -447,6 +451,18 @@ describe('createRouter', () => {
               createdBy: 'user:default/foo',
             },
           ],
+          totalTasks: 1,
+        });
+        expect(taskBroker.list).toHaveBeenCalledWith({
+          filters: {
+            createdBy: ['user:default/foo', 'user:default/bar'],
+            status: ['completed', 'open'],
+          },
+          pagination: {
+            limit: 1,
+            offset: 0,
+          },
+          order: [{ order: 'desc', field: 'created_at' }],
         });
       });
     });
@@ -691,6 +707,32 @@ data: {"id":1,"taskId":"a-random-id","type":"completion","createdAt":"","body":{
         expect(subscriber!.closed).toBe(true);
       });
     });
+
+    describe('POST /v2/dry-run', () => {
+      it('should get user entity', async () => {
+        const mockToken = mockCredentials.user.token();
+        const mockTemplate = getMockTemplate();
+
+        await request(app)
+          .post('/v2/dry-run')
+          .set('Authorization', `Bearer ${mockToken}`)
+          .send({
+            template: mockTemplate,
+            values: {
+              requiredParameter1: 'required-value-1',
+              requiredParameter2: 'required-value-2',
+            },
+            directoryContents: [],
+          });
+
+        expect(catalogClient.getEntityByRef).toHaveBeenCalledTimes(1);
+
+        expect(catalogClient.getEntityByRef).toHaveBeenCalledWith(
+          'user:default/mock',
+          expect.anything(),
+        );
+      });
+    });
   });
 
   describe('providing an identity api', () => {
@@ -721,20 +763,18 @@ data: {"id":1,"taskId":"a-random-id","type":"completion","createdAt":"","body":{
       });
       app = express().use(router);
 
-      jest
-        .spyOn(catalogClient, 'getEntityByRef')
-        .mockImplementation(async ref => {
-          const { kind } = parseEntityRef(ref);
+      catalogClient.getEntityByRef.mockImplementation(async ref => {
+        const { kind } = parseEntityRef(ref);
 
-          if (kind.toLocaleLowerCase() === 'template') {
-            return getMockTemplate();
-          }
+        if (kind.toLocaleLowerCase() === 'template') {
+          return getMockTemplate();
+        }
 
-          if (kind.toLocaleLowerCase() === 'user') {
-            return mockUser;
-          }
-          throw new Error(`no mock found for kind: ${kind}`);
-        });
+        if (kind.toLocaleLowerCase() === 'user') {
+          return mockUser;
+        }
+        throw new Error(`no mock found for kind: ${kind}`);
+      });
 
       jest
         .spyOn(permissionApi, 'authorizeConditional')
@@ -1164,11 +1204,13 @@ data: {"id":1,"taskId":"a-random-id","type":"completion","createdAt":"","body":{
               createdBy: '',
             },
           ],
+          totalTasks: 1,
         });
 
         const response = await request(app).get(`/v2/tasks`);
         expect(taskBroker.list).toHaveBeenCalledWith({
-          createdBy: undefined,
+          pagination: {},
+          filters: {},
         });
         expect(response.status).toEqual(200);
         expect(response.body).toStrictEqual({
@@ -1181,6 +1223,7 @@ data: {"id":1,"taskId":"a-random-id","type":"completion","createdAt":"","body":{
               createdBy: '',
             },
           ],
+          totalTasks: 1,
         });
       });
 
@@ -1197,13 +1240,17 @@ data: {"id":1,"taskId":"a-random-id","type":"completion","createdAt":"","body":{
               createdBy: 'user:default/foo',
             },
           ],
+          totalTasks: 1,
         });
 
         const response = await request(app).get(
           `/v2/tasks?createdBy=user:default/foo`,
         );
         expect(taskBroker.list).toHaveBeenCalledWith({
-          createdBy: 'user:default/foo',
+          filters: {
+            createdBy: ['user:default/foo'],
+          },
+          pagination: {},
         });
 
         expect(response.status).toEqual(200);
@@ -1217,6 +1264,7 @@ data: {"id":1,"taskId":"a-random-id","type":"completion","createdAt":"","body":{
               createdBy: 'user:default/foo',
             },
           ],
+          totalTasks: 1,
         });
       });
     });
@@ -1459,6 +1507,74 @@ data: {"id":1,"taskId":"a-random-id","type":"completion","createdAt":"","body":{
           after: 10,
         });
         expect(subscriber!.closed).toBe(true);
+      });
+    });
+
+    describe('GET /v2/autocomplete/:provider/:resource', () => {
+      let handleAutocompleteRequest: AutocompleteHandler;
+
+      beforeEach(async () => {
+        handleAutocompleteRequest = jest.fn().mockResolvedValue({
+          results: [{ title: 'blob' }],
+        });
+
+        const router = await createRouter({
+          logger: loggerToWinstonLogger(mockServices.logger.mock()),
+          config: new ConfigReader({}),
+          database: createDatabase(),
+          catalogClient,
+          reader: mockUrlReader,
+          taskBroker,
+          permissions: permissionApi,
+          auth,
+          httpAuth,
+          discovery,
+          autocompleteHandlers: {
+            'test-provider': handleAutocompleteRequest,
+          },
+        });
+
+        app = express().use(router).use(mockErrorHandler());
+      });
+
+      it('should throw an error when the provider is not registered', async () => {
+        const response = await request(app)
+          .post('/v2/autocomplete/unknown-provider/resource')
+          .send({
+            token: 'token',
+            context: {},
+          });
+
+        expect(response.status).toEqual(400);
+        expect(response.body).toEqual(
+          expect.objectContaining({
+            error: {
+              message: 'Unsupported provider: unknown-provider',
+              name: 'InputError',
+            },
+          }),
+        );
+      });
+
+      it('should call the autocomplete handler', async () => {
+        const context = { mock: 'context' };
+        const mockToken = 'mocktoken';
+
+        const response = await request(app)
+          .post('/v2/autocomplete/test-provider/resource')
+          .send({
+            token: mockToken,
+            context,
+          });
+
+        expect(response.status).toEqual(200);
+
+        expect(response.body).toEqual({ results: [{ title: 'blob' }] });
+        expect(handleAutocompleteRequest).toHaveBeenCalledWith({
+          token: mockToken,
+          context,
+          resource: 'resource',
+        });
       });
     });
   });

@@ -21,6 +21,12 @@ import {
 import { CacheManager } from './CacheManager';
 
 /**
+ * Key-value store for caching data.
+ *
+ * See {@link @backstage/code-plugin-api#CacheService}
+ * and {@link https://backstage.io/docs/backend-system/core-services/cache | the service docs}
+ * for more information.
+ *
  * @public
  */
 export const cacheServiceFactory = createServiceFactory({
@@ -34,6 +40,6 @@ export const cacheServiceFactory = createServiceFactory({
     return CacheManager.fromConfig(config, { logger });
   },
   async factory({ plugin }, manager) {
-    return manager.forPlugin(plugin.getId()).getClient();
+    return manager.forPlugin(plugin.getId());
   },
 });

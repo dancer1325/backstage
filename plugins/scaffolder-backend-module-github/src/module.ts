@@ -29,11 +29,14 @@ import {
   createGithubWebhookAction,
   createPublishGithubAction,
   createPublishGithubPullRequestAction,
+  createGithubPagesEnableAction,
+  createGithubBranchProtectionAction,
 } from './actions';
 import {
   DefaultGithubCredentialsProvider,
   ScmIntegrations,
 } from '@backstage/integration';
+import { CatalogClient } from '@backstage/catalog-client';
 
 /**
  * @public
@@ -47,11 +50,15 @@ export const githubModule = createBackendModule({
       deps: {
         scaffolder: scaffolderActionsExtensionPoint,
         config: coreServices.rootConfig,
+        discovery: coreServices.discovery,
       },
-      async init({ scaffolder, config }) {
+      async init({ scaffolder, config, discovery }) {
         const integrations = ScmIntegrations.fromConfig(config);
         const githubCredentialsProvider =
           DefaultGithubCredentialsProvider.fromIntegrations(integrations);
+        const catalogClient = new CatalogClient({
+          discoveryApi: discovery,
+        });
 
         scaffolder.addActions(
           createGithubActionsDispatchAction({
@@ -67,6 +74,7 @@ export const githubModule = createBackendModule({
           }),
           createGithubEnvironmentAction({
             integrations,
+            catalogClient,
           }),
           createGithubIssuesLabelAction({
             integrations,
@@ -90,6 +98,13 @@ export const githubModule = createBackendModule({
             integrations,
             githubCredentialsProvider,
             config,
+          }),
+          createGithubPagesEnableAction({
+            integrations,
+            githubCredentialsProvider,
+          }),
+          createGithubBranchProtectionAction({
+            integrations,
           }),
         );
       },

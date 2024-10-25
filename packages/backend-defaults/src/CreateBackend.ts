@@ -14,50 +14,45 @@
  * limitations under the License.
  */
 
-import {
-  Backend,
-  authServiceFactory,
-  createSpecializedBackend,
-  httpAuthServiceFactory,
-  httpRouterServiceFactory,
-  identityServiceFactory,
-  loggerServiceFactory,
-  rootHttpRouterServiceFactory,
-  rootLoggerServiceFactory,
-  tokenManagerServiceFactory,
-  userInfoServiceFactory,
-} from '@backstage/backend-app-api';
+import { Backend, createSpecializedBackend } from '@backstage/backend-app-api';
+import { authServiceFactory } from '@backstage/backend-defaults/auth';
 import { cacheServiceFactory } from '@backstage/backend-defaults/cache';
 import { databaseServiceFactory } from '@backstage/backend-defaults/database';
 import { discoveryServiceFactory } from '@backstage/backend-defaults/discovery';
+import { httpAuthServiceFactory } from '@backstage/backend-defaults/httpAuth';
+import { httpRouterServiceFactory } from '@backstage/backend-defaults/httpRouter';
 import { lifecycleServiceFactory } from '@backstage/backend-defaults/lifecycle';
+import { loggerServiceFactory } from '@backstage/backend-defaults/logger';
 import { permissionsServiceFactory } from '@backstage/backend-defaults/permissions';
 import { rootConfigServiceFactory } from '@backstage/backend-defaults/rootConfig';
+import { rootHealthServiceFactory } from '@backstage/backend-defaults/rootHealth';
+import { rootHttpRouterServiceFactory } from '@backstage/backend-defaults/rootHttpRouter';
 import { rootLifecycleServiceFactory } from '@backstage/backend-defaults/rootLifecycle';
+import { rootLoggerServiceFactory } from '@backstage/backend-defaults/rootLogger';
 import { schedulerServiceFactory } from '@backstage/backend-defaults/scheduler';
 import { urlReaderServiceFactory } from '@backstage/backend-defaults/urlReader';
+import { userInfoServiceFactory } from '@backstage/backend-defaults/userInfo';
 import { eventsServiceFactory } from '@backstage/plugin-events-node';
 
 export const defaultServiceFactories = [
-  authServiceFactory(),
-  cacheServiceFactory(),
-  rootConfigServiceFactory(),
-  databaseServiceFactory(),
-  discoveryServiceFactory(),
-  httpAuthServiceFactory(),
-  httpRouterServiceFactory(),
-  identityServiceFactory(),
-  lifecycleServiceFactory(),
-  loggerServiceFactory(),
-  permissionsServiceFactory(),
-  rootHttpRouterServiceFactory(),
-  rootLifecycleServiceFactory(),
-  rootLoggerServiceFactory(),
-  schedulerServiceFactory(),
-  tokenManagerServiceFactory(),
-  userInfoServiceFactory(),
-  urlReaderServiceFactory(),
-  eventsServiceFactory(),
+  authServiceFactory,
+  cacheServiceFactory,
+  rootConfigServiceFactory,
+  databaseServiceFactory,
+  discoveryServiceFactory,
+  httpAuthServiceFactory,
+  httpRouterServiceFactory,
+  lifecycleServiceFactory,
+  loggerServiceFactory,
+  permissionsServiceFactory,
+  rootHealthServiceFactory,
+  rootHttpRouterServiceFactory,
+  rootLifecycleServiceFactory,
+  rootLoggerServiceFactory,
+  schedulerServiceFactory,
+  userInfoServiceFactory,
+  urlReaderServiceFactory,
+  eventsServiceFactory,
 ];
 
 /**

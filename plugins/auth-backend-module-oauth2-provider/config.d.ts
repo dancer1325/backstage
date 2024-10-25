@@ -32,6 +32,16 @@ export interface Config {
           additionalScopes?: string | string[];
           disableRefresh?: boolean;
           includeBasicAuth?: boolean;
+          signIn?: {
+            resolvers: Array<
+              | { resolver: 'usernameMatchingUserEntityName' }
+              | {
+                  resolver: 'emailLocalPartMatchingUserEntityName';
+                  allowedDomains?: string[];
+                }
+              | { resolver: 'emailMatchingUserEntityProfileEmail' }
+            >;
+          };
         };
       };
     };

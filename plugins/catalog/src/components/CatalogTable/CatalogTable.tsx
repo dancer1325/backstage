@@ -35,19 +35,20 @@ import {
   useStarredEntities,
 } from '@backstage/plugin-catalog-react';
 import Typography from '@material-ui/core/Typography';
-import { withStyles } from '@material-ui/core/styles';
 import { visuallyHidden } from '@mui/utils';
 import Edit from '@material-ui/icons/Edit';
 import OpenInNew from '@material-ui/icons/OpenInNew';
-import Star from '@material-ui/icons/Star';
-import StarBorder from '@material-ui/icons/StarBorder';
 import { capitalize } from 'lodash';
 import pluralize from 'pluralize';
 import React, { ReactNode, useMemo } from 'react';
 import { columnFactories } from './columns';
 import { CatalogTableColumnsFunc, CatalogTableRow } from './types';
-import { PaginatedCatalogTable } from './PaginatedCatalogTable';
+import { OffsetPaginatedCatalogTable } from './OffsetPaginatedCatalogTable';
+import { CursorPaginatedCatalogTable } from './CursorPaginatedCatalogTable';
 import { defaultCatalogTableColumnsFunc } from './defaultCatalogTableColumnsFunc';
+import { useTranslationRef } from '@backstage/core-plugin-api/alpha';
+import { catalogTranslationRef } from '../../alpha/translation';
+import { FavoriteToggleIcon } from '@backstage/core-components';
 
 /**
  * Props for {@link CatalogTable}.
@@ -61,12 +62,6 @@ export interface CatalogTableProps {
   emptyContent?: ReactNode;
   subtitle?: string;
 }
-
-const YellowStar = withStyles({
-  root: {
-    color: '#f3ba37',
-  },
-})(Star);
 
 const refCompare = (a: Entity, b: Entity) => {
   const toRef = (entity: Entity) =>
@@ -88,21 +83,30 @@ export const CatalogTable = (props: CatalogTableProps) => {
   } = props;
   const { isStarredEntity, toggleStarredEntity } = useStarredEntities();
   const entityListContext = useEntityList();
-  const { loading, error, entities, filters, pageInfo, totalItems } =
-    entityListContext;
-  const enablePagination = !!pageInfo;
+
+  const {
+    loading,
+    error,
+    entities,
+    filters,
+    pageInfo,
+    totalItems,
+    paginationMode,
+  } = entityListContext;
+
   const tableColumns = useMemo(
     () =>
       typeof columns === 'function' ? columns(entityListContext) : columns,
     [columns, entityListContext],
   );
+  const { t } = useTranslationRef(catalogTranslationRef);
 
   if (error) {
     return (
       <div>
         <WarningPanel
           severity="error"
-          title="Could not fetch catalog entities."
+          title={t('catalogTable.warningPanelTitle')}
         >
           <CodeSnippet language="text" text={error.toString()} />
         </WarningPanel>
@@ -113,7 +117,7 @@ export const CatalogTable = (props: CatalogTableProps) => {
   const defaultActions: TableProps<CatalogTableRow>['actions'] = [
     ({ entity }) => {
       const url = entity.metadata.annotations?.[ANNOTATION_VIEW_URL];
-      const title = 'View';
+      const title = t('catalogTable.viewActionTitle');
 
       return {
         icon: () => (
@@ -132,7 +136,7 @@ export const CatalogTable = (props: CatalogTableProps) => {
     },
     ({ entity }) => {
       const url = entity.metadata.annotations?.[ANNOTATION_EDIT_URL];
-      const title = 'Edit';
+      const title = t('catalogTable.editActionTitle');
 
       return {
         icon: () => (
@@ -151,16 +155,13 @@ export const CatalogTable = (props: CatalogTableProps) => {
     },
     ({ entity }) => {
       const isStarred = isStarredEntity(entity);
-      const title = isStarred ? 'Remove from favorites' : 'Add to favorites';
+      const title = isStarred
+        ? t('catalogTable.unStarActionTitle')
+        : t('catalogTable.starActionTitle');
 
       return {
         cellStyle: { paddingLeft: '1em' },
-        icon: () => (
-          <>
-            <Typography style={visuallyHidden}>{title}</Typography>
-            {isStarred ? <YellowStar /> : <StarBorder />}
-          </>
-        ),
+        icon: () => <FavoriteToggleIcon isFavorite={isStarred} />,
         tooltip: title,
         onClick: () => toggleStarredEntity(entity),
       };
@@ -190,9 +191,9 @@ export const CatalogTable = (props: CatalogTableProps) => {
     ...tableOptions,
   };
 
-  if (enablePagination) {
+  if (paginationMode === 'cursor') {
     return (
-      <PaginatedCatalogTable
+      <CursorPaginatedCatalogTable
         columns={tableColumns}
         emptyContent={emptyContent}
         isLoading={loading}
@@ -201,8 +202,21 @@ export const CatalogTable = (props: CatalogTableProps) => {
         subtitle={subtitle}
         options={options}
         data={entities.map(toEntityRow)}
-        next={pageInfo.next}
-        prev={pageInfo.prev}
+        next={pageInfo?.next}
+        prev={pageInfo?.prev}
+      />
+    );
+  } else if (paginationMode === 'offset') {
+    return (
+      <OffsetPaginatedCatalogTable
+        columns={tableColumns}
+        emptyContent={emptyContent}
+        isLoading={loading}
+        title={title}
+        actions={actions}
+        subtitle={subtitle}
+        options={options}
+        data={entities.map(toEntityRow)}
       />
     );
   }

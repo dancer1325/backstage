@@ -23,7 +23,6 @@ import {
   readProviderConfigs,
 } from './PuppetDbEntityProviderConfig';
 import { Config } from '@backstage/config';
-import { PluginTaskScheduler, TaskRunner } from '@backstage/backend-tasks';
 import * as uuid from 'uuid';
 import { defaultResourceTransformer, ResourceTransformer } from '../puppet';
 import {
@@ -34,7 +33,11 @@ import {
 import { merge } from 'lodash';
 import { readPuppetNodes } from '../puppet/read';
 import { ENDPOINT_NODES } from '../puppet/constants';
-import { LoggerService } from '@backstage/backend-plugin-api';
+import {
+  SchedulerService,
+  SchedulerServiceTaskRunner,
+  LoggerService,
+} from '@backstage/backend-plugin-api';
 
 /**
  * Reads nodes from [PuppetDB](https://www.puppet.com/docs/puppet/6/puppetdb_overview.html)
@@ -61,8 +64,8 @@ export class PuppetDbEntityProvider implements EntityProvider {
     config: Config,
     deps: {
       logger: LoggerService;
-      schedule?: TaskRunner;
-      scheduler?: PluginTaskScheduler;
+      schedule?: SchedulerServiceTaskRunner;
+      scheduler?: SchedulerService;
       transformer?: ResourceTransformer;
     },
   ): PuppetDbEntityProvider[] {
@@ -96,16 +99,15 @@ export class PuppetDbEntityProvider implements EntityProvider {
    * Creates an instance of {@link PuppetDbEntityProvider}.
    *
    * @param config - Configuration of the provider.
-   * @param logger - The instance of a {@link LoggerService}.
-   * @param taskRunner - The instance of {@link TaskRunner}.
+   * @param logger - The instance of a {@link @backstage/backend-plugin-api#LoggerService}.
+   * @param taskRunner - The instance of {@link @backstage/backend-plugin-api#SchedulerServiceTaskRunner}.
    * @param transformer - A {@link ResourceTransformer} function.
    *
-   * @private
    */
   private constructor(
     config: PuppetDbEntityProviderConfig,
     logger: LoggerService,
-    taskRunner: TaskRunner,
+    taskRunner: SchedulerServiceTaskRunner,
     transformer: ResourceTransformer,
   ) {
     this.config = config;
@@ -130,11 +132,11 @@ export class PuppetDbEntityProvider implements EntityProvider {
   /**
    * Creates a function that can be used to schedule a refresh of the catalog.
    *
-   * @param taskRunner - The instance of {@link TaskRunner}.
-   *
-   * @private
+   * @param taskRunner - The instance of {@link @backstage/backend-plugin-api#SchedulerServiceTaskRunner}.
    */
-  private createScheduleFn(taskRunner: TaskRunner): () => Promise<void> {
+  private createScheduleFn(
+    taskRunner: SchedulerServiceTaskRunner,
+  ): () => Promise<void> {
     return async () => {
       const taskId = `${this.getProviderName()}:refresh`;
       return taskRunner.run({
@@ -213,7 +215,7 @@ function withLocations(baseUrl: string, entity: Entity): Entity {
 /**
  * Tracks the progress of the PuppetDB read and commit operations.
  *
- * @param logger - The instance of a {@link LoggerService}.
+ * @param logger - The instance of a {@link @backstage/backend-plugin-api#LoggerService}.
  */
 function trackProgress(logger: LoggerService) {
   let timestamp = Date.now();

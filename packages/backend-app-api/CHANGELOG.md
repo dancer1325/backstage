@@ -1,5 +1,415 @@
 # @backstage/backend-app-api
 
+## 1.0.2-next.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/plugin-auth-node@0.5.4-next.0
+  - @backstage/backend-plugin-api@1.0.2-next.0
+  - @backstage/cli-common@0.1.14
+  - @backstage/config@1.2.0
+  - @backstage/config-loader@1.9.1
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+  - @backstage/plugin-permission-node@0.8.5-next.0
+
+## 1.0.1
+
+### Patch Changes
+
+- ffd1f4a: Plugin lifecycle shutdown hooks are now performed before root lifecycle shutdown hooks.
+- fd6e6f4: build(deps): bump `cookie` from 0.6.0 to 0.7.0
+- 094eaa3: Remove references to in-repo backend-common
+- 04af116: The backend will no longer exit immediately if any plugin or modules fails to initialize. Instead, the backend will wait for all plugins and modules to either start up successfully or throw, and then shut down the backend if there were any initialization errors.
+
+  This fixes an issue where backend initialization errors in adjacent plugins during database schema migration could cause the database migrations to be stuck in a locked state.
+
+- Updated dependencies
+  - @backstage/plugin-auth-node@0.5.3
+  - @backstage/plugin-permission-node@0.8.4
+  - @backstage/backend-plugin-api@1.0.1
+  - @backstage/cli-common@0.1.14
+  - @backstage/config@1.2.0
+  - @backstage/config-loader@1.9.1
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+
+## 1.0.1-next.1
+
+### Patch Changes
+
+- ffd1f4a: Plugin lifecycle shutdown hooks are now performed before root lifecycle shutdown hooks.
+- fd6e6f4: build(deps): bump `cookie` from 0.6.0 to 0.7.0
+- Updated dependencies
+  - @backstage/plugin-auth-node@0.5.3-next.1
+  - @backstage/backend-plugin-api@1.0.1-next.1
+  - @backstage/cli-common@0.1.14
+  - @backstage/config@1.2.0
+  - @backstage/config-loader@1.9.1
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+  - @backstage/plugin-permission-node@0.8.4-next.1
+
+## 1.0.1-next.0
+
+### Patch Changes
+
+- 094eaa3: Remove references to in-repo backend-common
+- 04af116: The backend will no longer exit immediately if any plugin or modules fails to initialize. Instead, the backend will wait for all plugins and modules to either start up successfully or throw, and then shut down the backend if there were any initialization errors.
+
+  This fixes an issue where backend initialization errors in adjacent plugins during database schema migration could cause the database migrations to be stuck in a locked state.
+
+- Updated dependencies
+  - @backstage/plugin-permission-node@0.8.4-next.0
+  - @backstage/plugin-auth-node@0.5.3-next.0
+  - @backstage/backend-plugin-api@1.0.1-next.0
+  - @backstage/cli-common@0.1.14
+  - @backstage/config@1.2.0
+  - @backstage/config-loader@1.9.1
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+
+## 1.0.0
+
+### Major Changes
+
+- ec1b4be: Release 1.0 of the new backend system! :tada:
+
+  The backend system is finally getting promoted to 1.0.0. This means that the API is now stable and breaking changes should not occur until version 2.0.0, see our [package versioning policy](https://backstage.io/docs/overview/versioning-policy/#package-versioning-policy) for more information what this means.
+
+  This release also marks the end of the old backend system based on `createRouter` exports. Going forward backend plugins packages will start to deprecate and later this year remove exports supporting the old backend system. If you would like to help out with this transition, see https://github.com/backstage/backstage/issues/26353 or consult the [migration guide](https://backstage.io/docs/backend-system/building-plugins-and-modules/migrating/#remove-support-for-the-old-backend-system).
+
+### Minor Changes
+
+- 19ff127: **BREAKING**: The deprecated `identityServiceFactory` and `tokenManagerServiceFactory` have been removed.
+- d425fc4: **BREAKING**: The return values from `createBackendPlugin`, `createBackendModule`, and `createServiceFactory` are now simply `BackendFeature` and `ServiceFactory`, instead of the previously deprecated form of a function that returns them. For this reason, `createServiceFactory` also no longer accepts the callback form where you provide direct options to the service. This also affects all `coreServices.*` service refs.
+
+  This may in particular affect tests; if you were effectively doing `createBackendModule({...})()` (note the parentheses), you can now remove those extra parentheses at the end. You may encounter cases of this in your `packages/backend/src/index.ts` too, where you add plugins, modules, and services. If you were using `createServiceFactory` with a function as its argument for the purpose of passing in options, this pattern has been deprecated for a while and is no longer supported. You may want to explore the new multiton patterns to achieve your goals, or moving settings to app-config.
+
+  As part of this change, the `IdentityFactoryOptions` type was removed, and can no longer be used to tweak that service. The identity service was also deprecated some time ago, and you will want to [migrate to the new auth system](https://backstage.io/docs/tutorials/auth-service-migration) if you still rely on it.
+
+### Patch Changes
+
+- cd38da8: Deprecate the `featureDiscoveryServiceFactory` in favor of using `@backstage/backend-defaults#discoveryFeatureLoader` instead.
+- 8ccf784: All created backend instances now share a the same `process` exit listeners, and on exit the process will wait for all backend instances to shut down before exiting. This fixes the `EventEmitter` leak warnings in tests.
+- 6ed9264: chore(deps): bump `path-to-regexp` from 6.2.2 to 8.0.0
+- c246372: Updated the error message for missing service dependencies to include the plugin and module IDs.
+- 7f779c7: `auth.externalAccess` should be optional in the config schema
+- c2b63ab: Updated dependency `supertest` to `^7.0.0`.
+- 51a69b5: Fix feature loaders in CJS double-default nested builds
+- 0b2a402: Updates to the config schema to match reality
+- Updated dependencies
+  - @backstage/backend-common@0.25.0
+  - @backstage/backend-plugin-api@1.0.0
+  - @backstage/plugin-auth-node@0.5.2
+  - @backstage/plugin-permission-node@0.8.3
+  - @backstage/config-loader@1.9.1
+  - @backstage/cli-common@0.1.14
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+
+## 1.0.0-next.2
+
+### Major Changes
+
+- ec1b4be: Release 1.0 of the new backend system! :tada:
+
+  The backend system is finally getting promoted to 1.0.0. This means that the API is now stable and breaking changes should not occur until version 2.0.0, see our [package versioning policy](https://backstage.io/docs/overview/versioning-policy/#package-versioning-policy) for more information what this means.
+
+  This release also marks the end of the old backend system based on `createRouter` exports. Going forward backend plugins packages will start to deprecate and later this year remove exports supporting the old backend system. If you would like to help out with this transition, see https://github.com/backstage/backstage/issues/26353 or consult the [migration guide](https://backstage.io/docs/backend-system/building-plugins-and-modules/migrating/#remove-support-for-the-old-backend-system).
+
+### Patch Changes
+
+- 6ed9264: chore(deps): bump `path-to-regexp` from 6.2.2 to 8.0.0
+- c2b63ab: Updated dependency `supertest` to `^7.0.0`.
+- Updated dependencies
+  - @backstage/backend-common@0.25.0-next.2
+  - @backstage/plugin-auth-node@0.5.2-next.2
+  - @backstage/backend-plugin-api@1.0.0-next.2
+  - @backstage/config-loader@1.9.1-next.0
+  - @backstage/plugin-permission-node@0.8.3-next.2
+  - @backstage/cli-common@0.1.14
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+
+## 0.10.0-next.1
+
+### Patch Changes
+
+- c246372: Updated the error message for missing service dependencies to include the plugin and module IDs.
+- Updated dependencies
+  - @backstage/backend-common@0.25.0-next.1
+  - @backstage/plugin-auth-node@0.5.2-next.1
+  - @backstage/backend-plugin-api@0.9.0-next.1
+  - @backstage/cli-common@0.1.14
+  - @backstage/config@1.2.0
+  - @backstage/config-loader@1.9.0
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+  - @backstage/plugin-permission-node@0.8.3-next.1
+
+## 0.10.0-next.0
+
+### Minor Changes
+
+- 19ff127: **BREAKING**: The deprecated `identityServiceFactory` and `tokenManagerServiceFactory` have been removed.
+- d425fc4: **BREAKING**: The return values from `createBackendPlugin`, `createBackendModule`, and `createServiceFactory` are now simply `BackendFeature` and `ServiceFactory`, instead of the previously deprecated form of a function that returns them. For this reason, `createServiceFactory` also no longer accepts the callback form where you provide direct options to the service. This also affects all `coreServices.*` service refs.
+
+  This may in particular affect tests; if you were effectively doing `createBackendModule({...})()` (note the parentheses), you can now remove those extra parentheses at the end. You may encounter cases of this in your `packages/backend/src/index.ts` too, where you add plugins, modules, and services. If you were using `createServiceFactory` with a function as its argument for the purpose of passing in options, this pattern has been deprecated for a while and is no longer supported. You may want to explore the new multiton patterns to achieve your goals, or moving settings to app-config.
+
+  As part of this change, the `IdentityFactoryOptions` type was removed, and can no longer be used to tweak that service. The identity service was also deprecated some time ago, and you will want to [migrate to the new auth system](https://backstage.io/docs/tutorials/auth-service-migration) if you still rely on it.
+
+### Patch Changes
+
+- cd38da8: Deprecate the `featureDiscoveryServiceFactory` in favor of using `@backstage/backend-defaults#discoveryFeatureLoader` instead.
+- 7f779c7: `auth.externalAccess` should be optional in the config schema
+- 51a69b5: Fix feature loaders in CJS double-default nested builds
+- 0b2a402: Updates to the config schema to match reality
+- Updated dependencies
+  - @backstage/backend-plugin-api@0.9.0-next.0
+  - @backstage/plugin-permission-node@0.8.3-next.0
+  - @backstage/backend-common@0.25.0-next.0
+  - @backstage/plugin-auth-node@0.5.2-next.0
+  - @backstage/cli-common@0.1.14
+  - @backstage/config@1.2.0
+  - @backstage/config-loader@1.9.0
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+
+## 0.9.0
+
+### Minor Changes
+
+- da4fde5: **BREAKING**: Removed several deprecated service factories. These can instead be imported from `@backstage/backend-defaults` package.
+- fc24d9e: Stop using `@backstage/backend-tasks` as it will be deleted in near future.
+- 389f5a4: Remove deprecated `urlReaderServiceFactory`, please import from `@backstage/backend-defaults/urlReader` instead.
+
+### Patch Changes
+
+- 8b13183: Added support for the latest version of `BackendFeature`s from `@backstage/backend-plugin-api`, including feature loaders.
+- 93095ee: Make sure node-fetch is version 2.7.0 or greater
+- 7c5f3b0: Update the `ServiceRegister` implementation to enable registering multiple service implementations for a given service ref.
+- 80a0737: Added configuration for the `packages` options to config schema
+- Updated dependencies
+  - @backstage/backend-plugin-api@0.8.0
+  - @backstage/backend-common@0.24.0
+  - @backstage/config-loader@1.9.0
+  - @backstage/plugin-auth-node@0.5.0
+  - @backstage/plugin-permission-node@0.8.1
+  - @backstage/cli-common@0.1.14
+  - @backstage/cli-node@0.2.7
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+
+## 0.8.1-next.3
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-plugin-api@0.8.0-next.3
+  - @backstage/backend-common@0.23.4-next.3
+  - @backstage/backend-tasks@0.5.28-next.3
+  - @backstage/cli-common@0.1.14
+  - @backstage/cli-node@0.2.7
+  - @backstage/config@1.2.0
+  - @backstage/config-loader@1.9.0-next.2
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+  - @backstage/plugin-auth-node@0.5.0-next.3
+  - @backstage/plugin-permission-node@0.8.1-next.3
+
+## 0.8.1-next.2
+
+### Patch Changes
+
+- 8b13183: Added support for the latest version of `BackendFeature`s from `@backstage/backend-plugin-api`, including feature loaders.
+- 93095ee: Make sure node-fetch is version 2.7.0 or greater
+- 7c5f3b0: Update the `ServiceRegister` implementation to enable registering multiple service implementations for a given service ref.
+- 80a0737: Added configuration for the `packages` options to config schema
+- Updated dependencies
+  - @backstage/backend-plugin-api@0.8.0-next.2
+  - @backstage/backend-common@0.23.4-next.2
+  - @backstage/config-loader@1.9.0-next.2
+  - @backstage/plugin-auth-node@0.5.0-next.2
+  - @backstage/plugin-permission-node@0.8.1-next.2
+  - @backstage/backend-tasks@0.5.28-next.2
+  - @backstage/cli-node@0.2.7
+  - @backstage/cli-common@0.1.14
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+
+## 0.8.1-next.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/config-loader@1.9.0-next.1
+  - @backstage/plugin-permission-node@0.8.1-next.1
+  - @backstage/backend-plugin-api@0.7.1-next.1
+  - @backstage/backend-common@0.23.4-next.1
+  - @backstage/backend-tasks@0.5.28-next.1
+  - @backstage/cli-common@0.1.14
+  - @backstage/cli-node@0.2.7
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+  - @backstage/plugin-auth-node@0.4.18-next.1
+
+## 0.8.1-next.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-common@0.23.4-next.0
+  - @backstage/config-loader@1.8.2-next.0
+  - @backstage/backend-plugin-api@0.7.1-next.0
+  - @backstage/backend-tasks@0.5.28-next.0
+  - @backstage/cli-common@0.1.14
+  - @backstage/cli-node@0.2.7
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+  - @backstage/plugin-auth-node@0.4.18-next.0
+  - @backstage/plugin-permission-node@0.8.1-next.0
+
+## 0.8.0
+
+### Minor Changes
+
+- 1cb84d7: **BREAKING**: Removed the depreacted `getPath` option from `httpRouterServiceFactory`, as well as the `HttpRouterFactoryOptions` type.
+- f691c9b: **BREAKING**: Removed the ability to pass callback-form service factories through the `defaultServiceFactories` option of `createSpecializedBackend`. This is an immediate breaking change as usage of this function is expected to be very rare.
+
+### Patch Changes
+
+- 2f99178: The `ServiceFactoryTest.get` method was deprecated and the `ServiceFactoryTest.getSubject` should be used instead. The `getSubject` method has the same behavior, but has a better method name to indicate that the service instance returned is the subject currently being tested.
+- b05e1e1: Service factories exported by this package have been updated to use the new service factory format that doesn't use a callback.
+- 617a7d2: Internal refactor that avoids the use of service factory options.
+- b60db08: Fixing exporting of classes properly from new packages
+- 18b96b1: The ability to install backend features in callback form (`() => BackendFeature`) has been deprecated. This typically means that you need to update the installed features to use the latest version of `@backstage/backend-plugin-api`. If the feature is from a third-party package, please reach out to the package maintainer to update it.
+- a63c4b6: Fixing issue with `MiddlewareFactory` deprecation wrapping
+- Updated dependencies
+  - @backstage/backend-plugin-api@0.7.0
+  - @backstage/backend-common@0.23.3
+  - @backstage/cli-node@0.2.7
+  - @backstage/backend-tasks@0.5.27
+  - @backstage/plugin-permission-node@0.8.0
+  - @backstage/plugin-auth-node@0.4.17
+  - @backstage/config-loader@1.8.1
+  - @backstage/cli-common@0.1.14
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+
+## 0.7.10-next.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-common@0.23.3-next.1
+  - @backstage/backend-plugin-api@0.6.22-next.1
+  - @backstage/backend-tasks@0.5.27-next.1
+  - @backstage/cli-common@0.1.14
+  - @backstage/cli-node@0.2.6
+  - @backstage/config@1.2.0
+  - @backstage/config-loader@1.8.1
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+  - @backstage/plugin-auth-node@0.4.17-next.1
+  - @backstage/plugin-permission-node@0.7.33-next.1
+
+## 0.7.9-next.0
+
+### Patch Changes
+
+- b60db08: Fixing exporting of classes properly from new packages
+- a63c4b6: Fixing issue with `MiddlewareFactory` deprecation wrapping
+- Updated dependencies
+  - @backstage/backend-plugin-api@0.6.21-next.0
+  - @backstage/backend-common@0.23.2-next.0
+  - @backstage/backend-tasks@0.5.26-next.0
+  - @backstage/plugin-auth-node@0.4.16-next.0
+  - @backstage/plugin-permission-node@0.7.32-next.0
+  - @backstage/cli-common@0.1.14
+  - @backstage/cli-node@0.2.6
+  - @backstage/config@1.2.0
+  - @backstage/config-loader@1.8.1
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+
+## 0.7.6
+
+### Patch Changes
+
+- b7de623: Fixed a potential crash when passing an object with a `null` prototype as log meta.
+- 9539a0b: Deprecated `authServiceFactory`, `httpAuthServiceFactory`, and `userInfoServiceFactory`. Please import them from `@backstage/backend-defaults/auth`, `@backstage/backend-defaults/httpAuth`, and `@backstage/backend-defaults/userInfo` respectively instead.
+- 3e823d3: Limited user tokens will no longer include the `ent` field in its payload. Ownership claims will now be fetched from the user info service.
+
+  NOTE: Limited tokens issued prior to this change will no longer be valid. Users may have to clear their browser cookies in order to refresh their auth tokens.
+
+- 78a0b08: Internal refactor to handle `BackendFeature` contract change.
+- 398b82a: Add support for JWKS tokens in ExternalTokenHandler.
+- 9e63318: Added an optional `accessRestrictions` to external access service tokens and service principals in general, such that you can limit their access to certain plugins or permissions.
+- e25e467: Added a new static key based method for plugin-to-plugin auth. This is useful for example if you are running readonly service nodes that cannot use a database for the default public-key signature scheme outlined in [BEP-0003](https://github.com/backstage/backstage/tree/master/beps/0003-auth-architecture-evolution). Most users should want to stay on the more secure zero-config database signature scheme.
+
+  You can generate a public and private key pair using `openssl`.
+
+  - First generate a private key using the ES256 algorithm
+
+    ```sh
+    openssl ecparam -name prime256v1 -genkey -out private.ec.key
+    ```
+
+  - Convert it to PKCS#8 format
+
+    ```sh
+    openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in private.ec.key -out private.key
+    ```
+
+  - Extract the public key
+
+    ```sh
+    openssl ec -inform PEM -outform PEM -pubout -in private.key -out public.key
+    ```
+
+  After this you have the files `private.key` and `public.key`. Put them in a place where you know their absolute paths, and then set up your app-config accordingly:
+
+  ```yaml
+  backend:
+    auth:
+      keyStore:
+        type: static
+        static:
+          keys:
+            - publicKeyFile: /absolute/path/to/public.key
+              privateKeyFile: /absolute/path/to/private.key
+              keyId: some-custom-id
+  ```
+
+- 7d30d95: Fixing issue with log meta fields possibly being circular refs
+- 6a576dc: Stop using `getVoidLogger` in tests to reduce the dependency on the soon-to-deprecate `backstage-common` package.
+- 6551b3d: Deprecated core service factories and implementations and moved them over to
+  subpath exports on `@backstage/backend-defaults` instead. E.g.
+  `@backstage/backend-defaults/scheduler` is where the service factory and default
+  implementation of `coreServices.scheduler` now lives.
+- d617103: Updating the logger redaction message to something less dramatic
+- Updated dependencies
+  - @backstage/cli-node@0.2.6
+  - @backstage/backend-common@0.23.0
+  - @backstage/backend-plugin-api@0.6.19
+  - @backstage/backend-tasks@0.5.24
+  - @backstage/plugin-auth-node@0.4.14
+  - @backstage/plugin-permission-node@0.7.30
+  - @backstage/cli-common@0.1.14
+  - @backstage/config-loader@1.8.1
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+
 ## 0.7.6-next.3
 
 ### Patch Changes

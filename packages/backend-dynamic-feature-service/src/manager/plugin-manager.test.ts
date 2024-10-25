@@ -16,7 +16,7 @@
 
 import {
   DynamicPluginManager,
-  dynamicPluginsServiceFactory,
+  dynamicPluginsServiceFactoryWithOptions,
 } from './plugin-manager';
 import {
   BackendFeature,
@@ -37,15 +37,14 @@ import {
 import { ScannedPluginManifest, ScannedPluginPackage } from '../scanner/types';
 import { randomUUID } from 'crypto';
 import { TemplateAction } from '@backstage/plugin-scaffolder-node';
-import {
-  createSpecializedBackend,
-  rootLifecycleServiceFactory,
-} from '@backstage/backend-app-api';
+import { createSpecializedBackend } from '@backstage/backend-app-api';
 import { ConfigSources } from '@backstage/config-loader';
 import { Logs, MockedLogger, LogContent } from '../__testUtils__/testUtils';
 import { PluginScanner } from '../scanner/plugin-scanner';
 import { findPaths } from '@backstage/cli-common';
 import { createMockDirectory } from '@backstage/backend-test-utils';
+import { rootLifecycleServiceFactory } from '@backstage/backend-defaults/rootLifecycle';
+import { BackstagePackageJson, PackageRole } from '@backstage/cli-node';
 
 describe('backend-dynamic-feature-service', () => {
   const mockDir = createMockDirectory();
@@ -61,6 +60,13 @@ describe('backend-dynamic-feature-service', () => {
       indexFile?: {
         relativePath: string[];
         content: string;
+      };
+      alpha?: {
+        packageManifest: BackstagePackageJson;
+        indexFile: {
+          relativePath: string[];
+          content: string;
+        };
       };
       expectedLogs?(location: URL): {
         errors?: LogContent[];
@@ -128,7 +134,7 @@ describe('backend-dynamic-feature-service', () => {
         },
         indexFile: {
           relativePath: ['dist', 'index.cjs.js'],
-          content: `const alpha = { $$type: '@backstage/BackendFeature' }; exports["default"] = alpha;`,
+          content: `const feature = { $$type: '@backstage/BackendFeature' }; exports["default"] = feature;`,
         },
         expectedLogs(location) {
           return {
@@ -154,9 +160,63 @@ describe('backend-dynamic-feature-service', () => {
           const installer: NewBackendPluginInstaller = (
             plugins[0] as BackendDynamicPlugin
           ).installer as NewBackendPluginInstaller;
-          expect(installer.install()).toEqual<
-            BackendFeature | BackendFeature[]
-          >({ $$type: '@backstage/BackendFeature' });
+          expect((installer.install() as BackendFeature).$$type).toEqual(
+            '@backstage/BackendFeature',
+          );
+        },
+      },
+      {
+        name: 'should load the alpha variant of a backend plugin in priority',
+        packageManifest: {
+          name: 'backend-dynamic-plugin-test',
+          version: '0.0.0',
+          backstage: {
+            role: 'backend-plugin',
+          },
+          main: 'dist/index.cjs.js',
+        },
+        indexFile: {
+          relativePath: ['dist', 'index.cjs.js'],
+          content: `throw 'should not take this one';`,
+        },
+        alpha: {
+          packageManifest: {
+            name: 'backend-dynamic-plugin-test',
+            version: '0.0.0',
+            main: '../dist/alpha.cjs.js',
+          },
+          indexFile: {
+            relativePath: ['dist', 'alpha.cjs.js'],
+            content: `const alpha = { $$type: '@backstage/BackendFeature' }; exports["default"] = alpha;`,
+          },
+        },
+        expectedLogs(location) {
+          return {
+            infos: [
+              {
+                message: `loaded dynamic backend plugin 'backend-dynamic-plugin-test' from '${location}/alpha'`,
+              },
+            ],
+          };
+        },
+        checkLoadedPlugins(plugins) {
+          expect(plugins).toMatchObject([
+            {
+              name: 'backend-dynamic-plugin-test',
+              version: '0.0.0',
+              role: 'backend-plugin',
+              platform: 'node',
+              installer: {
+                kind: 'new',
+              },
+            },
+          ]);
+          const installer: NewBackendPluginInstaller = (
+            plugins[0] as BackendDynamicPlugin
+          ).installer as NewBackendPluginInstaller;
+          expect((installer.install() as BackendFeature).$$type).toEqual(
+            '@backstage/BackendFeature',
+          );
         },
       },
       {
@@ -199,9 +259,9 @@ describe('backend-dynamic-feature-service', () => {
           const installer: NewBackendPluginInstaller = (
             plugins[0] as BackendDynamicPlugin
           ).installer as NewBackendPluginInstaller;
-          expect(installer.install()).toEqual<
-            BackendFeature | BackendFeature[]
-          >({ $$type: '@backstage/BackendFeature' });
+          expect((installer.install() as BackendFeature).$$type).toEqual(
+            '@backstage/BackendFeature',
+          );
         },
       },
       {
@@ -249,6 +309,82 @@ describe('backend-dynamic-feature-service', () => {
         },
       },
       {
+        name: 'should successfully load a backend plugin wrapped in a BackendFeatureCompatWrapper function',
+        packageManifest: {
+          name: 'backend-dynamic-plugin-test',
+          version: '0.0.0',
+          backstage: {
+            role: 'backend-plugin',
+          },
+          main: 'dist/index.cjs.js',
+        },
+        indexFile: {
+          relativePath: ['dist', 'index.cjs.js'],
+          content: `
+          function backendFeatureCompatWrapper() {
+            return backendFeatureCompatWrapper;
+          }
+          Object.assign(backendFeatureCompatWrapper, {
+            $$type: "@backstage/BackendFeature",
+            version: "v1",
+          });
+          const alpha = backendFeatureCompatWrapper;
+          exports.default = alpha;
+          `,
+        },
+        expectedLogs(location) {
+          return {
+            infos: [
+              {
+                message: `loaded dynamic backend plugin 'backend-dynamic-plugin-test' from '${location}'`,
+              },
+            ],
+          };
+        },
+        checkLoadedPlugins(plugins) {
+          expect(plugins).toMatchObject([
+            {
+              name: 'backend-dynamic-plugin-test',
+              version: '0.0.0',
+              role: 'backend-plugin',
+              platform: 'node',
+              installer: {
+                kind: 'new',
+              },
+            },
+          ]);
+          const installer: NewBackendPluginInstaller = (
+            plugins[0] as BackendDynamicPlugin
+          ).installer as NewBackendPluginInstaller;
+          expect((installer.install() as BackendFeature).$$type).toEqual(
+            '@backstage/BackendFeature',
+          );
+        },
+      },
+      {
+        name: 'should ignore plugin package with incompatible role',
+        packageManifest: {
+          name: 'backend-dynamic-plugin-test',
+          version: '0.0.0',
+          backstage: {
+            role: 'node-library',
+          },
+          main: 'dist/index.cjs.js',
+        },
+        expectedLogs(location) {
+          return {
+            infos: [
+              {
+                message: `skipping dynamic plugin package 'backend-dynamic-plugin-test' from '${location}': incompatible role 'node-library'`,
+              },
+            ],
+          };
+        },
+        checkLoadedPlugins(plugins) {
+          expect(plugins).toMatchObject([]);
+        },
+      },
+      {
         name: 'should fail when no index file',
         packageManifest: {
           name: 'backend-dynamic-plugin-test',
@@ -291,7 +427,17 @@ describe('backend-dynamic-feature-service', () => {
           };
         },
         checkLoadedPlugins(plugins) {
-          expect(plugins).toMatchObject([]);
+          expect(plugins).toMatchObject([
+            {
+              name: 'backend-dynamic-plugin-test',
+              version: '0.0.0',
+              role: 'backend-plugin',
+              platform: 'node',
+              failure: expect.stringMatching(
+                `^Error: Cannot find module '[^']*' from .*`,
+              ),
+            },
+          ]);
         },
       },
       {
@@ -318,7 +464,15 @@ describe('backend-dynamic-feature-service', () => {
           };
         },
         checkLoadedPlugins(plugins) {
-          expect(plugins).toMatchObject([]);
+          expect(plugins).toMatchObject([
+            {
+              name: 'backend-dynamic-plugin-test',
+              version: '0.0.0',
+              role: 'backend-plugin',
+              platform: 'node',
+              failure: `the module should either export a 'BackendFeature' or 'BackendFeatureFactory' as default export, or export a 'const dynamicPluginInstaller: BackendDynamicPluginInstaller' field as dynamic loading entrypoint.`,
+            },
+          ]);
         },
       },
       {
@@ -346,7 +500,15 @@ describe('backend-dynamic-feature-service', () => {
           };
         },
         checkLoadedPlugins(plugins) {
-          expect(plugins).toMatchObject([]);
+          expect(plugins).toMatchObject([
+            {
+              name: 'backend-dynamic-plugin-test',
+              version: '0.0.0',
+              role: 'backend-plugin',
+              platform: 'node',
+              failure: `the module should either export a 'BackendFeature' or 'BackendFeatureFactory' as default export, or export a 'const dynamicPluginInstaller: BackendDynamicPluginInstaller' field as dynamic loading entrypoint.`,
+            },
+          ]);
         },
       },
       {
@@ -377,7 +539,17 @@ describe('backend-dynamic-feature-service', () => {
           };
         },
         checkLoadedPlugins(plugins) {
-          expect(plugins).toMatchObject([]);
+          expect(plugins).toMatchObject([
+            {
+              name: 'backend-dynamic-plugin-test',
+              version: '0.0.0',
+              role: 'backend-plugin',
+              platform: 'node',
+              failure: expect.stringMatching(
+                `^SyntaxError: Unexpected identifier.*`,
+              ),
+            },
+          ]);
         },
       },
       {
@@ -444,15 +616,37 @@ describe('backend-dynamic-feature-service', () => {
           ]);
         },
       },
+      {
+        name: 'should successfully load a frontend plugin (experimental dynamic container)',
+        packageManifest: {
+          name: 'frontend-dynamic-plugin-test',
+          version: '0.0.0',
+          backstage: {
+            role: 'frontend-dynamic-container' as PackageRole,
+          },
+          main: 'dist/index.esm.js',
+        },
+        checkLoadedPlugins(plugins) {
+          expect(plugins).toMatchObject([
+            {
+              name: 'frontend-dynamic-plugin-test',
+              version: '0.0.0',
+              role: 'frontend-dynamic-container',
+              platform: 'web',
+            },
+          ]);
+        },
+      },
     ])('$name', async (tc: TestCase): Promise<void> => {
       const plugin: ScannedPluginPackage = {
         location: url.pathToFileURL(mockDir.resolve(randomUUID())),
         manifest: tc.packageManifest,
+        alphaManifest: tc.alpha?.packageManifest,
       };
 
       const mockedFiles = {
         [path.join(url.fileURLToPath(plugin.location), 'package.json')]:
-          JSON.stringify(plugin),
+          JSON.stringify(tc.packageManifest),
       };
       if (tc.indexFile) {
         mockedFiles[
@@ -462,6 +656,18 @@ describe('backend-dynamic-feature-service', () => {
           )
         ] = tc.indexFile.content;
       }
+      if (tc.alpha) {
+        mockedFiles[
+          path.join(url.fileURLToPath(plugin.location), 'alpha', 'package.json')
+        ] = JSON.stringify(tc.alpha.packageManifest);
+        mockedFiles[
+          path.join(
+            url.fileURLToPath(plugin.location),
+            ...tc.alpha.indexFile.relativePath,
+          )
+        ] = tc.alpha.indexFile.content;
+      }
+
       mockDir.setContent(mockedFiles);
 
       const logger = new MockedLogger();
@@ -487,33 +693,54 @@ describe('backend-dynamic-feature-service', () => {
     });
   });
 
-  describe('backendPlugins', () => {
+  describe('plugin getters', () => {
+    const plugins: BaseDynamicPlugin[] = [
+      {
+        name: 'a-frontend-plugin',
+        platform: 'web',
+        role: 'frontend-plugin',
+        version: '0.0.0',
+      },
+      {
+        name: 'a-frontend-module',
+        platform: 'web',
+        role: 'frontend-plugin-module',
+        version: '0.0.0',
+      },
+      {
+        name: 'a-failing-frontend-plugin',
+        platform: 'web',
+        role: 'frontend-plugin',
+        version: '0.0.0',
+        failure: 'Some frontend failure',
+      },
+      {
+        name: 'a-backend-plugin',
+        platform: 'node',
+        role: 'backend-plugin',
+        version: '0.0.0',
+      },
+      {
+        name: 'a-backend-module',
+        platform: 'node',
+        role: 'backend-plugin-module',
+        version: '0.0.0',
+      },
+      {
+        name: 'a-failing-backend-plugin',
+        platform: 'node',
+        role: 'backend-plugin',
+        version: '0.0.0',
+        failure: 'Some backend failure',
+      },
+    ];
+
     it('should return only backend plugins and modules', async () => {
       const logger = new MockedLogger();
       const pluginManager = new (DynamicPluginManager as any)(
         logger,
         [],
       ) as DynamicPluginManager;
-      const plugins: BaseDynamicPlugin[] = [
-        {
-          name: 'a-frontend-plugin',
-          platform: 'web',
-          role: 'frontend-plugin',
-          version: '0.0.0',
-        },
-        {
-          name: 'a-backend-plugin',
-          platform: 'node',
-          role: 'backend-plugin',
-          version: '0.0.0',
-        },
-        {
-          name: 'a-backend-module',
-          platform: 'node',
-          role: 'backend-plugin-module',
-          version: '0.0.0',
-        },
-      ];
       (pluginManager as any)._plugins = plugins;
       expect(pluginManager.backendPlugins()).toEqual([
         {
@@ -529,17 +756,109 @@ describe('backend-dynamic-feature-service', () => {
           version: '0.0.0',
         },
       ]);
+      expect(pluginManager.backendPlugins({ includeFailed: false })).toEqual([
+        {
+          name: 'a-backend-plugin',
+          platform: 'node',
+          role: 'backend-plugin',
+          version: '0.0.0',
+        },
+        {
+          name: 'a-backend-module',
+          platform: 'node',
+          role: 'backend-plugin-module',
+          version: '0.0.0',
+        },
+      ]);
+      expect(pluginManager.backendPlugins({ includeFailed: true })).toEqual([
+        {
+          name: 'a-backend-plugin',
+          platform: 'node',
+          role: 'backend-plugin',
+          version: '0.0.0',
+        },
+        {
+          name: 'a-backend-module',
+          platform: 'node',
+          role: 'backend-plugin-module',
+          version: '0.0.0',
+        },
+        {
+          name: 'a-failing-backend-plugin',
+          platform: 'node',
+          role: 'backend-plugin',
+          version: '0.0.0',
+          failure: 'Some backend failure',
+        },
+      ]);
     });
-  });
 
-  describe('frontendPlugins', () => {
     it('should return only frontend plugins', async () => {
       const logger = new MockedLogger();
       const pluginManager = new (DynamicPluginManager as any)(
         logger,
         [],
       ) as DynamicPluginManager;
-      const plugins: BaseDynamicPlugin[] = [
+      (pluginManager as any)._plugins = plugins;
+      expect(pluginManager.frontendPlugins()).toEqual([
+        {
+          name: 'a-frontend-plugin',
+          platform: 'web',
+          role: 'frontend-plugin',
+          version: '0.0.0',
+        },
+        {
+          name: 'a-frontend-module',
+          platform: 'web',
+          role: 'frontend-plugin-module',
+          version: '0.0.0',
+        },
+      ]);
+      expect(pluginManager.frontendPlugins({ includeFailed: false })).toEqual([
+        {
+          name: 'a-frontend-plugin',
+          platform: 'web',
+          role: 'frontend-plugin',
+          version: '0.0.0',
+        },
+        {
+          name: 'a-frontend-module',
+          platform: 'web',
+          role: 'frontend-plugin-module',
+          version: '0.0.0',
+        },
+      ]);
+      expect(pluginManager.frontendPlugins({ includeFailed: true })).toEqual([
+        {
+          name: 'a-frontend-plugin',
+          platform: 'web',
+          role: 'frontend-plugin',
+          version: '0.0.0',
+        },
+        {
+          name: 'a-frontend-module',
+          platform: 'web',
+          role: 'frontend-plugin-module',
+          version: '0.0.0',
+        },
+        {
+          name: 'a-failing-frontend-plugin',
+          platform: 'web',
+          role: 'frontend-plugin',
+          version: '0.0.0',
+          failure: 'Some frontend failure',
+        },
+      ]);
+    });
+
+    it('should return all plugins', async () => {
+      const logger = new MockedLogger();
+      const pluginManager = new (DynamicPluginManager as any)(
+        logger,
+        [],
+      ) as DynamicPluginManager;
+      (pluginManager as any)._plugins = plugins;
+      expect(pluginManager.plugins()).toEqual([
         {
           name: 'a-frontend-plugin',
           platform: 'web',
@@ -564,9 +883,8 @@ describe('backend-dynamic-feature-service', () => {
           role: 'backend-plugin-module',
           version: '0.0.0',
         },
-      ];
-      (pluginManager as any)._plugins = plugins;
-      expect(pluginManager.frontendPlugins()).toEqual([
+      ]);
+      expect(pluginManager.plugins({ includeFailed: false })).toEqual([
         {
           name: 'a-frontend-plugin',
           platform: 'web',
@@ -579,7 +897,93 @@ describe('backend-dynamic-feature-service', () => {
           role: 'frontend-plugin-module',
           version: '0.0.0',
         },
+        {
+          name: 'a-backend-plugin',
+          platform: 'node',
+          role: 'backend-plugin',
+          version: '0.0.0',
+        },
+        {
+          name: 'a-backend-module',
+          platform: 'node',
+          role: 'backend-plugin-module',
+          version: '0.0.0',
+        },
       ]);
+      expect(pluginManager.plugins({ includeFailed: true })).toEqual([
+        {
+          name: 'a-frontend-plugin',
+          platform: 'web',
+          role: 'frontend-plugin',
+          version: '0.0.0',
+        },
+        {
+          name: 'a-frontend-module',
+          platform: 'web',
+          role: 'frontend-plugin-module',
+          version: '0.0.0',
+        },
+        {
+          name: 'a-failing-frontend-plugin',
+          platform: 'web',
+          role: 'frontend-plugin',
+          version: '0.0.0',
+          failure: 'Some frontend failure',
+        },
+        {
+          name: 'a-backend-plugin',
+          platform: 'node',
+          role: 'backend-plugin',
+          version: '0.0.0',
+        },
+        {
+          name: 'a-backend-module',
+          platform: 'node',
+          role: 'backend-plugin-module',
+          version: '0.0.0',
+        },
+        {
+          name: 'a-failing-backend-plugin',
+          platform: 'node',
+          role: 'backend-plugin',
+          version: '0.0.0',
+          failure: 'Some backend failure',
+        },
+      ]);
+    });
+  });
+
+  describe('get scanned package', () => {
+    it('should return the scanned package of the plugin', async () => {
+      const logger = new MockedLogger();
+      const packageFolder = mockDir.resolve(randomUUID());
+      const scannedPackage = {
+        manifest: {
+          name: 'backend-dynamic-plugin-test',
+          version: '0.0.0',
+          backstage: {
+            role: 'backend-plugin',
+          },
+          main: 'dist/index.cjs.js',
+        },
+        location: url.pathToFileURL(packageFolder),
+      };
+      const plugin = {
+        name: 'backend-dynamic-plugin-test',
+        version: '0.0.0',
+        role: 'backend-plugin',
+        platform: 'node',
+        installer: {
+          kind: 'new',
+        },
+      } as BackendDynamicPlugin;
+
+      const pluginManager = new (DynamicPluginManager as any)(logger, [
+        scannedPackage,
+      ]) as DynamicPluginManager;
+      (pluginManager as any)._plugins = [plugin];
+
+      expect(pluginManager.getScannedPackage(plugin)).toEqual(scannedPackage);
     });
   });
 
@@ -639,7 +1043,7 @@ describe('backend-dynamic-feature-service', () => {
 
       const backend = createSpecializedBackend({
         defaultServiceFactories: [
-          rootLifecycleServiceFactory(),
+          rootLifecycleServiceFactory,
           createServiceFactory({
             service: coreServices.rootConfig,
             deps: {},
@@ -672,7 +1076,7 @@ describe('backend-dynamic-feature-service', () => {
               return rootLogger;
             },
           }),
-          dynamicPluginsServiceFactory({
+          dynamicPluginsServiceFactoryWithOptions({
             moduleLoader: _ => mockedModuleLoader,
           }),
         ],

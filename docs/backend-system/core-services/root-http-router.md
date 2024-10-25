@@ -52,19 +52,56 @@ You can configure the root HTTP Router service by passing the options to the `cr
 
 ```ts
 import { rootHttpRouterServiceFactory } from '@backstage/backend-app-api';
+import { RequestHandler } from 'express';
+import morgan from 'morgan';
 
 const backend = createBackend();
 
 backend.add(
   rootHttpRouterServiceFactory({
-    configure: ({ app, middleware, routes, config, logger, lifecycle }) => {
+    configure: ({ app, middleware, routes, config, logger, healthRouter }) => {
+      // Refer to https://expressjs.com/en/guide/writing-middleware.html on how to write express middleware
+      const customMiddleware = {
+        logging(): RequestHandler {
+          const middlewareLogger = logger.child({
+            type: 'incomingRequest',
+          });
+          return (req, res, next) => {
+            // Custom Logging Implementation
+            next();
+          };
+        },
+        // Default logging middleware uses the [morgan](https://github.com/expressjs/morgan) middleware which you can configure with custom formats.
+        morganLogging(): RequestHandler {
+          const middlewareLogger = logger.child({
+            type: 'incomingRequest',
+          });
+          const customMorganFormat =
+            '[:date[clf]] ":method :url HTTP/:http-version" :status ":user-agent"';
+          return morgan(customMorganFormat, {
+            stream: {
+              write(message: string) {
+                logger.info(message.trimEnd());
+              },
+            },
+          });
+        },
+      };
+
+      // The default implementation pretty-prints JSON responses in development
+      if (process.env.NODE_ENV === 'development') {
+        app.set('json spaces', 2);
+      }
+
       // the built in middleware is provided through an option in the configure function
       app.use(middleware.helmet());
       app.use(middleware.cors());
       app.use(middleware.compression());
 
+      app.use(healthRouter);
+
       // you can add you your own middleware in here
-      app.use(custom.logging());
+      app.use(customMiddleware.logging());
 
       // here the routes that are registered by other plugins
       app.use(routes);

@@ -1,5 +1,272 @@
 # @backstage/plugin-user-settings-backend
 
+## 0.2.27-next.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/plugin-auth-node@0.5.4-next.0
+  - @backstage/backend-defaults@0.5.3-next.0
+  - @backstage/backend-plugin-api@1.0.2-next.0
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+  - @backstage/plugin-signals-node@0.1.14-next.0
+  - @backstage/plugin-user-settings-common@0.0.1
+
+## 0.2.25
+
+### Patch Changes
+
+- 3109c24: The export for the new backend system at the `/alpha` export is now also available via the main entry point, which means that you can remove the `/alpha` suffix from the import.
+- Updated dependencies
+  - @backstage/backend-defaults@0.5.1
+  - @backstage/plugin-auth-node@0.5.3
+  - @backstage/plugin-signals-node@0.1.12
+  - @backstage/backend-plugin-api@1.0.1
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+  - @backstage/plugin-user-settings-common@0.0.1
+
+## 0.2.25-next.2
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-defaults@0.5.1-next.2
+  - @backstage/plugin-auth-node@0.5.3-next.1
+  - @backstage/backend-plugin-api@1.0.1-next.1
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+  - @backstage/plugin-signals-node@0.1.12-next.1
+  - @backstage/plugin-user-settings-common@0.0.1
+
+## 0.2.25-next.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-defaults@0.5.1-next.1
+  - @backstage/backend-plugin-api@1.0.1-next.0
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+  - @backstage/plugin-auth-node@0.5.3-next.0
+  - @backstage/plugin-signals-node@0.1.12-next.0
+  - @backstage/plugin-user-settings-common@0.0.1
+
+## 0.2.25-next.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-defaults@0.5.1-next.0
+  - @backstage/plugin-signals-node@0.1.12-next.0
+  - @backstage/plugin-auth-node@0.5.3-next.0
+  - @backstage/backend-plugin-api@1.0.1-next.0
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+  - @backstage/plugin-user-settings-common@0.0.1
+
+## 0.2.24
+
+### Patch Changes
+
+- 5d1670f: Update README installation instructions
+- 164ce3e: In preparation to stop supporting to the legacy backend system, the `createRouter` function is now deprecated and we strongly recommend you [migrate](https://backstage.io/docs/backend-system/building-backends/migrating) your backend to the new system.
+- d425fc4: Modules, plugins, and services are now `BackendFeature`, not a function that returns a feature.
+- 1b98099: Replaced usage of the deprecated identity service with the new HTTP auth service for the new backend system.
+- c2b63ab: Updated dependency `supertest` to `^7.0.0`.
+- Updated dependencies
+  - @backstage/backend-defaults@0.5.0
+  - @backstage/plugin-signals-node@0.1.11
+  - @backstage/backend-plugin-api@1.0.0
+  - @backstage/plugin-auth-node@0.5.2
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+  - @backstage/plugin-user-settings-common@0.0.1
+
+## 0.2.24-next.2
+
+### Patch Changes
+
+- 5d1670f: Update README installation instructions
+- c2b63ab: Updated dependency `supertest` to `^7.0.0`.
+- Updated dependencies
+  - @backstage/backend-defaults@0.5.0-next.2
+  - @backstage/plugin-auth-node@0.5.2-next.2
+  - @backstage/backend-plugin-api@1.0.0-next.2
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+  - @backstage/plugin-signals-node@0.1.11-next.2
+  - @backstage/plugin-user-settings-common@0.0.1
+
+## 0.2.24-next.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-defaults@0.5.0-next.1
+  - @backstage/plugin-auth-node@0.5.2-next.1
+  - @backstage/backend-plugin-api@0.9.0-next.1
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+  - @backstage/plugin-signals-node@0.1.11-next.1
+  - @backstage/plugin-user-settings-common@0.0.1
+
+## 0.2.24-next.0
+
+### Patch Changes
+
+- 164ce3e: In preparation to stop supporting to the legacy backend system, the `createRouter` function is now deprecated and we strongly recommend you [migrate](https://backstage.io/docs/backend-system/building-backends/migrating) your backend to the new system.
+- d425fc4: Modules, plugins, and services are now `BackendFeature`, not a function that returns a feature.
+- 1b98099: Replaced usage of the deprecated identity service with the new HTTP auth service for the new backend system.
+- Updated dependencies
+  - @backstage/backend-plugin-api@0.9.0-next.0
+  - @backstage/backend-defaults@0.5.0-next.0
+  - @backstage/plugin-auth-node@0.5.2-next.0
+  - @backstage/plugin-signals-node@0.1.11-next.0
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+  - @backstage/plugin-user-settings-common@0.0.1
+
+## 0.2.22
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-plugin-api@0.8.0
+  - @backstage/backend-common@0.24.0
+  - @backstage/plugin-auth-node@0.5.0
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+  - @backstage/plugin-signals-node@0.1.9
+  - @backstage/plugin-user-settings-common@0.0.1
+
+## 0.2.22-next.3
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-plugin-api@0.8.0-next.3
+  - @backstage/backend-common@0.23.4-next.3
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+  - @backstage/plugin-auth-node@0.5.0-next.3
+  - @backstage/plugin-signals-node@0.1.9-next.3
+  - @backstage/plugin-user-settings-common@0.0.1
+
+## 0.2.22-next.2
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-plugin-api@0.8.0-next.2
+  - @backstage/backend-common@0.23.4-next.2
+  - @backstage/plugin-auth-node@0.5.0-next.2
+  - @backstage/plugin-signals-node@0.1.9-next.2
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+  - @backstage/plugin-user-settings-common@0.0.1
+
+## 0.2.22-next.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-plugin-api@0.7.1-next.1
+  - @backstage/backend-common@0.23.4-next.1
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+  - @backstage/plugin-auth-node@0.4.18-next.1
+  - @backstage/plugin-signals-node@0.1.9-next.1
+  - @backstage/plugin-user-settings-common@0.0.1
+
+## 0.2.22-next.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-common@0.23.4-next.0
+  - @backstage/backend-plugin-api@0.7.1-next.0
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+  - @backstage/plugin-auth-node@0.4.18-next.0
+  - @backstage/plugin-signals-node@0.1.9-next.0
+  - @backstage/plugin-user-settings-common@0.0.1
+
+## 0.2.21
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-plugin-api@0.7.0
+  - @backstage/backend-common@0.23.3
+  - @backstage/plugin-auth-node@0.4.17
+  - @backstage/plugin-signals-node@0.1.8
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+  - @backstage/plugin-user-settings-common@0.0.1
+
+## 0.2.21-next.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-common@0.23.3-next.1
+  - @backstage/backend-plugin-api@0.6.22-next.1
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+  - @backstage/plugin-auth-node@0.4.17-next.1
+  - @backstage/plugin-signals-node@0.1.8-next.1
+  - @backstage/plugin-user-settings-common@0.0.1
+
+## 0.2.20-next.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-plugin-api@0.6.21-next.0
+  - @backstage/backend-common@0.23.2-next.0
+  - @backstage/plugin-auth-node@0.4.16-next.0
+  - @backstage/plugin-signals-node@0.1.7-next.0
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+  - @backstage/plugin-user-settings-common@0.0.1
+
+## 0.2.18
+
+### Patch Changes
+
+- 8869b8e: Updated local development setup.
+- 78a0b08: Internal refactor to handle `BackendFeature` contract change.
+- d44a20a: Added additional plugin metadata to `package.json`.
+- e6ec179: Use signals to update user settings across sessions
+- Updated dependencies
+  - @backstage/backend-common@0.23.0
+  - @backstage/backend-plugin-api@0.6.19
+  - @backstage/plugin-auth-node@0.4.14
+  - @backstage/plugin-user-settings-common@0.0.1
+  - @backstage/plugin-signals-node@0.1.5
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/types@1.1.1
+
 ## 0.2.18-next.3
 
 ### Patch Changes

@@ -41,7 +41,7 @@ export class TaskWorker {
     private readonly workCheckFrequency: Duration = DEFAULT_WORK_CHECK_FREQUENCY,
   ) {}
 
-  async start(settings: TaskSettingsV2, options?: { signal?: AbortSignal }) {
+  async start(settings: TaskSettingsV2, options: { signal: AbortSignal }) {
     try {
       await this.persistTask(settings);
     } catch (e) {
@@ -53,8 +53,8 @@ export class TaskWorker {
     );
 
     let workCheckFrequency = this.workCheckFrequency;
-    const isCron = !settings?.cadence.startsWith('P');
-    if (!isCron) {
+    const isDuration = settings?.cadence.startsWith('P');
+    if (isDuration) {
       const cadence = Duration.fromISO(settings.cadence);
       if (cadence < workCheckFrequency) {
         workCheckFrequency = cadence;
@@ -68,18 +68,18 @@ export class TaskWorker {
           if (settings.initialDelayDuration) {
             await sleep(
               Duration.fromISO(settings.initialDelayDuration),
-              options?.signal,
+              options.signal,
             );
           }
 
-          while (!options?.signal?.aborted) {
-            const runResult = await this.runOnce(options?.signal);
+          while (!options.signal.aborted) {
+            const runResult = await this.runOnce(options.signal);
 
             if (runResult.result === 'abort') {
               break;
             }
 
-            await sleep(workCheckFrequency, options?.signal);
+            await sleep(workCheckFrequency, options.signal);
           }
 
           this.logger.info(`Task worker finished: ${this.taskId}`);
@@ -122,7 +122,7 @@ export class TaskWorker {
    * @returns The outcome of the attempt
    */
   private async runOnce(
-    signal?: AbortSignal,
+    signal: AbortSignal,
   ): Promise<
     | { result: 'not-ready-yet' }
     | { result: 'abort' }
@@ -175,7 +175,9 @@ export class TaskWorker {
     // read it back again.
     taskSettingsV2Schema.parse(settings);
 
-    const isCron = !settings?.cadence.startsWith('P');
+    const isManual = settings?.cadence === 'manual';
+    const isDuration = settings?.cadence.startsWith('P');
+    const isCron = !isManual && !isDuration;
 
     let startAt: Knex.Raw | undefined;
     let nextStartAt: Knex.Raw | undefined;
@@ -193,6 +195,9 @@ export class TaskWorker {
         .toUTC();
 
       nextStartAt = this.nextRunAtRaw(time);
+      startAt ||= nextStartAt;
+    } else if (isManual) {
+      nextStartAt = this.knex.raw('null');
       startAt ||= nextStartAt;
     } else {
       startAt ||= this.knex.fn.now();
@@ -317,7 +322,9 @@ export class TaskWorker {
     ticket: string,
     settings: TaskSettingsV2,
   ): Promise<boolean> {
-    const isCron = !settings?.cadence.startsWith('P');
+    const isManual = settings?.cadence === 'manual';
+    const isDuration = settings?.cadence.startsWith('P');
+    const isCron = !isManual && !isDuration;
 
     let nextRun: Knex.Raw;
     if (isCron) {
@@ -325,6 +332,8 @@ export class TaskWorker {
       this.logger.debug(`task: ${this.taskId} will next occur around ${time}`);
 
       nextRun = this.nextRunAtRaw(time);
+    } else if (isManual) {
+      nextRun = this.knex.raw('null');
     } else {
       const dt = Duration.fromISO(settings.cadence).as('seconds');
       this.logger.debug(

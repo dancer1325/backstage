@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
-import { Entity, GroupEntity } from '@backstage/catalog-model';
+import { GroupEntity } from '@backstage/catalog-model';
 import {
-  CatalogApi,
   catalogApiRef,
   EntityProvider,
   entityRouteRef,
   StarredEntitiesApi,
   starredEntitiesApiRef,
 } from '@backstage/plugin-catalog-react';
-import { renderInTestApp, TestApiProvider } from '@backstage/test-utils';
+import {
+  mockApis,
+  renderInTestApp,
+  TestApiProvider,
+} from '@backstage/test-utils';
 import React from 'react';
 import { MembersListCard } from './MembersListCard';
 import {
@@ -35,6 +38,7 @@ import { EntityLayout, catalogPlugin } from '@backstage/plugin-catalog';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Observable } from '@backstage/types';
+import { catalogApiMock } from '@backstage/plugin-catalog-react/testUtils';
 
 const mockedStarredEntitiesApi: Partial<StarredEntitiesApi> = {
   starredEntitie$: () => {
@@ -68,37 +72,36 @@ describe('MemberTab Test', () => {
     },
   };
 
-  const catalogApi: Partial<CatalogApi> = {
-    getEntities: () =>
-      Promise.resolve({
-        items: [
-          {
-            apiVersion: 'backstage.io/v1alpha1',
-            kind: 'User',
-            metadata: {
-              name: 'tara.macgovern',
-              namespace: 'foo-bar',
-              uid: 'a5gerth56',
-              description: 'Super Awesome Developer',
-            },
-            relations: [
-              {
-                type: 'memberOf',
-                targetRef: 'group:default/team-d',
-              },
-            ],
-            spec: {
-              profile: {
-                displayName: 'Tara MacGovern',
-                email: 'tara-macgovern@example.com',
-                picture: 'https://example.com/staff/tara.jpeg',
-              },
-              memberOf: ['team-d'],
-            },
+  const catalogApi = catalogApiMock.mock({
+    getEntities: async () => ({
+      items: [
+        {
+          apiVersion: 'backstage.io/v1alpha1',
+          kind: 'User',
+          metadata: {
+            name: 'tara.macgovern',
+            namespace: 'foo-bar',
+            uid: 'a5gerth56',
+            description: 'Super Awesome Developer',
           },
-        ] as Entity[],
-      }),
-  };
+          relations: [
+            {
+              type: 'memberOf',
+              targetRef: 'group:default/team-d',
+            },
+          ],
+          spec: {
+            profile: {
+              displayName: 'Tara MacGovern',
+              email: 'tara-macgovern@example.com',
+              picture: 'https://example.com/staff/tara.jpeg',
+            },
+            memberOf: ['team-d'],
+          },
+        },
+      ],
+    }),
+  });
 
   it('Display Profile Card', async () => {
     await renderInTestApp(
@@ -115,6 +118,12 @@ describe('MemberTab Test', () => {
         },
       },
     );
+    expect(catalogApi.getEntities).toHaveBeenCalledWith({
+      filter: {
+        kind: 'User',
+        'relations.memberof': ['group:default/team-d'],
+      },
+    });
 
     expect(screen.getByAltText('Tara MacGovern')).toHaveAttribute(
       'src',
@@ -149,6 +158,29 @@ describe('MemberTab Test', () => {
     expect(screen.getByText('Testers (1)')).toBeInTheDocument();
   });
 
+  it('Can query a different relationship', async () => {
+    await renderInTestApp(
+      <TestApiProvider apis={[[catalogApiRef, catalogApi]]}>
+        <EntityProvider entity={groupEntity}>
+          <MembersListCard relationType="leaderOf" />
+        </EntityProvider>
+      </TestApiProvider>,
+      {
+        mountedRoutes: {
+          '/catalog/:namespace/:kind/:name': entityRouteRef,
+          '/catalog': rootRouteRef,
+        },
+      },
+    );
+
+    expect(catalogApi.getEntities).toHaveBeenCalledWith({
+      filter: {
+        kind: 'User',
+        'relations.leaderof': ['group:default/team-d'],
+      },
+    });
+  });
+
   describe('Aggregate members toggle', () => {
     it('Does not show the aggregate members toggle if the showAggregateMembersToggle prop is undefined', async () => {
       await renderInTestApp(
@@ -156,7 +188,7 @@ describe('MemberTab Test', () => {
           apis={[
             [catalogApiRef, mockedCatalogApiSupportingGroups],
             [starredEntitiesApiRef, mockedStarredEntitiesApi],
-            [permissionApiRef, {}],
+            [permissionApiRef, mockApis.permission()],
           ]}
         >
           <EntityProvider entity={groupA}>
@@ -184,7 +216,7 @@ describe('MemberTab Test', () => {
           apis={[
             [catalogApiRef, mockedCatalogApiSupportingGroups],
             [starredEntitiesApiRef, mockedStarredEntitiesApi],
-            [permissionApiRef, {}],
+            [permissionApiRef, mockApis.permission()],
           ]}
         >
           <EntityProvider entity={groupA}>
@@ -210,7 +242,7 @@ describe('MemberTab Test', () => {
           apis={[
             [catalogApiRef, mockedCatalogApiSupportingGroups],
             [starredEntitiesApiRef, mockedStarredEntitiesApi],
-            [permissionApiRef, {}],
+            [permissionApiRef, mockApis.permission()],
           ]}
         >
           <EntityProvider entity={groupA}>
@@ -245,7 +277,7 @@ describe('MemberTab Test', () => {
           apis={[
             [catalogApiRef, mockedCatalogApiSupportingGroups],
             [starredEntitiesApiRef, mockedStarredEntitiesApi],
-            [permissionApiRef, {}],
+            [permissionApiRef, mockApis.permission()],
           ]}
         >
           <EntityProvider entity={groupA}>
@@ -280,7 +312,7 @@ describe('MemberTab Test', () => {
           apis={[
             [catalogApiRef, mockedCatalogApiSupportingGroups],
             [starredEntitiesApiRef, mockedStarredEntitiesApi],
-            [permissionApiRef, {}],
+            [permissionApiRef, mockApis.permission()],
           ]}
         >
           <EntityProvider entity={groupA}>
@@ -338,7 +370,7 @@ describe('MemberTab Test', () => {
         apis={[
           [catalogApiRef, mockedCatalogApiSupportingGroups],
           [starredEntitiesApiRef, mockedStarredEntitiesApi],
-          [permissionApiRef, {}],
+          [permissionApiRef, mockApis.permission()],
         ]}
       >
         <EntityProvider entity={groupA}>
@@ -346,7 +378,7 @@ describe('MemberTab Test', () => {
             <EntityLayout.Route path="/" title="Title">
               <MembersListCard
                 showAggregateMembersToggle
-                relationsType="aggregated"
+                relationAggregation="aggregated"
               />
             </EntityLayout.Route>
           </EntityLayout>
@@ -378,13 +410,13 @@ describe('MemberTab Test', () => {
         apis={[
           [catalogApiRef, mockedCatalogApiSupportingGroups],
           [starredEntitiesApiRef, mockedStarredEntitiesApi],
-          [permissionApiRef, {}],
+          [permissionApiRef, mockApis.permission()],
         ]}
       >
         <EntityProvider entity={groupA}>
           <EntityLayout>
             <EntityLayout.Route path="/" title="Title">
-              <MembersListCard relationsType="aggregated" />
+              <MembersListCard relationAggregation="aggregated" />
             </EntityLayout.Route>
           </EntityLayout>
         </EntityProvider>

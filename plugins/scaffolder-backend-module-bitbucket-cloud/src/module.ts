@@ -17,12 +17,17 @@ import {
   coreServices,
   createBackendModule,
 } from '@backstage/backend-plugin-api';
-import { scaffolderActionsExtensionPoint } from '@backstage/plugin-scaffolder-node/alpha';
+import {
+  scaffolderActionsExtensionPoint,
+  scaffolderAutocompleteExtensionPoint,
+} from '@backstage/plugin-scaffolder-node/alpha';
 import {
   createBitbucketPipelinesRunAction,
   createPublishBitbucketCloudAction,
+  createPublishBitbucketCloudPullRequestAction,
 } from './actions';
 import { ScmIntegrations } from '@backstage/integration';
+import { handleAutocompleteRequest } from './autocomplete/autocomplete';
 
 /**
  * @public
@@ -35,15 +40,25 @@ export const bitbucketCloudModule = createBackendModule({
     registerInit({
       deps: {
         scaffolder: scaffolderActionsExtensionPoint,
+        autocomplete: scaffolderAutocompleteExtensionPoint,
         config: coreServices.rootConfig,
       },
-      async init({ scaffolder, config }) {
+      async init({ scaffolder, config, autocomplete }) {
         const integrations = ScmIntegrations.fromConfig(config);
 
         scaffolder.addActions(
           createPublishBitbucketCloudAction({ integrations, config }),
           createBitbucketPipelinesRunAction({ integrations }),
+          createPublishBitbucketCloudPullRequestAction({
+            integrations,
+            config,
+          }),
         );
+
+        autocomplete.addAutocompleteProvider({
+          id: 'bitbucket-cloud',
+          handler: handleAutocompleteRequest,
+        });
       },
     });
   },

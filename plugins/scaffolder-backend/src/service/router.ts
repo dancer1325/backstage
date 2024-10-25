@@ -15,12 +15,9 @@
  */
 
 import {
-  HostDiscovery,
-  PluginDatabaseManager,
-  UrlReader,
   createLegacyAuthAdapters,
+  HostDiscovery,
 } from '@backstage/backend-common';
-import { PluginTaskScheduler } from '@backstage/backend-tasks';
 import { CatalogApi } from '@backstage/catalog-client';
 import {
   CompoundEntityRef,
@@ -35,22 +32,22 @@ import { ScmIntegrations } from '@backstage/integration';
 import { HumanDuration, JsonObject, JsonValue } from '@backstage/types';
 import {
   TaskSpec,
+  TemplateEntityStepV1beta3,
   TemplateEntityV1beta3,
   templateEntityV1beta3Validator,
   TemplateParametersV1beta3,
-  TemplateEntityStepV1beta3,
 } from '@backstage/plugin-scaffolder-common';
 import {
   RESOURCE_TYPE_SCAFFOLDER_ACTION,
   RESOURCE_TYPE_SCAFFOLDER_TEMPLATE,
   scaffolderActionPermissions,
+  scaffolderTaskPermissions,
   scaffolderTemplatePermissions,
   taskCancelPermission,
   taskCreatePermission,
   taskReadPermission,
   templateParameterReadPermission,
   templateStepReadPermission,
-  scaffolderTaskPermissions,
 } from '@backstage/plugin-scaffolder-common/alpha';
 import express from 'express';
 import Router from 'express-promise-router';
@@ -58,8 +55,9 @@ import { validate } from 'jsonschema';
 import { Logger } from 'winston';
 import { z } from 'zod';
 import {
-  TemplateAction,
   TaskBroker,
+  TaskStatus,
+  TemplateAction,
   TemplateFilter,
   TemplateGlobal,
 } from '@backstage/plugin-scaffolder-node';
@@ -71,7 +69,13 @@ import {
 } from '../scaffolder';
 import { createDryRunner } from '../scaffolder/dryrun';
 import { StorageTaskBroker } from '../scaffolder/tasks/StorageTaskBroker';
-import { findTemplate, getEntityBaseUrl, getWorkingDirectory } from './helpers';
+import {
+  findTemplate,
+  getEntityBaseUrl,
+  getWorkingDirectory,
+  parseNumberParam,
+  parseStringsParam,
+} from './helpers';
 import { PermissionRuleParams } from '@backstage/plugin-permission-common';
 import {
   createConditionAuthorizer,
@@ -83,10 +87,13 @@ import { Duration } from 'luxon';
 import {
   AuthService,
   BackstageCredentials,
+  DatabaseService,
   DiscoveryService,
   HttpAuthService,
   LifecycleService,
   PermissionsService,
+  SchedulerService,
+  UrlReaderService,
 } from '@backstage/backend-plugin-api';
 import {
   IdentityApi,
@@ -94,6 +101,10 @@ import {
 } from '@backstage/plugin-auth-node';
 import { InternalTaskSecrets } from '../scaffolder/tasks/types';
 import { checkPermission } from '../util/checkPermissions';
+import {
+  AutocompleteHandler,
+  WorkspaceProvider,
+} from '@backstage/plugin-scaffolder-node/alpha';
 
 /**
  *
@@ -135,15 +146,16 @@ function isActionPermissionRuleInput(
  * RouterOptions
  *
  * @public
+ * @deprecated Please migrate to the new backend system as this will be removed in the future.
  */
 export interface RouterOptions {
   logger: Logger;
   config: Config;
-  reader: UrlReader;
+  reader: UrlReaderService;
   lifecycle?: LifecycleService;
-  database: PluginDatabaseManager;
+  database: DatabaseService;
   catalogClient: CatalogApi;
-  scheduler?: PluginTaskScheduler;
+  scheduler?: SchedulerService;
   actions?: TemplateAction<any, any>[];
   /**
    * @deprecated taskWorkers is deprecated in favor of concurrentTasksLimit option with a single TaskWorker
@@ -158,6 +170,7 @@ export interface RouterOptions {
   taskBroker?: TaskBroker;
   additionalTemplateFilters?: Record<string, TemplateFilter>;
   additionalTemplateGlobals?: Record<string, TemplateGlobal>;
+  additionalWorkspaceProviders?: Record<string, WorkspaceProvider>;
   permissions?: PermissionsService;
   permissionRules?: Array<
     TemplatePermissionRuleInput | ActionPermissionRuleInput
@@ -166,6 +179,8 @@ export interface RouterOptions {
   httpAuth?: HttpAuthService;
   identity?: IdentityApi;
   discovery?: DiscoveryService;
+
+  autocompleteHandlers?: Record<string, AutocompleteHandler>;
 }
 
 function isSupportedTemplate(entity: TemplateEntityV1beta3) {
@@ -250,6 +265,7 @@ const readDuration = (
 /**
  * A method to create a router for the scaffolder backend plugin.
  * @public
+ * @deprecated Please migrate to the new backend system as this will be removed in the future.
  */
 export async function createRouter(
   options: RouterOptions,
@@ -269,10 +285,12 @@ export async function createRouter(
     scheduler,
     additionalTemplateFilters,
     additionalTemplateGlobals,
+    additionalWorkspaceProviders,
     permissions,
     permissionRules,
     discovery = HostDiscovery.fromConfig(config),
     identity = buildDefaultIdentityClient(options),
+    autocompleteHandlers = {},
   } = options;
 
   const { auth, httpAuth } = createLegacyAuthAdapters({
@@ -293,7 +311,13 @@ export async function createRouter(
   let taskBroker: TaskBroker;
   if (!options.taskBroker) {
     const databaseTaskStore = await DatabaseTaskStore.create({ database });
-    taskBroker = new StorageTaskBroker(databaseTaskStore, logger, config, auth);
+    taskBroker = new StorageTaskBroker(
+      databaseTaskStore,
+      logger,
+      config,
+      auth,
+      additionalWorkspaceProviders,
+    );
 
     if (scheduler && databaseTaskStore.listStaleTasks) {
       await scheduler.scheduleTask({
@@ -469,6 +493,7 @@ export async function createRouter(
       });
 
       const credentials = await httpAuth.credentials(req);
+
       await checkPermission({
         credentials,
         permissions: [taskCreatePermission],
@@ -539,7 +564,11 @@ export async function createRouter(
       const secrets: InternalTaskSecrets = {
         ...req.body.secrets,
         backstageToken: token,
-        __initiatorCredentials: JSON.stringify(credentials),
+        __initiatorCredentials: JSON.stringify({
+          ...credentials,
+          // credentials.token is nonenumerable and will not be serialized, so we need to add it explicitly
+          token: (credentials as any).token,
+        }),
       };
 
       const result = await taskBroker.dispatch({
@@ -558,22 +587,42 @@ export async function createRouter(
         permissionService: permissions,
       });
 
-      const [userEntityRef] = [req.query.createdBy].flat();
-      if (
-        typeof userEntityRef !== 'string' &&
-        typeof userEntityRef !== 'undefined'
-      ) {
-        throw new InputError('createdBy query parameter must be a string');
-      }
-
       if (!taskBroker.list) {
         throw new Error(
           'TaskBroker does not support listing tasks, please implement the list method on the TaskBroker.',
         );
       }
 
+      const createdBy = parseStringsParam(req.query.createdBy, 'createdBy');
+      const status = parseStringsParam(req.query.status, 'status');
+
+      const order = parseStringsParam(req.query.order, 'order')?.map(item => {
+        const match = item.match(/^(asc|desc):(.+)$/);
+        if (!match) {
+          throw new InputError(
+            `Invalid order parameter "${item}", expected "<asc or desc>:<field name>"`,
+          );
+        }
+
+        return {
+          order: match[1] as 'asc' | 'desc',
+          field: match[2],
+        };
+      });
+
+      const limit = parseNumberParam(req.query.limit, 'limit');
+      const offset = parseNumberParam(req.query.offset, 'offset');
+
       const tasks = await taskBroker.list({
-        createdBy: userEntityRef,
+        filters: {
+          createdBy,
+          status: status ? (status as TaskStatus[]) : undefined,
+        },
+        order,
+        pagination: {
+          limit: limit ? limit[0] : undefined,
+          offset: offset ? offset[0] : undefined,
+        },
       });
 
       res.status(200).json(tasks);
@@ -607,6 +656,19 @@ export async function createRouter(
       const { taskId } = req.params;
       await taskBroker.cancel?.(taskId);
       res.status(200).json({ status: 'cancelled' });
+    })
+    .post('/v2/tasks/:taskId/retry', async (req, res) => {
+      const credentials = await httpAuth.credentials(req);
+      // Requires both read and cancel permissions
+      await checkPermission({
+        credentials,
+        permissions: [taskCreatePermission, taskReadPermission],
+        permissionService: permissions,
+      });
+
+      const { taskId } = req.params;
+      await taskBroker.retry?.(taskId);
+      res.status(201).json({ id: taskId });
     })
     .get('/v2/tasks/:taskId/eventstream', async (req, res) => {
       const credentials = await httpAuth.credentials(req);
@@ -643,7 +705,7 @@ export async function createRouter(
             res.write(
               `event: ${event.type}\ndata: ${JSON.stringify(event)}\n\n`,
             );
-            if (event.type === 'completion') {
+            if (event.type === 'completion' && !event.isTaskRecoverable) {
               shouldUnsubscribe = true;
             }
           }
@@ -730,6 +792,14 @@ export async function createRouter(
         targetPluginId: 'catalog',
       });
 
+      const userEntityRef = auth.isPrincipal(credentials, 'user')
+        ? credentials.principal.userEntityRef
+        : undefined;
+
+      const userEntity = userEntityRef
+        ? await catalogClient.getEntityByRef(userEntityRef, { token })
+        : undefined;
+
       for (const parameters of [template.spec.parameters ?? []].flat()) {
         const result = validate(body.values, parameters);
         if (!result.valid) {
@@ -750,6 +820,10 @@ export async function createRouter(
           steps,
           output: template.spec.output ?? {},
           parameters: body.values as JsonObject,
+          user: {
+            entity: userEntity as UserEntity,
+            ref: userEntityRef,
+          },
         },
         directoryContents: (body.directoryContents ?? []).map(file => ({
           path: file.path,
@@ -771,6 +845,24 @@ export async function createRouter(
           base64Content: file.content.toString('base64'),
         })),
       });
+    })
+    .post('/v2/autocomplete/:provider/:resource', async (req, res) => {
+      const { token, context } = req.body;
+      const { provider, resource } = req.params;
+
+      if (!token) throw new InputError('Missing token query parameter');
+
+      if (!autocompleteHandlers[provider]) {
+        throw new InputError(`Unsupported provider: ${provider}`);
+      }
+
+      const { results } = await autocompleteHandlers[provider]({
+        resource,
+        token,
+        context,
+      });
+
+      res.status(200).json({ results });
     });
 
   const app = express();

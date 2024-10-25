@@ -28,9 +28,13 @@ import {
   TemplateGlobal,
 } from '@backstage/plugin-scaffolder-node';
 import {
+  AutocompleteHandler,
   scaffolderActionsExtensionPoint,
+  scaffolderAutocompleteExtensionPoint,
   scaffolderTaskBrokerExtensionPoint,
   scaffolderTemplatingExtensionPoint,
+  scaffolderWorkspaceProviderExtensionPoint,
+  WorkspaceProvider,
 } from '@backstage/plugin-scaffolder-node/alpha';
 import {
   createCatalogRegisterAction,
@@ -40,6 +44,7 @@ import {
   createFetchPlainAction,
   createFetchPlainFileAction,
   createFetchTemplateAction,
+  createFetchTemplateFileAction,
   createFilesystemDeleteAction,
   createFilesystemRenameAction,
   createWaitAction,
@@ -49,7 +54,7 @@ import { createRouter } from './service/router';
 /**
  * Scaffolder plugin
  *
- * @alpha
+ * @public
  */
 export const scaffolderPlugin = createBackendPlugin({
   pluginId: 'scaffolder',
@@ -79,6 +84,20 @@ export const scaffolderPlugin = createBackendPlugin({
       },
       addTemplateGlobals(newGlobals) {
         Object.assign(additionalTemplateGlobals, newGlobals);
+      },
+    });
+
+    const autocompleteHandlers: Record<string, AutocompleteHandler> = {};
+    env.registerExtensionPoint(scaffolderAutocompleteExtensionPoint, {
+      addAutocompleteProvider(provider) {
+        autocompleteHandlers[provider.id] = provider.handler;
+      },
+    });
+
+    const additionalWorkspaceProviders: Record<string, WorkspaceProvider> = {};
+    env.registerExtensionPoint(scaffolderWorkspaceProviderExtensionPoint, {
+      addProviders(provider) {
+        Object.assign(additionalWorkspaceProviders, provider);
       },
     });
 
@@ -131,6 +150,12 @@ export const scaffolderPlugin = createBackendPlugin({
             additionalTemplateFilters,
             additionalTemplateGlobals,
           }),
+          createFetchTemplateFileAction({
+            integrations,
+            reader,
+            additionalTemplateFilters,
+            additionalTemplateGlobals,
+          }),
           createDebugLogAction(),
           createWaitAction(),
           // todo(blam): maybe these should be a -catalog module?
@@ -162,6 +187,8 @@ export const scaffolderPlugin = createBackendPlugin({
           httpAuth,
           discovery,
           permissions,
+          autocompleteHandlers,
+          additionalWorkspaceProviders,
         });
         httpRouter.use(router);
       },

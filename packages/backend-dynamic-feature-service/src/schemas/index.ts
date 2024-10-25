@@ -20,5 +20,8 @@ export {
   type DynamicPluginsSchemasOptions,
 } from './schemas';
 
-export { dynamicPluginsFrontendSchemas } from './appBackendModule';
-export { dynamicPluginsRootLoggerServiceFactory } from './rootLoggerServiceFactory';
+export { dynamicPluginsFrontendSchemas } from './frontend';
+export {
+  dynamicPluginsRootLoggerServiceFactory,
+  type DynamicPluginsRootLoggerFactoryOptions,
+} from './rootLogger';

@@ -1,5 +1,229 @@
 # @backstage/plugin-proxy-backend
 
+## 0.5.8-next.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-plugin-api@1.0.2-next.0
+  - @backstage/config@1.2.0
+  - @backstage/types@1.1.1
+
+## 0.5.7
+
+### Patch Changes
+
+- 094eaa3: Remove references to in-repo backend-common
+- 3109c24: The export for the new backend system at the `/alpha` export is now also available via the main entry point, which means that you can remove the `/alpha` suffix from the import.
+- Updated dependencies
+  - @backstage/backend-plugin-api@1.0.1
+  - @backstage/config@1.2.0
+  - @backstage/types@1.1.1
+
+## 0.5.7-next.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-plugin-api@1.0.1-next.1
+  - @backstage/config@1.2.0
+  - @backstage/types@1.1.1
+
+## 0.5.7-next.0
+
+### Patch Changes
+
+- 094eaa3: Remove references to in-repo backend-common
+- Updated dependencies
+  - @backstage/backend-plugin-api@1.0.1-next.0
+  - @backstage/config@1.2.0
+  - @backstage/types@1.1.1
+
+## 0.5.6
+
+### Patch Changes
+
+- d425fc4: Modules, plugins, and services are now `BackendFeature`, not a function that returns a feature.
+- d298e6e: Deprecated `createRouter` and its router options in favour of the new backend system.
+- Updated dependencies
+  - @backstage/backend-common@0.25.0
+  - @backstage/backend-plugin-api@1.0.0
+  - @backstage/config@1.2.0
+  - @backstage/types@1.1.1
+
+## 0.5.6-next.2
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-common@0.25.0-next.2
+  - @backstage/backend-plugin-api@1.0.0-next.2
+  - @backstage/config@1.2.0
+  - @backstage/types@1.1.1
+
+## 0.5.6-next.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-common@0.25.0-next.1
+  - @backstage/backend-plugin-api@0.9.0-next.1
+  - @backstage/config@1.2.0
+  - @backstage/types@1.1.1
+
+## 0.5.6-next.0
+
+### Patch Changes
+
+- d425fc4: Modules, plugins, and services are now `BackendFeature`, not a function that returns a feature.
+- d298e6e: Deprecated `createRouter` and its router options in favour of the new backend system.
+- Updated dependencies
+  - @backstage/backend-plugin-api@0.9.0-next.0
+  - @backstage/backend-common@0.25.0-next.0
+  - @backstage/config@1.2.0
+  - @backstage/types@1.1.1
+
+## 0.5.4
+
+### Patch Changes
+
+- 93095ee: Make sure node-fetch is version 2.7.0 or greater
+- b63d378: Update internal imports
+- Updated dependencies
+  - @backstage/backend-plugin-api@0.8.0
+  - @backstage/backend-common@0.24.0
+  - @backstage/config@1.2.0
+  - @backstage/types@1.1.1
+
+## 0.5.4-next.3
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-plugin-api@0.8.0-next.3
+  - @backstage/backend-common@0.23.4-next.3
+  - @backstage/config@1.2.0
+  - @backstage/types@1.1.1
+
+## 0.5.4-next.2
+
+### Patch Changes
+
+- 93095ee: Make sure node-fetch is version 2.7.0 or greater
+- Updated dependencies
+  - @backstage/backend-plugin-api@0.8.0-next.2
+  - @backstage/backend-common@0.23.4-next.2
+  - @backstage/config@1.2.0
+  - @backstage/types@1.1.1
+
+## 0.5.4-next.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-plugin-api@0.7.1-next.1
+  - @backstage/backend-common@0.23.4-next.1
+  - @backstage/config@1.2.0
+  - @backstage/types@1.1.1
+
+## 0.5.4-next.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-common@0.23.4-next.0
+  - @backstage/backend-plugin-api@0.7.1-next.0
+  - @backstage/config@1.2.0
+  - @backstage/types@1.1.1
+
+## 0.5.3
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-plugin-api@0.7.0
+  - @backstage/backend-common@0.23.3
+  - @backstage/config@1.2.0
+  - @backstage/types@1.1.1
+
+## 0.5.3-next.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-common@0.23.3-next.1
+  - @backstage/backend-plugin-api@0.6.22-next.1
+  - @backstage/config@1.2.0
+  - @backstage/types@1.1.1
+
+## 0.5.2-next.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-plugin-api@0.6.21-next.0
+  - @backstage/backend-common@0.23.2-next.0
+  - @backstage/config@1.2.0
+  - @backstage/types@1.1.1
+
+## 0.5.0
+
+### Minor Changes
+
+- 88480e4: **BREAKING**: The proxy backend plugin is now protected by Backstage auth, by
+  default. Unless specifically configured (see below), all proxy endpoints will
+  reject requests immediately unless a valid Backstage user or service token is
+  passed along with the request. This aligns the proxy with how other Backstage
+  backends behave out of the box, and serves to protect your upstreams from
+  unauthorized access.
+
+  A proxy configuration section can now look as follows:
+
+  ```yaml
+  proxy:
+    endpoints:
+      '/pagerduty':
+        target: https://api.pagerduty.com
+        credentials: require # NEW!
+        headers:
+          Authorization: Token token=${PAGERDUTY_TOKEN}
+  ```
+
+  There are three possible `credentials` settings at this point:
+
+  - `require`: Callers must provide Backstage user or service credentials with
+    each request. The credentials are not forwarded to the proxy target.
+  - `forward`: Callers must provide Backstage user or service credentials with
+    each request, and those credentials are forwarded to the proxy target.
+  - `dangerously-allow-unauthenticated`: No Backstage credentials are required to
+    access this proxy target. The target can still apply its own credentials
+    checks, but the proxy will not help block non-Backstage-blessed callers. If
+    you also add `allowedHeaders: ['Authorization']` to an endpoint configuration,
+    then the Backstage token (if provided) WILL be forwarded.
+
+  The value `dangerously-allow-unauthenticated` was the old default.
+
+  The value `require` is the new default, so requests that were previously
+  permitted may now start resulting in `401 Unauthorized` responses. If you have
+  `backend.auth.dangerouslyDisableDefaultAuthPolicy` set to `true`, this does not
+  apply; the proxy will behave as if all endpoints were set to
+  `dangerously-allow-unauthenticated`.
+
+  If you have proxy endpoints that require unauthenticated access still, please
+  add `credentials: dangerously-allow-unauthenticated` to their declarations in
+  your app-config.
+
+### Patch Changes
+
+- 8869b8e: Updated local development setup.
+- 78a0b08: Internal refactor to handle `BackendFeature` contract change.
+- d44a20a: Added additional plugin metadata to `package.json`.
+- Updated dependencies
+  - @backstage/backend-common@0.23.0
+  - @backstage/backend-plugin-api@0.6.19
+  - @backstage/config@1.2.0
+  - @backstage/types@1.1.1
+
 ## 0.5.0-next.3
 
 ### Patch Changes

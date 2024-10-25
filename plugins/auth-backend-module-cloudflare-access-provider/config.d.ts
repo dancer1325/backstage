@@ -27,6 +27,17 @@ export interface Config {
           token: string;
           subject: string;
         }>;
+        jwtHeaderName?: string;
+        authorizationCookieName?: string;
+        signIn?: {
+          resolvers: Array<
+            | {
+                resolver: 'emailLocalPartMatchingUserEntityName';
+                allowedDomains?: string[];
+              }
+            | { resolver: 'emailMatchingUserEntityProfileEmail' }
+          >;
+        };
       };
       /**
        * The backstage token expiration.

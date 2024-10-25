@@ -1,5 +1,222 @@
 # @backstage/core-components
 
+## 0.16.0-next.0
+
+### Minor Changes
+
+- dc409c5: The SupportButton component will now be hidden if no support config is specified in app-config
+
+### Patch Changes
+
+- af9097e: Adds the ability to mock a media query per break point and to change the active break point during a test. Usage example:
+
+  ```ts
+  const { set } = mockBreakpoint({
+    initialBreakpoint: 'md',
+    queryBreakpointMap: {
+      '(min-width:1500px)': 'xl',
+      '(min-width:1000px)': 'lg',
+      '(min-width:700px)': 'md',
+      '(min-width:400px)': 'sm',
+      '(min-width:0px)': 'xs',
+    },
+  });
+  // assertions for when the active break point is "md"
+  set('lg');
+  // assertions for when the active break point is "lg"
+  ```
+
+- Updated dependencies
+  - @backstage/config@1.2.0
+  - @backstage/core-plugin-api@1.10.0
+  - @backstage/errors@1.2.4
+  - @backstage/theme@0.6.0
+  - @backstage/version-bridge@1.0.10
+
+## 0.15.1
+
+### Patch Changes
+
+- 3f76d0e: Correct size of FavoriteToggle and inherit non-starred color from parent
+- e969dc7: Move `@types/react` to a peer dependency.
+- 1ff1dbd: It is possible to define a custom error element to be shown when sign in fails
+- 83e2887: Fixed a bug in the `SidebarSubmenu` core component that caused the nested menu to overlap with the sidebar when the user hovers over the pinned sidebar.
+- 46b5a20: `Link` component now accepts `externalLinkIcon` prop
+- e4ad29a: Fix authentication error handling using redirect flow via `enableExperimentalRedirectFlow` config. If an error is caught during authentication, the user is redirected back to app origin with `error` query parameter containing the error message.
+- Updated dependencies
+  - @backstage/core-plugin-api@1.10.0
+  - @backstage/version-bridge@1.0.10
+  - @backstage/theme@0.6.0
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+
+## 0.15.1-next.2
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/theme@0.6.0-next.1
+  - @backstage/config@1.2.0
+  - @backstage/core-plugin-api@1.10.0-next.1
+  - @backstage/errors@1.2.4
+  - @backstage/version-bridge@1.0.10-next.0
+
+## 0.15.1-next.1
+
+### Patch Changes
+
+- 3f76d0e: Correct size of FavoriteToggle and inherit non-starred color from parent
+- e969dc7: Move `@types/react` to a peer dependency.
+- 83e2887: Fixed a bug in the `SidebarSubmenu` core component that caused the nested menu to overlap with the sidebar when the user hovers over the pinned sidebar.
+- Updated dependencies
+  - @backstage/core-plugin-api@1.10.0-next.1
+  - @backstage/version-bridge@1.0.10-next.0
+  - @backstage/theme@0.5.8-next.0
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+
+## 0.15.1-next.0
+
+### Patch Changes
+
+- 46b5a20: `Link` component now accepts `externalLinkIcon` prop
+- Updated dependencies
+  - @backstage/core-plugin-api@1.10.0-next.0
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/theme@0.5.7
+  - @backstage/version-bridge@1.0.9
+
+## 0.15.0
+
+### Minor Changes
+
+- 9adc552: Added missing items to `overridableComponents`
+
+  **BREAKING** Overridable component name for styling `OAuthRequestDialog` changed to `BackstageOAuthRequestDialog`. Overridable component name `BackstageMissingAnnotationEmptyState` that was previously deprecated has been removed.
+
+### Patch Changes
+
+- c891b69: Add `FavoriteToggle` in `core-components` to standardise favorite marking
+- 0944334: Removed default title set to Unknown page on `ContentHeaderTitle` component to support usage of component without title prop.
+- f325258: Use getOptionalString for optional app.support.items[].links[].title
+- af4c146: Support menu items should not be buttons in favour of links
+- 107a147: Fixed `Table` width being overridden by custom `style` prop.
+- b537bd7: Allow custom star icons to be provided via the `star` and `unstarred` icon overrides. See how to override existing icons in the [Backstage documentation](https://backstage.io/docs/getting-started/app-custom-theme/#custom-icons).
+- 06b8206: Added `titleComponent` prop to `SignInPage` component to allow further customization of the title using `ReactNode`
+- dbbd93e: Internal update to match recent React types
+- 836127c: Updated dependency `@testing-library/react` to `^16.0.0`.
+- Updated dependencies
+  - @backstage/core-plugin-api@1.9.4
+  - @backstage/theme@0.5.7
+  - @backstage/version-bridge@1.0.9
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+
+## 0.14.11-next.1
+
+### Patch Changes
+
+- c891b69: Add `FavoriteToggle` in `core-components` to standardise favorite marking
+- 0944334: Removed default title set to Unknown page on `ContentHeaderTitle` component to support usage of component without title prop.
+- f325258: Use getOptionalString for optional app.support.items[].links[].title
+- af4c146: Support menu items should not be buttons in favour of links
+- b537bd7: Allow custom star icons to be provided via the `star` and `unstarred` icon overrides. See how to override existing icons in the [Backstage documentation](https://backstage.io/docs/getting-started/app-custom-theme/#custom-icons).
+- dbbd93e: Internal update to match recent React types
+- 836127c: Updated dependency `@testing-library/react` to `^16.0.0`.
+- Updated dependencies
+  - @backstage/core-plugin-api@1.9.4-next.0
+  - @backstage/theme@0.5.7-next.0
+  - @backstage/version-bridge@1.0.9-next.0
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+
+## 0.14.11-next.0
+
+### Patch Changes
+
+- 06b8206: Added `titleComponent` prop to `SignInPage` component to allow further customization of the title using `ReactNode`
+- Updated dependencies
+  - @backstage/config@1.2.0
+  - @backstage/core-plugin-api@1.9.3
+  - @backstage/errors@1.2.4
+  - @backstage/theme@0.5.6
+  - @backstage/version-bridge@1.0.8
+
+## 0.14.10
+
+### Patch Changes
+
+- 678971a: Move the `Link` component to the `RoutedTabs` instead of the `HeaderTabs` component
+- 13a9c63: Corrected the documentation for the GCP IAP auth module and updated the configuration to follow proxy configuration conventions by ignoring authEnv
+- Updated dependencies
+  - @backstage/config@1.2.0
+  - @backstage/core-plugin-api@1.9.3
+  - @backstage/errors@1.2.4
+  - @backstage/theme@0.5.6
+  - @backstage/version-bridge@1.0.8
+
+## 0.14.10-next.0
+
+### Patch Changes
+
+- 678971a: Move the `Link` component to the `RoutedTabs` instead of the `HeaderTabs` component
+- Updated dependencies
+  - @backstage/config@1.2.0
+  - @backstage/core-plugin-api@1.9.3
+  - @backstage/errors@1.2.4
+  - @backstage/theme@0.5.6
+  - @backstage/version-bridge@1.0.8
+
+## 0.14.9
+
+### Patch Changes
+
+- d4ffdbb: Fixed bug where `<Select>` component with empty string as placeholder gave an error
+- 99d672d: Modified the `Select` component to take in a `data-testid` parameter ensuring backwards compatibility with default value corresponding to previously hardcoded `data-testid` of "select".
+- Updated dependencies
+  - @backstage/config@1.2.0
+  - @backstage/core-plugin-api@1.9.3
+  - @backstage/errors@1.2.4
+  - @backstage/theme@0.5.6
+  - @backstage/version-bridge@1.0.8
+
+## 0.14.9-next.1
+
+### Patch Changes
+
+- 99d672d: Modified the `Select` component to take in a `data-testid` parameter ensuring backwards compatibility with default value corresponding to previously hardcoded `data-testid` of "select".
+
+## 0.14.9-next.0
+
+### Patch Changes
+
+- d4ffdbb: Fixed bug where `<Select>` component with empty string as placeholder gave an error
+- Updated dependencies
+  - @backstage/core-plugin-api@1.9.3
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/theme@0.5.6
+  - @backstage/version-bridge@1.0.8
+
+## 0.14.8
+
+### Patch Changes
+
+- a0b46f6: Having tooltip inherit font size for consistency in catalog table columns
+- 59cee81: Use `inherit` variant on OverflowTooltip underlying Typography component.
+- eae0e4d: Fixed an issue causing `SidebarSubmenu` text to not follow the theme color
+- e4811ec: Make number of decimal digits in Gauge configurable via the `decimalDigits` property
+- 83c4251: Adds icons to status component
+- 3e175c8: Removed max width from `Select` component.
+- 57d7582: Fixed a bug in `SupportButton` where the title was rendered with the characteristics of a button.
+- Updated dependencies
+  - @backstage/core-plugin-api@1.9.3
+  - @backstage/theme@0.5.6
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/version-bridge@1.0.8
+
 ## 0.14.8-next.2
 
 ### Patch Changes

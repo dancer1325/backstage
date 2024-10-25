@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-import { serveBundle } from '../../lib/bundler';
+import { readJson } from 'fs-extra';
+import { getModuleFederationOptions, serveBundle } from '../../lib/bundler';
+import { paths } from '../../lib/paths';
 
 interface StartAppOptions {
   verifyVersions?: boolean;
@@ -22,14 +24,25 @@ interface StartAppOptions {
 
   checksEnabled: boolean;
   configPaths: string[];
+  skipOpenBrowser?: boolean;
+  isModuleFederationRemote?: boolean;
+  linkedWorkspace?: string;
 }
 
 export async function startFrontend(options: StartAppOptions) {
+  const { name } = await readJson(paths.resolveTarget('package.json'));
+
   const waitForExit = await serveBundle({
     entry: options.entry,
     checksEnabled: options.checksEnabled,
     configPaths: options.configPaths,
     verifyVersions: options.verifyVersions,
+    skipOpenBrowser: options.skipOpenBrowser,
+    linkedWorkspace: options.linkedWorkspace,
+    moduleFederation: getModuleFederationOptions(
+      name,
+      options.isModuleFederationRemote,
+    ),
   });
 
   await waitForExit();

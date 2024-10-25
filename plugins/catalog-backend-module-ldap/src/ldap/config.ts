@@ -15,9 +15,9 @@
  */
 
 import {
-  readTaskScheduleDefinitionFromConfig,
-  TaskScheduleDefinition,
-} from '@backstage/backend-tasks';
+  SchedulerServiceTaskScheduleDefinition,
+  readSchedulerServiceTaskScheduleDefinitionFromConfig,
+} from '@backstage/backend-plugin-api';
 import { Config } from '@backstage/config';
 import { JsonValue } from '@backstage/types';
 import { SearchOptions } from 'ldapjs';
@@ -42,11 +42,13 @@ export type LdapProviderConfig = {
   // command is not issued.
   bind?: BindConfig;
   // The settings that govern the reading and interpretation of users
-  users: UserConfig;
+  users: UserConfig[];
   // The settings that govern the reading and interpretation of groups
-  groups: GroupConfig;
+  groups: GroupConfig[];
   // Schedule configuration for refresh tasks.
-  schedule?: TaskScheduleDefinition;
+  schedule?: SchedulerServiceTaskScheduleDefinition;
+  // Configuration for overriding the vendor-specific default attribute names.
+  vendor?: VendorConfig;
 };
 
 /**
@@ -161,34 +163,60 @@ export type GroupConfig = {
   };
 };
 
-const defaultConfig = {
-  users: {
-    options: {
-      scope: 'one',
-      attributes: ['*', '+'],
-    },
-    map: {
-      rdn: 'uid',
-      name: 'uid',
-      displayName: 'cn',
-      email: 'mail',
-      memberOf: 'memberOf',
-    },
+/**
+ * Configuration for LDAP vendor-specific attributes.
+ *
+ * Allows custom attribute names for distinguished names (DN) and
+ * universally unique identifiers (UUID) in LDAP directories.
+ *
+ * @public
+ */
+export type VendorConfig = {
+  /**
+   * Attribute name for the distinguished name (DN) of an entry,
+   */
+  dnAttributeName?: string;
+
+  /**
+   * Attribute name for the unique identifier (UUID) of an entry,
+   */
+  uuidAttributeName?: string;
+
+  /**
+   * Attribute to determine if we need to force the DN and members/memberOf values to be forced to same case.
+   * Some providers may provide lowercase members but multicase DN names which causes the group filtering to break.
+   * The default is off, but turning this on forces the inbound DN values and all member values to lowercase.
+   */
+  dnCaseSensitive?: boolean;
+};
+
+const defaultUserConfig = {
+  options: {
+    scope: 'one',
+    attributes: ['*', '+'],
   },
-  groups: {
-    options: {
-      scope: 'one',
-      attributes: ['*', '+'],
-    },
-    map: {
-      rdn: 'cn',
-      name: 'cn',
-      description: 'description',
-      displayName: 'cn',
-      type: 'groupType',
-      memberOf: 'memberOf',
-      members: 'member',
-    },
+  map: {
+    rdn: 'uid',
+    name: 'uid',
+    displayName: 'cn',
+    email: 'mail',
+    memberOf: 'memberOf',
+  },
+};
+
+const defaultGroupConfig = {
+  options: {
+    scope: 'one',
+    attributes: ['*', '+'],
+  },
+  map: {
+    rdn: 'cn',
+    name: 'cn',
+    description: 'description',
+    displayName: 'cn',
+    type: 'groupType',
+    memberOf: 'memberOf',
+    members: 'member',
   },
 };
 
@@ -223,6 +251,19 @@ function readBindConfig(
   return {
     dn: c.getString('dn'),
     secret: c.getString('secret'),
+  };
+}
+
+function readVendorConfig(
+  c: Config | undefined,
+): LdapProviderConfig['vendor'] | undefined {
+  if (!c) {
+    return undefined;
+  }
+  return {
+    dnAttributeName: c.getOptionalString('dnAttributeName'),
+    uuidAttributeName: c.getOptionalString('uuidAttributeName'),
+    dnCaseSensitive: c.getOptionalBoolean('dnCaseSensitive'),
   };
 }
 
@@ -272,9 +313,7 @@ function readSetConfig(
   return c.get();
 }
 
-function readUserMapConfig(
-  c: Config | undefined,
-): Partial<LdapProviderConfig['users']['map']> {
+function readUserMapConfig(c: Config | undefined): Partial<UserConfig['map']> {
   if (!c) {
     return {};
   }
@@ -292,7 +331,7 @@ function readUserMapConfig(
 
 function readGroupMapConfig(
   c: Config | undefined,
-): Partial<LdapProviderConfig['groups']['map']> {
+): Partial<GroupConfig['map']> {
   if (!c) {
     return {};
   }
@@ -311,8 +350,18 @@ function readGroupMapConfig(
 }
 
 function readUserConfig(
-  c: Config,
+  c: Config | Config[] | undefined,
 ): RecursivePartial<LdapProviderConfig['users']> {
+  if (!c) {
+    return [];
+  }
+  if (Array.isArray(c)) {
+    return c.map(it => readSingleUserConfig(it));
+  }
+  return [readSingleUserConfig(c)];
+}
+
+function readSingleUserConfig(c: Config): RecursivePartial<UserConfig> {
   return {
     dn: c.getString('dn'),
     options: readOptionsConfig(c.getOptionalConfig('options')),
@@ -322,8 +371,18 @@ function readUserConfig(
 }
 
 function readGroupConfig(
-  c: Config,
+  c: Config | Config[] | undefined,
 ): RecursivePartial<LdapProviderConfig['groups']> {
+  if (!c) {
+    return [];
+  }
+  if (Array.isArray(c)) {
+    return c.map(it => readSingleGroupConfig(it));
+  }
+  return [readSingleGroupConfig(c)];
+}
+
+function readSingleGroupConfig(c: Config): RecursivePartial<GroupConfig> {
   return {
     dn: c.getString('dn'),
     options: readOptionsConfig(c.getOptionalConfig('options')),
@@ -352,14 +411,16 @@ export function readLdapLegacyConfig(config: Config): LdapProviderConfig[] {
       target: trimEnd(c.getString('target'), '/'),
       tls: readTlsConfig(c.getOptionalConfig('tls')),
       bind: readBindConfig(c.getOptionalConfig('bind')),
-      users: readUserConfig(c.getConfig('users')),
-      groups: readGroupConfig(c.getConfig('groups')),
+      users: readUserConfig(c.getConfig('users')).map(it => {
+        return mergeWith({}, defaultUserConfig, it, replaceArraysIfPresent);
+      }),
+      groups: readGroupConfig(c.getConfig('groups')).map(it => {
+        return mergeWith({}, defaultGroupConfig, it, replaceArraysIfPresent);
+      }),
+      vendor: readVendorConfig(c.getOptionalConfig('vendor')),
     };
-    const merged = mergeWith({}, defaultConfig, newConfig, (_into, from) => {
-      // Replace arrays instead of merging, otherwise default behavior
-      return Array.isArray(from) ? from : undefined;
-    });
-    return freeze(merged) as LdapProviderConfig;
+
+    return freeze(newConfig) as LdapProviderConfig;
   });
 }
 
@@ -378,24 +439,43 @@ export function readProviderConfigs(config: Config): LdapProviderConfig[] {
 
   return providersConfig.keys().map(id => {
     const c = providersConfig.getConfig(id);
-
     const schedule = c.has('schedule')
-      ? readTaskScheduleDefinitionFromConfig(c.getConfig('schedule'))
+      ? readSchedulerServiceTaskScheduleDefinitionFromConfig(
+          c.getConfig('schedule'),
+        )
       : undefined;
+
+    const isUserList = Array.isArray(c.getOptional('users'));
+    const isGroupList = Array.isArray(c.getOptional('groups'));
 
     const newConfig = {
       id,
       target: trimEnd(c.getString('target'), '/'),
       tls: readTlsConfig(c.getOptionalConfig('tls')),
       bind: readBindConfig(c.getOptionalConfig('bind')),
-      users: readUserConfig(c.getConfig('users')),
-      groups: readGroupConfig(c.getConfig('groups')),
+      users: readUserConfig(
+        isUserList
+          ? c.getOptionalConfigArray('users')
+          : c.getOptionalConfig('users'),
+      ).map(it => {
+        return mergeWith({}, defaultUserConfig, it, replaceArraysIfPresent);
+      }),
+      groups: readGroupConfig(
+        isGroupList
+          ? c.getOptionalConfigArray('groups')
+          : c.getOptionalConfig('groups'),
+      ).map(it => {
+        return mergeWith({}, defaultGroupConfig, it, replaceArraysIfPresent);
+      }),
       schedule,
+      vendor: readVendorConfig(c.getOptionalConfig('vendor')),
     };
-    const merged = mergeWith({}, defaultConfig, newConfig, (_into, from) => {
-      // Replace arrays instead of merging, otherwise default behavior
-      return Array.isArray(from) ? from : undefined;
-    });
-    return freeze(merged) as LdapProviderConfig;
+
+    return freeze(newConfig) as LdapProviderConfig;
   });
+}
+
+function replaceArraysIfPresent(_into: any, from: any) {
+  // Replace arrays instead of merging, otherwise default behavior
+  return Array.isArray(from) ? from : undefined;
 }

@@ -18,6 +18,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import React from 'react';
 import { EntityLifecycleFilter } from '../../filters';
 import { EntityAutocompletePicker } from '../EntityAutocompletePicker';
+import { catalogReactTranslationRef } from '../../translation';
+import { useTranslationRef } from '@backstage/core-plugin-api/alpha';
 
 /** @public */
 export type CatalogReactEntityLifecyclePickerClassKey = 'input';
@@ -26,19 +28,18 @@ const useStyles = makeStyles(
   {
     input: {},
   },
-  {
-    name: 'CatalogReactEntityLifecyclePicker',
-  },
+  { name: 'CatalogReactEntityLifecyclePicker' },
 );
 
 /** @public */
 export const EntityLifecyclePicker = (props: { initialFilter?: string[] }) => {
   const { initialFilter = [] } = props;
   const classes = useStyles();
+  const { t } = useTranslationRef(catalogReactTranslationRef);
 
   return (
     <EntityAutocompletePicker
-      label="Lifecycle"
+      label={t('entityLifecyclePicker.title')}
       name="lifecycles"
       path="spec.lifecycle"
       Filter={EntityLifecycleFilter}

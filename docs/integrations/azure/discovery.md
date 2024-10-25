@@ -45,7 +45,7 @@ catalog:
         project: myproject
         repository: service-* # this will match all repos starting with service-*
         path: /catalog-info.yaml
-        schedule: # optional; same options as in TaskScheduleDefinition
+        schedule: # optional; same options as in SchedulerServiceTaskScheduleDefinition
           # supports cron, ISO duration, "human duration" as used in code
           frequency: { minutes: 30 }
           # supports ISO duration, "human duration" as used in code
@@ -102,16 +102,15 @@ It may take some time before the branch is indexed and searchable.
 As this provider is not one of the default providers, you will first need to install
 the Azure catalog plugin:
 
-```bash
-# From your Backstage root directory
+```bash title="From your Backstage root directory"
 yarn --cwd packages/backend add @backstage/plugin-catalog-backend-module-azure
 ```
 
 Then updated your backend by adding the following line:
 
 ```ts title="packages/backend/src/index.ts"
-backend.add(import('@backstage/plugin-catalog-backend/alpha'));
+backend.add(import('@backstage/plugin-catalog-backend'));
 /* highlight-add-start */
-backend.add(import('@backstage/plugin-catalog-backend-module-azure/alpha'));
+backend.add(import('@backstage/plugin-catalog-backend-module-azure'));
 /* highlight-add-end */
 ```

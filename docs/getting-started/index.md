@@ -1,6 +1,6 @@
 ---
 id: index
-title: Installing a standalone server
+title: Creating your Backstage App
 sidebar_label: Introduction
 description: How to install Backstage for your own use.
 ---
@@ -94,7 +94,7 @@ If this fails on the `yarn install` step, it's likely that you will need to inst
 
 ## 2. Run the Backstage app
 
-You Backstage app is fully installed and ready to be run! Now that the installation is complete, you can go to the application directory and start the app using the `yarn dev` command. The `yarn dev` command will run both the frontend and backend as separate processes (named `[0]` and `[1]`) in the same window.
+Your Backstage app is fully installed and ready to be run! Now that the installation is complete, you can go to the application directory and start the app using the `yarn dev` command. The `yarn dev` command will run both the frontend and backend as separate processes (named `[0]` and `[1]`) in the same window.
 
 ```bash
 cd my-backstage-app # your app name
@@ -126,22 +126,22 @@ Choose the correct next steps for your user role, if you're likely to be deployi
 ### Admin
 
 - Deploying a production server
-  - [Deploying with Docker](../deployment/docker/docker.md)
-  - [Deploying with Kubernetes](../deployment/k8s/k8s.md)
+  - [Deploying with Docker](../deployment/docker.md)
+  - [Deploying with Kubernetes](../deployment/k8s.md)
   - [Deploying with AWS Lightsail](../deployment/backstage-deploy/aws.md)
 - Configuring Backstage
-  - [Database](configuring Backstage/Database/database.md)
-  - [Authentication](configuring Backstage/authentication.md)
-  - [Plugins](configuring Backstage/configure-app-with-plugins.md)
-  - [Theme](configuring Backstage/app-custom-theme.md)
-  - [Homepage](configuring Backstage/homepage.md)
+  - [Database](./config/database.md)
+  - [Authentication](./config/authentication.md)
+  - [Plugins](./configure-app-with-plugins.md)
+  - [Theme](./app-custom-theme.md)
+  - [Homepage](./homepage.md)
 
 ### Developer
 
 - Using your Backstage instance
-  - [Logging into Backstage](using backstage/logging-in.md)
-  - [Register a component](using backstage/register-a-component.md)
-  - [Create a new component](using backstage/create-a-component.md)
+  - [Logging into Backstage](./logging-in.md)
+  - [Register a component](./register-a-component.md)
+  - [Create a new component](./create-a-component.md)
 
 Share your experiences, comments, or suggestions with us:
 [on discord](https://discord.gg/backstage-687207715902193673), file issues for any

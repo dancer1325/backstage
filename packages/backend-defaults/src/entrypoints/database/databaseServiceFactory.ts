@@ -22,6 +22,12 @@ import { ConfigReader } from '@backstage/config';
 import { DatabaseManager } from './DatabaseManager';
 
 /**
+ * Database access and management via `knex`.
+ *
+ * See {@link @backstage/code-plugin-api#DatabaseService}
+ * and {@link https://backstage.io/docs/backend-system/core-services/database | the service docs}
+ * for more information.
+ *
  * @public
  */
 export const databaseServiceFactory = createServiceFactory({
@@ -29,23 +35,27 @@ export const databaseServiceFactory = createServiceFactory({
   deps: {
     config: coreServices.rootConfig,
     lifecycle: coreServices.lifecycle,
+    logger: coreServices.logger,
     pluginMetadata: coreServices.pluginMetadata,
+    rootLifecycle: coreServices.rootLifecycle,
+    rootLogger: coreServices.rootLogger,
   },
-  async createRootContext({ config }) {
+  async createRootContext({ config, rootLifecycle, rootLogger }) {
     return config.getOptional('backend.database')
-      ? DatabaseManager.fromConfig(config)
+      ? DatabaseManager.fromConfig(config, { rootLifecycle, rootLogger })
       : DatabaseManager.fromConfig(
           new ConfigReader({
             backend: {
               database: { client: 'better-sqlite3', connection: ':memory:' },
             },
           }),
+          { rootLifecycle, rootLogger },
         );
   },
-  async factory({ pluginMetadata, lifecycle }, databaseManager) {
+  async factory({ pluginMetadata, lifecycle, logger }, databaseManager) {
     return databaseManager.forPlugin(pluginMetadata.getId(), {
-      pluginMetadata,
       lifecycle,
+      logger,
     });
   },
 });

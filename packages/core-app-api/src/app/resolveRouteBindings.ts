@@ -73,6 +73,7 @@ export function resolveRouteBindings(
 ) {
   const routesById = collectRouteIds(plugins);
   const result = new Map<ExternalRouteRef, RouteRef | SubRouteRef>();
+  const disabledExternalRefs = new Set<ExternalRouteRef>();
 
   // Perform callback bindings first with highest priority
   if (bindRoutes) {
@@ -87,11 +88,15 @@ export function resolveRouteBindings(
         }
         if (!value && !externalRoute.optional) {
           throw new Error(
-            `External route ${key} is required but was undefined`,
+            `External route ${key} is required but was ${
+              value === false ? 'disabled' : 'not provided'
+            }`,
           );
         }
         if (value) {
           result.set(externalRoute, value);
+        } else if (value === false) {
+          disabledExternalRefs.add(externalRoute);
         }
       }
     };
@@ -104,9 +109,9 @@ export function resolveRouteBindings(
     ?.get<JsonObject>();
   if (bindings) {
     for (const [externalRefId, targetRefId] of Object.entries(bindings)) {
-      if (typeof targetRefId !== 'string' || targetRefId === '') {
+      if (!isValidTargetRefId(targetRefId)) {
         throw new Error(
-          `Invalid config at app.routes.bindings['${externalRefId}'], value must be a non-empty string`,
+          `Invalid config at app.routes.bindings['${externalRefId}'], value must be a non-empty string or false`,
         );
       }
 
@@ -116,23 +121,30 @@ export function resolveRouteBindings(
           `Invalid config at app.routes.bindings, '${externalRefId}' is not a valid external route`,
         );
       }
-      if (result.has(externalRef)) {
+
+      // Skip if binding was already defined in code
+      if (result.has(externalRef) || disabledExternalRefs.has(externalRef)) {
         continue;
       }
-      const targetRef = routesById.routes.get(targetRefId);
-      if (!targetRef) {
-        throw new Error(
-          `Invalid config at app.routes.bindings['${externalRefId}'], '${targetRefId}' is not a valid route`,
-        );
-      }
 
-      result.set(externalRef, targetRef);
+      if (targetRefId === false) {
+        disabledExternalRefs.add(externalRef);
+      } else {
+        const targetRef = routesById.routes.get(targetRefId);
+        if (!targetRef) {
+          throw new Error(
+            `Invalid config at app.routes.bindings['${externalRefId}'], '${targetRefId}' is not a valid route`,
+          );
+        }
+
+        result.set(externalRef, targetRef);
+      }
     }
   }
 
   // Finally fall back to attempting to map defaults, at lowest priority
   for (const externalRef of routesById.externalRoutes.values()) {
-    if (!result.has(externalRef)) {
+    if (!result.has(externalRef) && !disabledExternalRefs.has(externalRef)) {
       const defaultRefId =
         'getDefaultTarget' in externalRef
           ? (externalRef.getDefaultTarget as () => string | undefined)()
@@ -147,4 +159,16 @@ export function resolveRouteBindings(
   }
 
   return result;
+}
+
+function isValidTargetRefId(value: unknown): value is string | false {
+  if (value === false) {
+    return true;
+  }
+
+  if (typeof value === 'string' && value) {
+    return true;
+  }
+
+  return false;
 }

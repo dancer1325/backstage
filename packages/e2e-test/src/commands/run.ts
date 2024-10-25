@@ -531,13 +531,19 @@ async function testBackendStart(appDir: string, ...args: string[]) {
         !l.includes(
           'ExperimentalWarning: `globalPreload` is planned for removal in favor of `initialize`.', // Node 18
         ) &&
-        !l.includes('node --trace-warnings ...'),
+        !l.includes(
+          'DeprecationWarning: The `punycode` module is deprecated.', // Node 22
+        ) &&
+        !l.includes('node --trace-warnings ...') &&
+        !l.includes('node --trace-deprecation ...'),
     );
   };
 
   try {
     await waitFor(
-      () => stdout.includes('Listening on ') || filterStderr(stderr).length > 0,
+      () =>
+        stdout.includes('Plugin initialization complete') ||
+        filterStderr(stderr).length > 0,
     );
     const stderrLines = filterStderr(stderr);
     if (stderrLines.length > 0) {

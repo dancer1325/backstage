@@ -1,5 +1,253 @@
 # @backstage/repo-tools
 
+## 0.11.0-next.0
+
+### Minor Changes
+
+- 47fdbb4: Adds a `--watch` mode to the `schema openapi generate` command for a better local schema writing experience.
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-plugin-api@1.0.2-next.0
+  - @backstage/catalog-model@1.7.0
+  - @backstage/cli-common@0.1.14
+  - @backstage/cli-node@0.2.9
+  - @backstage/config-loader@1.9.1
+  - @backstage/errors@1.2.4
+
+## 0.10.0
+
+### Minor Changes
+
+- 30c2be9: Update @microsoft/api-extractor and use their api report resolution.
+  Change api report format from `api-report.md` to `report.api.md`
+- 8eb3033: Adds a new command `backstage-repo-tools peer-deps` for validating your usage of peer dependencies in your plugins. It currently supports react related peer dependencies. It also has a `--fix` mode for quickly fixing any issues that it finds.
+
+### Patch Changes
+
+- 1f6706f: Properly log instructions when APIs do not match
+- 35e735b: Fix issues with warnings in API reports not being checked or reported.
+
+  Due to the recent version bump of API Extractor you may now see a lot of `ae-undocumented` warnings,
+  these can be ignored using the `-o` option, for example, `backstage-repo-tools api-reports -o ae-undocumented,ae-wrong-input-file-type`.
+
+- 248793e: Updated dependency `@useoptic/optic` to `^1.0.0`.
+- Updated dependencies
+  - @backstage/cli-node@0.2.9
+  - @backstage/backend-plugin-api@1.0.1
+  - @backstage/catalog-model@1.7.0
+  - @backstage/cli-common@0.1.14
+  - @backstage/config-loader@1.9.1
+  - @backstage/errors@1.2.4
+
+## 0.10.0-next.2
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/cli-node@0.2.9-next.0
+  - @backstage/backend-plugin-api@1.0.1-next.1
+  - @backstage/catalog-model@1.7.0
+  - @backstage/cli-common@0.1.14
+  - @backstage/config-loader@1.9.1
+  - @backstage/errors@1.2.4
+
+## 0.10.0-next.1
+
+### Minor Changes
+
+- 8eb3033: Adds a new command `backstage-repo-tools peer-deps` for validating your usage of peer dependencies in your plugins. It currently supports react related peer dependencies. It also has a `--fix` mode for quickly fixing any issues that it finds.
+
+### Patch Changes
+
+- 1f6706f: Properly log instructions when APIs do not match
+- Updated dependencies
+  - @backstage/backend-plugin-api@1.0.1-next.0
+  - @backstage/catalog-model@1.7.0
+  - @backstage/cli-common@0.1.14
+  - @backstage/cli-node@0.2.8
+  - @backstage/config-loader@1.9.1
+  - @backstage/errors@1.2.4
+
+## 0.10.0-next.0
+
+### Minor Changes
+
+- 30c2be9: Update @microsoft/api-extractor and use their api report resolution.
+  Change api report format from `api-report.md` to `report.api.md`
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-plugin-api@1.0.1-next.0
+  - @backstage/catalog-model@1.7.0
+  - @backstage/cli-common@0.1.14
+  - @backstage/cli-node@0.2.8
+  - @backstage/config-loader@1.9.1
+  - @backstage/errors@1.2.4
+
+## 0.9.7
+
+### Patch Changes
+
+- 5c4aa2f: Updated dependency `@useoptic/openapi-utilities` to `^0.55.0`.
+- 1a8837e: Avoid generating API reports for packages with `backstage.inline` set.
+- Updated dependencies
+  - @backstage/backend-plugin-api@1.0.0
+  - @backstage/catalog-model@1.7.0
+  - @backstage/cli-node@0.2.8
+  - @backstage/config-loader@1.9.1
+  - @backstage/cli-common@0.1.14
+  - @backstage/errors@1.2.4
+
+## 0.9.7-next.2
+
+### Patch Changes
+
+- 1a8837e: Avoid generating API reports for packages with `backstage.inline` set.
+- Updated dependencies
+  - @backstage/backend-plugin-api@1.0.0-next.2
+  - @backstage/cli-node@0.2.8-next.0
+  - @backstage/config-loader@1.9.1-next.0
+  - @backstage/catalog-model@1.6.0
+  - @backstage/cli-common@0.1.14
+  - @backstage/errors@1.2.4
+
+## 0.9.7-next.1
+
+### Patch Changes
+
+- 5c4aa2f: Updated dependency `@useoptic/openapi-utilities` to `^0.55.0`.
+- Updated dependencies
+  - @backstage/backend-plugin-api@0.9.0-next.1
+  - @backstage/catalog-model@1.6.0
+  - @backstage/cli-common@0.1.14
+  - @backstage/cli-node@0.2.7
+  - @backstage/config-loader@1.9.0
+  - @backstage/errors@1.2.4
+
+## 0.9.7-next.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-plugin-api@0.9.0-next.0
+  - @backstage/catalog-model@1.6.0
+  - @backstage/cli-common@0.1.14
+  - @backstage/cli-node@0.2.7
+  - @backstage/config-loader@1.9.0
+  - @backstage/errors@1.2.4
+
+## 0.9.5
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-plugin-api@0.8.0
+  - @backstage/config-loader@1.9.0
+  - @backstage/catalog-model@1.6.0
+  - @backstage/cli-common@0.1.14
+  - @backstage/cli-node@0.2.7
+  - @backstage/errors@1.2.4
+
+## 0.9.5-next.3
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-plugin-api@0.8.0-next.3
+  - @backstage/catalog-model@1.6.0-next.0
+  - @backstage/cli-common@0.1.14
+  - @backstage/cli-node@0.2.7
+  - @backstage/config-loader@1.9.0-next.2
+  - @backstage/errors@1.2.4
+
+## 0.9.5-next.2
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-plugin-api@0.8.0-next.2
+  - @backstage/config-loader@1.9.0-next.2
+  - @backstage/cli-node@0.2.7
+  - @backstage/catalog-model@1.5.0
+  - @backstage/cli-common@0.1.14
+  - @backstage/errors@1.2.4
+
+## 0.9.5-next.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/config-loader@1.9.0-next.1
+  - @backstage/backend-plugin-api@0.7.1-next.1
+  - @backstage/catalog-model@1.5.0
+  - @backstage/cli-common@0.1.14
+  - @backstage/cli-node@0.2.7
+  - @backstage/errors@1.2.4
+
+## 0.9.5-next.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/config-loader@1.8.2-next.0
+  - @backstage/backend-plugin-api@0.7.1-next.0
+  - @backstage/catalog-model@1.5.0
+  - @backstage/cli-common@0.1.14
+  - @backstage/cli-node@0.2.7
+  - @backstage/errors@1.2.4
+
+## 0.9.4
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-plugin-api@0.7.0
+  - @backstage/cli-node@0.2.7
+  - @backstage/config-loader@1.8.1
+  - @backstage/catalog-model@1.5.0
+  - @backstage/cli-common@0.1.14
+  - @backstage/errors@1.2.4
+
+## 0.9.4-next.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-plugin-api@0.6.22-next.1
+  - @backstage/catalog-model@1.5.0
+  - @backstage/cli-common@0.1.14
+  - @backstage/cli-node@0.2.6
+  - @backstage/config-loader@1.8.1
+  - @backstage/errors@1.2.4
+
+## 0.9.3-next.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/backend-plugin-api@0.6.21-next.0
+  - @backstage/catalog-model@1.5.0
+  - @backstage/cli-common@0.1.14
+  - @backstage/cli-node@0.2.6
+  - @backstage/config-loader@1.8.1
+  - @backstage/errors@1.2.4
+
+## 0.9.1
+
+### Patch Changes
+
+- 8721a02: Add `--client-additional-properties` option to `openapi generate` command
+- Updated dependencies
+  - @backstage/cli-node@0.2.6
+  - @backstage/backend-plugin-api@0.6.19
+  - @backstage/cli-common@0.1.14
+  - @backstage/config-loader@1.8.1
+  - @backstage/catalog-model@1.5.0
+  - @backstage/errors@1.2.4
+
 ## 0.9.1-next.3
 
 ### Patch Changes

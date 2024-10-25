@@ -9,6 +9,41 @@ latest releases. Backstage is more of a library than an application or service;
 similar to `create-react-app`, the `@backstage/create-app` tool gives you a
 starting point that's meant to be evolved.
 
+## Managing package versions with the Backstage yarn plugin
+
+The Backstage yarn plugin makes it easier to manage Backstage package versions,
+by determining the appropriate version for each package based on the overall
+Backstage version in backstage.json. This avoids the need to update every
+package.json across your Backstage monorepo, and means that when adding new
+`@backstage` dependencies, you don't need to worry about figuring out the right
+version to use to match the currently-installed release of Backstage.
+
+### Requirements
+
+In order to use the yarn plugin, you'll need to be using yarn 4.1.1 or greater.
+
+### Installation
+
+To install the yarn plugin, run the following command in your Backstage
+monorepo:
+
+```bash
+yarn plugin import https://versions.backstage.io/v1/tags/main/yarn-plugin
+```
+
+The resulting changes in the file system should be committed to your repo.
+
+### Usage
+
+When the yarn plugin is installed, versions for currently-released `@backstage`
+packages can be replaced in package.json with the string `"backstage:^"`. This
+instructs yarn to resolve the version based on the overall Backstage version in
+backstage.json.
+
+The `backstage-cli versions:bump` command documented below will detect the
+installation of the yarn plugin, and when it's installed, will automatically
+migrate dependencies across the monorepo to use it.
+
 ## Updating Backstage versions with backstage-cli
 
 The Backstage CLI has a command to bump all `@backstage` packages and
@@ -63,18 +98,28 @@ When a given dependency version is the _same_ between different packages, the
 dependency is hoisted to the main `node_modules` folder in the monorepo root to
 be shared between packages. When _different_ versions of the same dependency are
 encountered, Yarn creates a `node_modules` folder within a particular package.
+This can lead to multiple versions of the same package being installed and used
+in the same app.
 
-This can lead to confusing situations with type definitions, or anything with
-global state. React [Context](https://reactjs.org/docs/context.html), for
-example, depends on global referential equality. This can cause problems in
-Backstage with API lookup, or config loading.
+All Backstage core packages are implemented in such as way that package
+duplication is **not** a problem. For example, duplicate installations of
+packages like `@backstage/core-plugin-api`, `@backstage/core-components`,
+`@backstage/plugin-catalog-react`, and `@backstage/backend-plugin-api` are all
+acceptable.
 
-To help resolve these situations, the Backstage CLI has
-[versions:check](https://backstage.io/docs/tooling/cli/03-commands#versionscheck). This
-will validate versions of `@backstage` packages in your app to check for
-duplicate definitions:
+While package duplication might be acceptable in many cases, you might want to
+deduplicate packages for the purpose of optimizing bundle size and installation
+speed. We recommend using deduplication utilities such as `yarn dedupe` to trim
+down the number of duplicate packages.
+
+## Proxy
+
+The Backstage CLI uses [global-agent](https://www.npmjs.com/package/global-agent) to configure HTTP/HTTPS proxy settings using environment variables. This allows you to route the CLI’s network traffic through a proxy server, which can be useful in environments with restricted internet access.
+
+### Example Configuration
 
 ```bash
-# Add --fix to attempt automatic resolution in yarn.lock
-yarn backstage-cli versions:check
+export GLOBAL_AGENT_HTTP_PROXY=http://proxy.company.com:8080
+export GLOBAL_AGENT_HTTPS_PROXY=https://secure-proxy.company.com:8080
+export GLOBAL_AGENT_NO_PROXY=localhost,internal.company.com
 ```

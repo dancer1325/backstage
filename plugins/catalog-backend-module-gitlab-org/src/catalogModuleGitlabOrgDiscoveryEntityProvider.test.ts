@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-import { createServiceFactory } from '@backstage/backend-plugin-api';
-import { TaskScheduleDefinition } from '@backstage/backend-tasks';
+import {
+  createServiceFactory,
+  SchedulerServiceTaskScheduleDefinition,
+} from '@backstage/backend-plugin-api';
 import { mockServices, startTestBackend } from '@backstage/backend-test-utils';
 import { GitlabOrgDiscoveryEntityProvider } from '@backstage/plugin-catalog-backend-module-gitlab';
 import { EntityProviderConnection } from '@backstage/plugin-catalog-node';
 import { catalogProcessingExtensionPoint } from '@backstage/plugin-catalog-node/alpha';
 import { TestEventsService } from '@backstage/plugin-events-backend-test-utils';
 import { eventsServiceRef } from '@backstage/plugin-events-node';
-import { Duration } from 'luxon';
 import { catalogModuleGitlabOrgDiscoveryEntityProvider } from './catalogModuleGitlabOrgDiscoveryEntityProvider';
 
 describe('catalogModuleGitlabOrgDiscoveryEntityProvider', () => {
@@ -36,7 +37,7 @@ describe('catalogModuleGitlabOrgDiscoveryEntityProvider', () => {
       },
     });
     let addedProviders: Array<GitlabOrgDiscoveryEntityProvider> | undefined;
-    let usedSchedule: TaskScheduleDefinition | undefined;
+    let usedSchedule: SchedulerServiceTaskScheduleDefinition | undefined;
 
     const extensionPoint = {
       addEntityProvider: (providers: any) => {
@@ -82,16 +83,16 @@ describe('catalogModuleGitlabOrgDiscoveryEntityProvider', () => {
     await startTestBackend({
       extensionPoints: [[catalogProcessingExtensionPoint, extensionPoint]],
       features: [
-        eventsServiceFactory(),
-        catalogModuleGitlabOrgDiscoveryEntityProvider(),
+        eventsServiceFactory,
+        catalogModuleGitlabOrgDiscoveryEntityProvider,
         mockServices.rootConfig.factory({ data: config }),
         mockServices.logger.factory(),
         scheduler.factory,
       ],
     });
 
-    expect(usedSchedule?.frequency).toEqual(Duration.fromISO('P1M'));
-    expect(usedSchedule?.timeout).toEqual(Duration.fromISO('PT3M'));
+    expect(usedSchedule?.frequency).toEqual({ months: 1 });
+    expect(usedSchedule?.timeout).toEqual({ minutes: 3 });
     expect(addedProviders?.length).toEqual(1);
     expect(runner).not.toHaveBeenCalled();
 

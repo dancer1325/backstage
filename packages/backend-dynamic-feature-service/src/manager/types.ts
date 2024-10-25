@@ -21,10 +21,8 @@ import {
   PluginDatabaseManager,
   PluginEndpointDiscovery,
   TokenManager,
-  UrlReader,
 } from '@backstage/backend-common';
 import { Router } from 'express';
-import { PluginTaskScheduler, TaskRunner } from '@backstage/backend-tasks';
 import { IdentityApi } from '@backstage/plugin-auth-node';
 import { PermissionEvaluator } from '@backstage/plugin-permission-common';
 import {
@@ -33,13 +31,19 @@ import {
   HttpPostIngressOptions,
 } from '@backstage/plugin-events-node';
 
-import { BackendFeature } from '@backstage/backend-plugin-api';
+import {
+  BackendFeature,
+  UrlReaderService,
+  SchedulerService,
+  SchedulerServiceTaskRunner,
+} from '@backstage/backend-plugin-api';
 import { PackagePlatform, PackageRole } from '@backstage/cli-node';
 import { CatalogBuilder } from '@backstage/plugin-catalog-backend';
 import { TemplateAction } from '@backstage/plugin-scaffolder-node';
 import { IndexBuilder } from '@backstage/plugin-search-backend-node';
 import { EventsBackend } from '@backstage/plugin-events-backend';
 import { PermissionPolicy } from '@backstage/plugin-permission-node';
+import { ScannedPluginPackage } from '../scanner';
 
 /**
  * @public
@@ -58,11 +62,11 @@ export type LegacyPluginEnvironment = {
   cache: PluginCacheManager;
   database: PluginDatabaseManager;
   config: Config;
-  reader: UrlReader;
+  reader: UrlReaderService;
   discovery: PluginEndpointDiscovery;
   tokenManager: TokenManager;
   permissions: PermissionEvaluator;
-  scheduler: PluginTaskScheduler;
+  scheduler: SchedulerService;
   identity: IdentityApi;
   eventBroker: EventBroker;
   events: EventsService;
@@ -75,21 +79,24 @@ export type LegacyPluginEnvironment = {
 export interface DynamicPluginProvider
   extends FrontendPluginProvider,
     BackendPluginProvider {
-  plugins(): DynamicPlugin[];
+  plugins(options?: { includeFailed?: boolean }): DynamicPlugin[];
+  getScannedPackage(plugin: DynamicPlugin): ScannedPluginPackage;
 }
 
 /**
  * @public
  */
 export interface BackendPluginProvider {
-  backendPlugins(): BackendDynamicPlugin[];
+  backendPlugins(options?: { includeFailed?: boolean }): BackendDynamicPlugin[];
 }
 
 /**
  * @public
  */
 export interface FrontendPluginProvider {
-  frontendPlugins(): FrontendDynamicPlugin[];
+  frontendPlugins(options?: {
+    includeFailed?: boolean;
+  }): FrontendDynamicPlugin[];
 }
 
 /**
@@ -100,6 +107,7 @@ export interface BaseDynamicPlugin {
   version: string;
   role: PackageRole;
   platform: PackagePlatform;
+  failure?: string;
 }
 
 /**
@@ -119,7 +127,7 @@ export interface FrontendDynamicPlugin extends BaseDynamicPlugin {
  */
 export interface BackendDynamicPlugin extends BaseDynamicPlugin {
   platform: 'node';
-  installer: BackendDynamicPluginInstaller;
+  installer?: BackendDynamicPluginInstaller;
 }
 
 /**
@@ -161,7 +169,7 @@ export interface LegacyBackendPluginInstaller {
   scaffolder?(env: LegacyPluginEnvironment): TemplateAction<any>[];
   search?(
     indexBuilder: IndexBuilder,
-    schedule: TaskRunner,
+    schedule: SchedulerServiceTaskRunner,
     env: LegacyPluginEnvironment,
   ): void;
   events?(

@@ -1,5 +1,481 @@
 # @backstage/plugin-techdocs
 
+## 1.11.1-next.0
+
+### Patch Changes
+
+- 605bdc0: Avoid page re-rendering when clicking on anchor links in the same documentation page.
+- 4f0cb89: Added DomPurify sanitizer configuration for custom elements implementing RFC https://github.com/backstage/backstage/issues/26988.
+  See https://backstage.io/docs/features/techdocs/how-to-guides#how-to-enable-custom-elements-in-techdocs for how to enable it in the configuration.
+- f246178: Removed `canvas` dev dependency.
+- 4a2f73a: Fix an issue that caused the current documentation page to be re-rendered when navigating to
+  another one.
+- Updated dependencies
+  - @backstage/core-components@0.16.0-next.0
+  - @backstage/plugin-techdocs-react@1.2.10-next.0
+  - @backstage/catalog-model@1.7.0
+  - @backstage/config@1.2.0
+  - @backstage/core-compat-api@0.3.2-next.0
+  - @backstage/core-plugin-api@1.10.0
+  - @backstage/errors@1.2.4
+  - @backstage/frontend-plugin-api@0.9.1-next.0
+  - @backstage/integration@1.15.1
+  - @backstage/integration-react@1.2.0
+  - @backstage/theme@0.6.0
+  - @backstage/plugin-auth-react@0.1.8-next.0
+  - @backstage/plugin-catalog-react@1.14.1-next.0
+  - @backstage/plugin-search-common@1.2.14
+  - @backstage/plugin-search-react@1.8.2-next.0
+  - @backstage/plugin-techdocs-common@0.1.0
+
+## 1.11.0
+
+### Minor Changes
+
+- e77ff3d: Adds support for custom background colors in code blocks and inline code within TechDocs.
+
+### Patch Changes
+
+- e969dc7: Move `@types/react` to a peer dependency.
+- a77cb40: Make `emptyState` input optional on `entity-content:techdocs` extension so that
+  the default empty state extension works correctly.
+- e918061: Add support for mkdocs material palette conditional hashes.
+- 720a2f9: Updated dependency `git-url-parse` to `^15.0.0`.
+- e8b4966: Use more of the available space for the navigation sidebar.
+- Updated dependencies
+  - @backstage/core-components@0.15.1
+  - @backstage/frontend-plugin-api@0.9.0
+  - @backstage/integration-react@1.2.0
+  - @backstage/core-compat-api@0.3.1
+  - @backstage/core-plugin-api@1.10.0
+  - @backstage/plugin-techdocs-react@1.2.9
+  - @backstage/plugin-catalog-react@1.14.0
+  - @backstage/plugin-search-react@1.8.1
+  - @backstage/plugin-auth-react@0.1.7
+  - @backstage/theme@0.6.0
+  - @backstage/integration@1.15.1
+  - @backstage/catalog-model@1.7.0
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/plugin-search-common@1.2.14
+  - @backstage/plugin-techdocs-common@0.1.0
+
+## 1.11.0-next.2
+
+### Minor Changes
+
+- e77ff3d: Adds support for custom background colors in code blocks and inline code within TechDocs.
+
+### Patch Changes
+
+- e918061: Add support for mkdocs material palette conditional hashes.
+- 720a2f9: Updated dependency `git-url-parse` to `^15.0.0`.
+- e8b4966: Use more of the available space for the navigation sidebar.
+- Updated dependencies
+  - @backstage/plugin-catalog-react@1.14.0-next.2
+  - @backstage/integration@1.15.1-next.1
+  - @backstage/theme@0.6.0-next.1
+  - @backstage/catalog-model@1.7.0
+  - @backstage/config@1.2.0
+  - @backstage/core-compat-api@0.3.1-next.2
+  - @backstage/core-components@0.15.1-next.2
+  - @backstage/core-plugin-api@1.10.0-next.1
+  - @backstage/errors@1.2.4
+  - @backstage/frontend-plugin-api@0.9.0-next.2
+  - @backstage/integration-react@1.2.0-next.2
+  - @backstage/plugin-auth-react@0.1.7-next.2
+  - @backstage/plugin-search-common@1.2.14
+  - @backstage/plugin-search-react@1.8.1-next.2
+  - @backstage/plugin-techdocs-common@0.1.0
+  - @backstage/plugin-techdocs-react@1.2.9-next.2
+
+## 1.10.11-next.1
+
+### Patch Changes
+
+- e969dc7: Move `@types/react` to a peer dependency.
+- Updated dependencies
+  - @backstage/core-components@0.15.1-next.1
+  - @backstage/frontend-plugin-api@0.9.0-next.1
+  - @backstage/integration-react@1.2.0-next.1
+  - @backstage/core-compat-api@0.3.1-next.1
+  - @backstage/core-plugin-api@1.10.0-next.1
+  - @backstage/plugin-techdocs-react@1.2.9-next.1
+  - @backstage/plugin-catalog-react@1.14.0-next.1
+  - @backstage/plugin-search-react@1.8.1-next.1
+  - @backstage/plugin-auth-react@0.1.7-next.1
+  - @backstage/theme@0.5.8-next.0
+  - @backstage/integration@1.15.1-next.0
+  - @backstage/catalog-model@1.7.0
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/plugin-search-common@1.2.14
+  - @backstage/plugin-techdocs-common@0.1.0
+
+## 1.10.10-next.0
+
+### Patch Changes
+
+- a77cb40: Make `emptyState` input optional on `entity-content:techdocs` extension so that
+  the default empty state extension works correctly.
+- Updated dependencies
+  - @backstage/frontend-plugin-api@0.9.0-next.0
+  - @backstage/core-compat-api@0.3.1-next.0
+  - @backstage/core-components@0.15.1-next.0
+  - @backstage/core-plugin-api@1.10.0-next.0
+  - @backstage/plugin-catalog-react@1.13.1-next.0
+  - @backstage/plugin-search-react@1.8.1-next.0
+  - @backstage/catalog-model@1.7.0
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/integration@1.15.0
+  - @backstage/integration-react@1.1.32-next.0
+  - @backstage/theme@0.5.7
+  - @backstage/plugin-auth-react@0.1.7-next.0
+  - @backstage/plugin-search-common@1.2.14
+  - @backstage/plugin-techdocs-common@0.1.0
+  - @backstage/plugin-techdocs-react@1.2.9-next.0
+
+## 1.10.9
+
+### Patch Changes
+
+- c891b69: Add `FavoriteToggle` in `core-components` to standardise favorite marking
+- fec8b57: Updated exports to use the new type parameters for extensions and extension blueprints.
+- fe94ad8: Fixes left navigation positioning when using mkdocs blog plugin
+- b0206dc: Added support for setting page status with 'new' and 'deprecated' values, allowing visual indication of page status in TechDocs. To use include the following at the top of your markdown file:
+
+  ```markdown
+  ---
+  status: new
+  ---
+  ```
+
+- 836127c: Updated dependency `@testing-library/react` to `^16.0.0`.
+- c7cb4c0: Add `empty-state:techdocs/entity-content` extension to allow overriding the empty state for the entity page techdocs tab.
+- 97db53e: Enhanced the table hover effect with a lighter color and updated the border radius to align with Backstage's theme styling
+- Updated dependencies
+  - @backstage/core-components@0.15.0
+  - @backstage/plugin-catalog-react@1.13.0
+  - @backstage/frontend-plugin-api@0.8.0
+  - @backstage/plugin-techdocs-react@1.2.8
+  - @backstage/core-compat-api@0.3.0
+  - @backstage/plugin-search-react@1.8.0
+  - @backstage/integration-react@1.1.31
+  - @backstage/catalog-model@1.7.0
+  - @backstage/integration@1.15.0
+  - @backstage/core-plugin-api@1.9.4
+  - @backstage/theme@0.5.7
+  - @backstage/plugin-auth-react@0.1.6
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/plugin-search-common@1.2.14
+  - @backstage/plugin-techdocs-common@0.1.0
+
+## 1.10.9-next.2
+
+### Patch Changes
+
+- c891b69: Add `FavoriteToggle` in `core-components` to standardise favorite marking
+- 836127c: Updated dependency `@testing-library/react` to `^16.0.0`.
+- 97db53e: Enhanced the table hover effect with a lighter color and updated the border radius to align with Backstage's theme styling
+- Updated dependencies
+  - @backstage/core-components@0.14.11-next.1
+  - @backstage/plugin-catalog-react@1.13.0-next.2
+  - @backstage/integration-react@1.1.31-next.0
+  - @backstage/plugin-search-react@1.8.0-next.2
+  - @backstage/integration@1.15.0-next.0
+  - @backstage/core-compat-api@0.3.0-next.2
+  - @backstage/core-plugin-api@1.9.4-next.0
+  - @backstage/frontend-plugin-api@0.8.0-next.2
+  - @backstage/theme@0.5.7-next.0
+  - @backstage/plugin-auth-react@0.1.6-next.1
+  - @backstage/plugin-techdocs-react@1.2.8-next.2
+  - @backstage/catalog-model@1.6.0
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/plugin-search-common@1.2.14
+  - @backstage/plugin-techdocs-common@0.1.0
+
+## 1.10.9-next.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/frontend-plugin-api@0.8.0-next.1
+  - @backstage/core-compat-api@0.3.0-next.1
+  - @backstage/core-components@0.14.11-next.0
+  - @backstage/plugin-catalog-react@1.12.4-next.1
+  - @backstage/catalog-model@1.6.0
+  - @backstage/config@1.2.0
+  - @backstage/core-plugin-api@1.9.3
+  - @backstage/errors@1.2.4
+  - @backstage/integration@1.14.0
+  - @backstage/integration-react@1.1.30
+  - @backstage/theme@0.5.6
+  - @backstage/plugin-auth-react@0.1.6-next.0
+  - @backstage/plugin-search-common@1.2.14
+  - @backstage/plugin-search-react@1.8.0-next.1
+  - @backstage/plugin-techdocs-common@0.1.0
+  - @backstage/plugin-techdocs-react@1.2.8-next.1
+
+## 1.10.9-next.0
+
+### Patch Changes
+
+- fec8b57: Updated exports to use the new type parameters for extensions and extension blueprints.
+- Updated dependencies
+  - @backstage/frontend-plugin-api@0.8.0-next.0
+  - @backstage/plugin-techdocs-react@1.2.8-next.0
+  - @backstage/core-compat-api@0.2.9-next.0
+  - @backstage/plugin-catalog-react@1.12.4-next.0
+  - @backstage/plugin-search-react@1.8.0-next.0
+  - @backstage/catalog-model@1.6.0
+  - @backstage/config@1.2.0
+  - @backstage/core-components@0.14.10
+  - @backstage/core-plugin-api@1.9.3
+  - @backstage/errors@1.2.4
+  - @backstage/integration@1.14.0
+  - @backstage/integration-react@1.1.30
+  - @backstage/theme@0.5.6
+  - @backstage/plugin-auth-react@0.1.5
+  - @backstage/plugin-search-common@1.2.14
+  - @backstage/plugin-techdocs-common@0.1.0
+
+## 1.10.8
+
+### Patch Changes
+
+- 69bd940: Use annotation constants from new techdocs-common package.
+- c7603e8: Deprecate the old pattern of `create*Extension`, and replace it with the equivalent Blueprint implementation instead
+- 27794d1: Allow for more granular control of TechDocsReaderPage styling. Theme overrides can now be provided to TechDocs without affecting the theme in other areas of Backstage.
+- 4490d73: Refactor TechDocs' mkdocs-redirects support.
+- 8543e72: TechDocs redirect feature now includes a notification to the user before they are redirected.
+- 67e76f2: TechDocs now supports the `mkdocs-redirects` plugin. Redirects defined using the `mkdocs-redirect` plugin will be handled automatically in TechDocs. Redirecting to external urls is not supported. In the case that an external redirect url is provided, TechDocs will redirect to the current documentation site home.
+- bdc5471: Fixed issue where header styles were incorrectly generated when themes used CSS variables to define font size.
+- 6349099: Added config input type to the extensions
+- Updated dependencies
+  - @backstage/frontend-plugin-api@0.7.0
+  - @backstage/plugin-catalog-react@1.12.3
+  - @backstage/plugin-search-react@1.7.14
+  - @backstage/core-components@0.14.10
+  - @backstage/core-compat-api@0.2.8
+  - @backstage/plugin-search-common@1.2.14
+  - @backstage/integration@1.14.0
+  - @backstage/plugin-techdocs-common@0.1.0
+  - @backstage/plugin-auth-react@0.1.5
+  - @backstage/catalog-model@1.6.0
+  - @backstage/config@1.2.0
+  - @backstage/core-plugin-api@1.9.3
+  - @backstage/errors@1.2.4
+  - @backstage/integration-react@1.1.30
+  - @backstage/theme@0.5.6
+  - @backstage/plugin-techdocs-react@1.2.7
+
+## 1.10.8-next.3
+
+### Patch Changes
+
+- 27794d1: Allow for more granular control of TechDocsReaderPage styling. Theme overrides can now be provided to TechDocs without affecting the theme in other areas of Backstage.
+- 8543e72: TechDocs redirect feature now includes a notification to the user before they are redirected.
+- Updated dependencies
+  - @backstage/frontend-plugin-api@0.7.0-next.3
+  - @backstage/catalog-model@1.6.0-next.0
+  - @backstage/core-compat-api@0.2.8-next.3
+  - @backstage/plugin-catalog-react@1.12.3-next.3
+  - @backstage/plugin-search-react@1.7.14-next.3
+  - @backstage/config@1.2.0
+  - @backstage/core-components@0.14.10-next.0
+  - @backstage/core-plugin-api@1.9.3
+  - @backstage/errors@1.2.4
+  - @backstage/integration@1.14.0-next.0
+  - @backstage/integration-react@1.1.30-next.0
+  - @backstage/theme@0.5.6
+  - @backstage/plugin-auth-react@0.1.5-next.0
+  - @backstage/plugin-search-common@1.2.14-next.1
+  - @backstage/plugin-techdocs-common@0.1.0-next.0
+  - @backstage/plugin-techdocs-react@1.2.7-next.1
+
+## 1.10.8-next.2
+
+### Patch Changes
+
+- 67e76f2: TechDocs now supports the `mkdocs-redirects` plugin. Redirects defined using the `mkdocs-redirect` plugin will be handled automatically in TechDocs. Redirecting to external urls is not supported. In the case that an external redirect url is provided, TechDocs will redirect to the current documentation site home.
+- bdc5471: Fixed issue where header styles were incorrectly generated when themes used CSS variables to define font size.
+- Updated dependencies
+  - @backstage/frontend-plugin-api@0.7.0-next.2
+  - @backstage/core-compat-api@0.2.8-next.2
+  - @backstage/plugin-search-common@1.2.14-next.1
+  - @backstage/plugin-search-react@1.7.14-next.2
+  - @backstage/plugin-catalog-react@1.12.3-next.2
+  - @backstage/integration@1.14.0-next.0
+  - @backstage/catalog-model@1.5.0
+  - @backstage/config@1.2.0
+  - @backstage/core-components@0.14.10-next.0
+  - @backstage/core-plugin-api@1.9.3
+  - @backstage/errors@1.2.4
+  - @backstage/integration-react@1.1.30-next.0
+  - @backstage/theme@0.5.6
+  - @backstage/plugin-auth-react@0.1.5-next.0
+  - @backstage/plugin-techdocs-common@0.1.0-next.0
+  - @backstage/plugin-techdocs-react@1.2.7-next.0
+
+## 1.10.8-next.1
+
+### Patch Changes
+
+- 69bd940: Use annotation constants from new techdocs-common package.
+- 6349099: Added config input type to the extensions
+- Updated dependencies
+  - @backstage/plugin-catalog-react@1.12.3-next.1
+  - @backstage/plugin-techdocs-common@0.1.0-next.0
+  - @backstage/frontend-plugin-api@0.6.8-next.1
+  - @backstage/core-compat-api@0.2.8-next.1
+  - @backstage/plugin-search-react@1.7.14-next.1
+  - @backstage/integration@1.14.0-next.0
+  - @backstage/plugin-search-common@1.2.14-next.0
+  - @backstage/catalog-model@1.5.0
+  - @backstage/config@1.2.0
+  - @backstage/core-components@0.14.10-next.0
+  - @backstage/core-plugin-api@1.9.3
+  - @backstage/errors@1.2.4
+  - @backstage/integration-react@1.1.30-next.0
+  - @backstage/theme@0.5.6
+  - @backstage/plugin-auth-react@0.1.5-next.0
+  - @backstage/plugin-techdocs-react@1.2.7-next.0
+
+## 1.10.8-next.0
+
+### Patch Changes
+
+- Updated dependencies
+  - @backstage/frontend-plugin-api@0.6.8-next.0
+  - @backstage/plugin-catalog-react@1.12.3-next.0
+  - @backstage/plugin-search-react@1.7.14-next.0
+  - @backstage/core-components@0.14.10-next.0
+  - @backstage/integration@1.14.0-next.0
+  - @backstage/plugin-auth-react@0.1.5-next.0
+  - @backstage/catalog-model@1.5.0
+  - @backstage/config@1.2.0
+  - @backstage/core-compat-api@0.2.8-next.0
+  - @backstage/core-plugin-api@1.9.3
+  - @backstage/errors@1.2.4
+  - @backstage/integration-react@1.1.30-next.0
+  - @backstage/theme@0.5.6
+  - @backstage/plugin-search-common@1.2.13
+  - @backstage/plugin-techdocs-react@1.2.7-next.0
+
+## 1.10.7
+
+### Patch Changes
+
+- 8fc2622: Fixed an issue that was causing techdocs pages unnecessarily re-render on navigate.
+- 6fa652c: Improve default sorting of docs table
+- 605b691: Allow for searching TechDocs by entity title
+- 60caa92: Fix double scrollbar bug in reader
+- Updated dependencies
+  - @backstage/plugin-techdocs-react@1.2.6
+  - @backstage/core-components@0.14.9
+  - @backstage/integration@1.13.0
+  - @backstage/plugin-catalog-react@1.12.2
+  - @backstage/plugin-search-common@1.2.13
+  - @backstage/frontend-plugin-api@0.6.7
+  - @backstage/integration-react@1.1.29
+  - @backstage/plugin-auth-react@0.1.4
+  - @backstage/plugin-search-react@1.7.13
+  - @backstage/catalog-model@1.5.0
+  - @backstage/config@1.2.0
+  - @backstage/core-compat-api@0.2.7
+  - @backstage/core-plugin-api@1.9.3
+  - @backstage/errors@1.2.4
+  - @backstage/theme@0.5.6
+
+## 1.10.7-next.2
+
+### Patch Changes
+
+- 6fa652c: Improve default sorting of docs table
+- Updated dependencies
+  - @backstage/core-components@0.14.9-next.1
+  - @backstage/frontend-plugin-api@0.6.7-next.1
+  - @backstage/integration-react@1.1.29-next.0
+  - @backstage/plugin-auth-react@0.1.4-next.1
+  - @backstage/plugin-catalog-react@1.12.2-next.2
+  - @backstage/plugin-search-react@1.7.13-next.1
+  - @backstage/plugin-techdocs-react@1.2.6-next.1
+  - @backstage/core-compat-api@0.2.7-next.1
+
+## 1.10.7-next.1
+
+### Patch Changes
+
+- 60caa92: Fix double scrollbar bug in reader
+- Updated dependencies
+  - @backstage/plugin-catalog-react@1.12.2-next.1
+  - @backstage/core-compat-api@0.2.7-next.0
+  - @backstage/core-components@0.14.9-next.0
+  - @backstage/core-plugin-api@1.9.3
+  - @backstage/plugin-search-react@1.7.13-next.0
+  - @backstage/catalog-model@1.5.0
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/frontend-plugin-api@0.6.7-next.0
+  - @backstage/integration@1.13.0-next.0
+  - @backstage/integration-react@1.1.29-next.0
+  - @backstage/theme@0.5.6
+  - @backstage/plugin-auth-react@0.1.4-next.0
+  - @backstage/plugin-search-common@1.2.12
+  - @backstage/plugin-techdocs-react@1.2.6-next.0
+
+## 1.10.7-next.0
+
+### Patch Changes
+
+- 8ac9ce5: Fixed a bug with the TechDocsReaderPageProvider not re-rendering when setShadowDom is called, meaning that the useShadowDom hooks were inconsistent. This issue caused the TextSize addon changes not to reapply during navigation.
+- Updated dependencies
+  - @backstage/plugin-techdocs-react@1.2.6-next.0
+  - @backstage/core-components@0.14.9-next.0
+  - @backstage/integration@1.13.0-next.0
+  - @backstage/plugin-catalog-react@1.12.2-next.0
+  - @backstage/frontend-plugin-api@0.6.7-next.0
+  - @backstage/integration-react@1.1.29-next.0
+  - @backstage/plugin-auth-react@0.1.4-next.0
+  - @backstage/plugin-search-react@1.7.13-next.0
+  - @backstage/core-compat-api@0.2.7-next.0
+  - @backstage/core-plugin-api@1.9.3
+  - @backstage/catalog-model@1.5.0
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+  - @backstage/theme@0.5.6
+  - @backstage/plugin-search-common@1.2.12
+
+## 1.10.6
+
+### Patch Changes
+
+- 654af4a: mkdocs-material have updated their CSS variable template, and a few are unset in Backstage. This patch adds the missing variables to ensure coverage.
+- cbebad1: Internal updates to allow reusing Backstage's `fetchApi` implementation for event source requests. This allows you to for example, override the `Authorization` header.
+- 96cd13e: `TechDocsIndexPage` now accepts an optional `ownerPickerMode` for toggling the behavior of the `EntityOwnerPicker`, exposing a new mode `<TechDocsIndexPage ownerPickerMode="all" />` particularly suitable for larger catalogs. In this new mode, `EntityOwnerPicker` will display all the users and groups present in the catalog.
+- e40bd9a: Fixed bug in `CopyToClipboardButton` component where positioning of the "Copy to clipboard" button in techdocs code snippets was broken in some cases.
+- d44a20a: Added additional plugin metadata to `package.json`.
+- 1256d88: Fixed an issue preventing the `TechDocsSearchBar` component from opening when clicking on the arrow icon.
+- Updated dependencies
+  - @backstage/core-components@0.14.8
+  - @backstage/core-compat-api@0.2.6
+  - @backstage/integration@1.12.0
+  - @backstage/core-plugin-api@1.9.3
+  - @backstage/theme@0.5.6
+  - @backstage/plugin-techdocs-react@1.2.5
+  - @backstage/plugin-catalog-react@1.12.1
+  - @backstage/plugin-search-common@1.2.12
+  - @backstage/plugin-search-react@1.7.12
+  - @backstage/plugin-auth-react@0.1.3
+  - @backstage/integration-react@1.1.28
+  - @backstage/frontend-plugin-api@0.6.6
+  - @backstage/catalog-model@1.5.0
+  - @backstage/config@1.2.0
+  - @backstage/errors@1.2.4
+
 ## 1.10.6-next.2
 
 ### Patch Changes

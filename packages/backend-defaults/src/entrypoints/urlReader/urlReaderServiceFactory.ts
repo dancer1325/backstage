@@ -14,23 +14,57 @@
  * limitations under the License.
  */
 
+import { ReaderFactory } from './lib';
 import { UrlReaders } from './lib/UrlReaders';
 import {
   coreServices,
   createServiceFactory,
+  createServiceRef,
 } from '@backstage/backend-plugin-api';
 
-/** @public */
+/**
+ * @public
+ * A non-singleton reference to URL Reader factory services.
+ *
+ * @example
+ * Creating a service factory implementation for a Custom URL Reader.
+ * ```ts
+ * createServiceFactory({
+ *   service: urlReaderFactoriesServiceRef,
+ *   deps: {},
+ *   async factory() {
+ *     return CustomUrlReader.factory;
+ *   },
+ * });
+ * ```
+ */
+export const urlReaderFactoriesServiceRef = createServiceRef<ReaderFactory>({
+  id: 'core.urlReader.factories',
+  scope: 'plugin',
+  multiton: true,
+});
+
+/**
+ * Reading content from external systems.
+ *
+ * See {@link @backstage/code-plugin-api#UrlReaderService}
+ * and {@link https://backstage.io/docs/backend-system/core-services/url-reader | the service docs}
+ * for more information.
+ *
+ * @public
+ */
 export const urlReaderServiceFactory = createServiceFactory({
   service: coreServices.urlReader,
   deps: {
     config: coreServices.rootConfig,
     logger: coreServices.logger,
+    factories: urlReaderFactoriesServiceRef,
   },
-  async factory({ config, logger }) {
+  async factory({ config, logger, factories }) {
     return UrlReaders.default({
       config,
       logger,
+      factories,
     });
   },
 });

@@ -18,7 +18,7 @@ import { ConfigReader } from '@backstage/config';
 import {
   createMockDirectory,
   mockServices,
-  setupRequestMockHandlers,
+  registerMswTestHooks,
 } from '@backstage/backend-test-utils';
 import fs from 'fs-extra';
 import { rest } from 'msw';
@@ -72,7 +72,7 @@ describe('GitlabUrlReader', () => {
   beforeEach(mockDir.clear);
 
   const worker = setupServer();
-  setupRequestMockHandlers(worker);
+  registerMswTestHooks(worker);
 
   describe('read', () => {
     beforeEach(() => {
@@ -697,7 +697,9 @@ describe('GitlabUrlReader', () => {
         (gitlabProcessor as any).getGitlabFetchUrl(
           'https://gitlab.com/some/random/endpoint',
         ),
-      ).rejects.toThrow('Please provide full path to yaml file from GitLab');
+      ).rejects.toThrow(
+        'Failed converting /some/random/endpoint to a project id. Url path must include /blob/.',
+      );
     });
   });
 

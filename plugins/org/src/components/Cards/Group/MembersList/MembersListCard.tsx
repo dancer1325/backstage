@@ -46,6 +46,9 @@ import {
 import { EntityRefLink } from '@backstage/plugin-catalog-react';
 import { EntityRelationAggregation } from '../../types';
 
+/** @public */
+export type MemberComponentClassKey = 'card' | 'avatar';
+
 const useStyles = makeStyles(
   (theme: Theme) =>
     createStyles({
@@ -64,7 +67,7 @@ const useStyles = makeStyles(
         top: '-2rem',
       },
     }),
-  { name: 'MembersListCardComponent' },
+  { name: 'PluginOrgMemberComponent' },
 );
 
 const MemberComponent = (props: { member: UserEntity }) => {
@@ -117,35 +120,46 @@ const MemberComponent = (props: { member: UserEntity }) => {
   );
 };
 
-const useListStyles = makeStyles(theme => ({
-  root: {
-    height: '100%',
-  },
-  cardContent: {
-    overflow: 'auto',
-  },
-  memberList: {
-    display: 'grid',
-    gap: theme.spacing(1.5),
-    gridTemplateColumns: `repeat(auto-fit, minmax(auto, ${theme.spacing(
-      34,
-    )}px))`,
-  },
-}));
+/** @public */
+export type MembersListCardClassKey = 'root' | 'cardContent' | 'memberList';
+
+const useListStyles = makeStyles(
+  theme => ({
+    root: {
+      height: '100%',
+    },
+    cardContent: {
+      overflow: 'auto',
+    },
+    memberList: {
+      display: 'grid',
+      gap: theme.spacing(1.5),
+      gridTemplateColumns: `repeat(auto-fit, minmax(auto, ${theme.spacing(
+        34,
+      )}px))`,
+    },
+  }),
+  { name: 'PluginOrgMembersListCardComponent' },
+);
 
 /** @public */
 export const MembersListCard = (props: {
   memberDisplayTitle?: string;
   pageSize?: number;
   showAggregateMembersToggle?: boolean;
+  relationType?: string;
+  /** @deprecated Please use `relationAggregation` instead */
   relationsType?: EntityRelationAggregation;
+  relationAggregation?: EntityRelationAggregation;
 }) => {
   const {
     memberDisplayTitle = 'Members',
     pageSize = 50,
     showAggregateMembersToggle,
-    relationsType = 'direct',
+    relationType = 'memberof',
   } = props;
+  const relationAggregation =
+    props.relationAggregation ?? props.relationsType ?? 'direct';
   const classes = useListStyles();
 
   const { entity: groupEntity } = useEntity<GroupEntity>();
@@ -165,7 +179,7 @@ export const MembersListCard = (props: {
   };
 
   const [showAggregateMembers, setShowAggregateMembers] = useState(
-    relationsType === 'aggregated',
+    relationAggregation === 'aggregated',
   );
 
   const { loading: loadingDescendantMembers, value: descendantMembers } =
@@ -177,6 +191,7 @@ export const MembersListCard = (props: {
       return await getAllDesendantMembersForGroupEntity(
         groupEntity,
         catalogApi,
+        relationType,
       );
     }, [catalogApi, groupEntity, showAggregateMembers]);
   const {
@@ -187,7 +202,7 @@ export const MembersListCard = (props: {
     const membersList = await catalogApi.getEntities({
       filter: {
         kind: 'User',
-        'relations.memberof': [
+        [`relations.${relationType.toLocaleLowerCase('en-US')}`]: [
           stringifyEntityRef({
             kind: 'group',
             namespace: groupNamespace.toLocaleLowerCase('en-US'),

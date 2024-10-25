@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-import { createServiceFactory } from '@backstage/backend-plugin-api';
-import { TaskScheduleDefinition } from '@backstage/backend-tasks';
+import {
+  createServiceFactory,
+  SchedulerServiceTaskScheduleDefinition,
+} from '@backstage/backend-plugin-api';
 import { startTestBackend, mockServices } from '@backstage/backend-test-utils';
 import { EntityProviderConnection } from '@backstage/plugin-catalog-node';
 import { catalogProcessingExtensionPoint } from '@backstage/plugin-catalog-node/alpha';
 import { TestEventsService } from '@backstage/plugin-events-backend-test-utils';
 import { eventsServiceRef } from '@backstage/plugin-events-node';
-import { Duration } from 'luxon';
 import { catalogModuleBitbucketCloudEntityProvider } from './catalogModuleBitbucketCloudEntityProvider';
 import { BitbucketCloudEntityProvider } from '../providers/BitbucketCloudEntityProvider';
 
@@ -36,7 +37,7 @@ describe('catalogModuleBitbucketCloudEntityProvider', () => {
       },
     });
     let addedProviders: Array<BitbucketCloudEntityProvider> | undefined;
-    let usedSchedule: TaskScheduleDefinition | undefined;
+    let usedSchedule: SchedulerServiceTaskScheduleDefinition | undefined;
 
     const catalogExtensionPointImpl = {
       addEntityProvider: (providers: any) => {
@@ -57,8 +58,8 @@ describe('catalogModuleBitbucketCloudEntityProvider', () => {
         [catalogProcessingExtensionPoint, catalogExtensionPointImpl],
       ],
       features: [
-        eventsServiceFactory(),
-        catalogModuleBitbucketCloudEntityProvider(),
+        eventsServiceFactory,
+        catalogModuleBitbucketCloudEntityProvider,
         mockServices.rootConfig.factory({
           data: {
             catalog: {
@@ -78,8 +79,8 @@ describe('catalogModuleBitbucketCloudEntityProvider', () => {
       ],
     });
 
-    expect(usedSchedule?.frequency).toEqual(Duration.fromISO('P1M'));
-    expect(usedSchedule?.timeout).toEqual(Duration.fromISO('PT3M'));
+    expect(usedSchedule?.frequency).toEqual({ months: 1 });
+    expect(usedSchedule?.timeout).toEqual({ minutes: 3 });
     expect(addedProviders?.length).toEqual(1);
     expect(runner).not.toHaveBeenCalled();
     const provider = addedProviders!.pop()!;

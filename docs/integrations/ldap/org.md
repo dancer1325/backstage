@@ -21,8 +21,7 @@ Backstage in general supports OpenLDAP compatible vendors, as well as Active Dir
 The provider is not installed by default, therefore you have to add a dependency
 to `@backstage/plugin-catalog-backend-module-ldap` to your backend package.
 
-```bash
-# From your Backstage root directory
+```bash title="From your Backstage root directory"
 yarn --cwd packages/backend add @backstage/plugin-catalog-backend-module-ldap
 ```
 
@@ -45,7 +44,7 @@ catalog:
 Finally, updated your backend by adding the following line:
 
 ```ts title="packages/backend/src/index.ts"
-backend.add(import('@backstage/plugin-catalog-backend/alpha'));
+backend.add(import('@backstage/plugin-catalog-backend'));
 /* highlight-add-start */
 backend.add(import('@backstage/plugin-catalog-backend-module-ldap'));
 /* highlight-add-end */
@@ -55,6 +54,8 @@ backend.add(import('@backstage/plugin-catalog-backend-module-ldap'));
 
 The following configuration is a small example of how a setup could look for
 importing groups and users from a corporate LDAP server.
+
+Users and Groups can be configured for multiple `dn` entries as an array.
 
 ```yaml
 catalog:
@@ -66,25 +67,32 @@ catalog:
           dn: uid=ldap-reader-user,ou=people,ou=example,dc=example,dc=net
           secret: ${LDAP_SECRET}
         users:
-          dn: ou=people,ou=example,dc=example,dc=net
-          options:
-            filter: (uid=*)
-          map:
-            description: l
-          set:
-            metadata.customField: 'hello'
+          - dn: ou=people,ou=example,dc=example,dc=net
+            options:
+              filter: (uid=*)
+            map:
+              description: l
+            set:
+              metadata.customField: 'hello'
         groups:
-          dn: ou=access,ou=groups,ou=example,dc=example,dc=net
-          options:
-            filter: (&(objectClass=some-group-class)(!(groupType=email)))
-          map:
-            description: l
-          set:
-            metadata.customField: 'hello'
+          - dn: ou=access,ou=groups,ou=example,dc=example,dc=net
+            options:
+              filter: (&(objectClass=some-group-class)(!(groupType=email)))
+            map:
+              description: l
+            set:
+              metadata.customField: 'hello'
 ```
 
-These config blocks have a lot of options in them, so we will describe each
-"root" key within the block separately.
+These config blocks have a lot of options in them, so we will describe each "root" key within the block separately.
+
+> NOTE:
+>
+> If you want to import users and groups from different LDAP servers, you can define multiple providers with different names.
+> If they should come from the same server, you can define multiple users and groups blocks within the same provider using an array of users / groups.
+> Entries coming from the same block will be able to detect group memberships based on the `memberOf` attribute.
+>
+> If you want only to import users or groups, you can omit the groups or users block.
 
 ### target
 
@@ -296,16 +304,43 @@ map:
   members: member
 ```
 
+## Optional Vendor Configuration
+
+In case the LDAP vendor isn't automatically detected by the module, an optional `vendor` configuration section is available which allows overriding the location for `dn` and `uuid` settings, and a case sensitivity setting.
+
+#### vendor.dnAttributeName
+
+Allows explicitly defining the name of the attribute that stores each entry's DN.
+
+#### vendor.uuidAttributeName
+
+Allows explicitly defining the name of the attribute that stores each entry's UUID.
+
+#### vendor.dnCaseSensitive
+
+Provides the ability to ignore case sensitivity issues with user/group mappings. If set to true, the ingestion will link user/members to groups whether their `dn`, `member`, or `memberOf` values have the right case or not.
+
+```yaml
+vendor:
+  # Attribute name override for the distinguished name (DN) of an entry.
+  dnAttributeName: dn
+  # Attribute name override for the unique identifier (UUID) of an entry.
+  uuidAttributeName: uuid
+  # Attribute to force values provided from dn and members/memberOf values all to lowercase.
+  # This is to resolve potential user/group mapping issues if case differences on dn strings.
+  dnCaseSensitive: true
+```
+
 ## Customize the Provider
 
 In case you want to customize the ingested entities, the provider allows to pass
 transformers for users and groups.
 
-Transformers can be configured by extending `ldapOrgEntityProviderTransformExtensionPoint`. Here is an example:
+Transformers can be configured by extending `ldapOrgEntityProviderTransformsExtensionPoint`. Here is an example:
 
 ```ts title="packages/backend/src/index.ts"
 import { createBackendModule } from '@backstage/backend-plugin-api';
-import { ldapOrgEntityProviderTransformExtensionPoint } from '@backstage/plugin-catalog-backend-module-ldap';
+import { ldapOrgEntityProviderTransformsExtensionPoint } from '@backstage/plugin-catalog-backend-module-ldap';
 import { myUserTransformer, myGroupTransformer } from './transformers';
 
 backend.add(
@@ -316,7 +351,7 @@ backend.add(
       env.registerInit({
         deps: {
           /* highlight-add-start */
-          ldapTransformers: ldapOrgEntityProviderTransformExtensionPoint,
+          ldapTransformers: ldapOrgEntityProviderTransformsExtensionPoint,
           /* highlight-add-end */
         },
         async init({ ldapTransformers }) {
