@@ -55,16 +55,34 @@ You can throw for "hard" errors such as when the basic expectations of the entit
 
 ## Can I represent versions (of APIs, services etc) in the catalog?
 
-We do not recommend trying to represent fine grained versions in the catalog. It does not have builtin facilities for that (by design), and the alternatives that exist for trying to do so anyway, end up being awkward and have significant drawbacks. You can sometimes represent major, breaking versions as separate entities (more on that below).
-
-This response can seem surprising, but there's a clear intent behind it. Catalog entities generally represent the "human concept" of a thing, rather than the exact technical implementation of it. The name and granularity of entries in the catalog often match the way that you think and speak of that thing when talking to others. Then, you attach plugins to that high level concept, that are responsible for showing all of the finer details about it that your users need.
-
-The catalog should contain _rarely changing_, _human curated_ data that is easily overseen and _managed by the owners_ of those entities.
-
-One example is backend services. In a fast moving world, there may be several versions of a service deployed in several environments at the same time, and those can change rapidly. Despite that, when you talk about the service with your colleagues, you probably call it e.g. "the scaffolder". So you catalog it for example as `kind: Component`, `name: scaffolder`, `type: service`. But in your frontend, you can still have rich plugins that directly query your CI/CD systems, log collectors, and similar, to show precise, real-time information about exactly what's going on in your infrastructure in terms of that service. And notably, this happened without putting the burden on your end users to maintain a complex, fast moving set of yaml data just in order to appease those views.
-
-Another example is software libraries. It's tempting to catalog every dependency of every software component, but it's ultimately not a good fit for the catalog. If you develop inner-source libraries that are widely used in your org, then by all means make a single component for them! That lets people search for it, find the owners, and gain similar insights. But if you want to track individual versions and their usages within the ecosystem, then that's a use case better served by a separate solution. Which then, in turn, absolutely could have a nice plugin view in Backstage so that you can see its output right in the view of the library itself!
-
-And finally the example of APIs. This topic can sometimes be the most contentious. It would be unfortunate to have to create entities for every iteration of your API, and it would clobber search and ultimately be confusing.
-
-Especially for APIs, but also the other kinds, you can still end up wanting to make a new catalog entity when a new major version of that thing is released. At that point, in some cases, the new major version is almost like a completely new component, deployed in isolation from the old one, with completely updated contracts, maybe with different documentation etc. If so then sure, make a `kind: API`, `name: customerinfo2` for example. Then you make the choice that there will be two entities popping up in search results when looking for that string, and maybe that is a good thing in this instance.
+* recommendations
+  * versions
+    * 👀NOT represent fine grained versions | catalog 👀
+      * Reason: 🧠NOT builtin facilities (by design) & the alternatives have significant drawbacks 🧠 
+    * ⭐️SOMETIMES, you can represent major, breaking versions -- as -- separate entities ⭐️
+      * Reason: 🧠Catalog entities -- generally represent the -- "human concept" of a thing / != technical implementation of it 🧠 
+        * plugins -- show -- ALL of the finer details about this "human concept"
+* catalog
+  * ⚠️scope about the information / displayed | catalog ⚠️
+    * _rarely changing_,
+    * _human curated_,
+    * easily overseen & _managed -- by the -- owners_ of those entities
+  * _Examples:_
+    * _Example1:_ backend services
+      * use case
+        * several versions of a service / deployed | several environments | SAME time / change rapidly
+    * _Example2:_ software libraries
+      * NOT recommended
+        * catalog EVERY dependency / EVERY software component 
+        * track individual versions of an inner source library -> check a separate solution
+      * recommended
+        * inner-source libraries / widely used | your org
+          * create 1! component 
+          * lets people
+            * search for it
+            * find the owners
+            * gain similar insight
+    * _Example3:_ APIs 
+      * NOT recommended, BUT ONLY solution
+        * create entities / EVERY version of your API
+          * ⚠️-> confusing ⚠️
