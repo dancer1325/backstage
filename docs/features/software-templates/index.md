@@ -59,60 +59,50 @@ description: The Software Templates part of Backstage is a tool that can help yo
 
 ## View Component in Catalog
 
-* TODO:
-When it's been created, you'll see the `View in Catalog` button, which will take
-you to the registered component in the catalog:
+* once it's been created -> redirected to the `View in Catalog` button
 
-![Catalog](../../assets/software-templates/go-to-catalog.png)
+  ![Catalog](../../assets/software-templates/go-to-catalog.png)
 
-And then you'll also be able to see it in the Catalog View table:
+* | Catalog View table
 
-![Catalog](../../assets/software-templates/added-to-the-catalog-list.png)
+  ![Catalog](../../assets/software-templates/added-to-the-catalog-list.png)
 
 ## Disable Register Existing Component button
 
-There could be situations where you would like to disable the
-`Register Existing Component` button for your users. For example:
+* == disable the default route binding | `scaffolderPlugin.registerComponent`
+* ways
+  * | `backstage/packages/app/src/App.tsx`:
 
-![Disable Button](../../assets/software-templates/disable-register-existing-component-button.png)
+  ```diff
+   const app = createApp({
+     apis,
+     bindRoutes({ bind }) {
+       bind(scaffolderPlugin.externalRoutes, {
+  +      registerComponent: false,
+  -      registerComponent: catalogImportPlugin.routes.importPage,
+         viewTechDoc: techdocsPlugin.routes.docRoot,
+       });
+  })
+  ```
 
-To do so, you need to explicitly disable the default route binding from the `scaffolderPlugin.registerComponent` to the Catalog Import page.
+  * | `app-config.yaml`
 
-This can be done in `backstage/packages/app/src/App.tsx`:
-
-```diff
- const app = createApp({
-   apis,
-   bindRoutes({ bind }) {
-     bind(scaffolderPlugin.externalRoutes, {
-+      registerComponent: false,
--      registerComponent: catalogImportPlugin.routes.importPage,
-       viewTechDoc: techdocsPlugin.routes.docRoot,
-     });
-})
-```
-
-OR in `app-config.yaml`:
-
-```yaml
-app:
-  routes:
-    bindings:
-      scaffolder.registerComponent: false
-```
-
-After the change, you should no longer see the button.
+  ```yaml
+  app:
+    routes:
+      bindings:
+        scaffolder.registerComponent: false
+  ```
 
 ## Previewing and Executing Previous Template Tasks
 
-Each execution of a template is treated as a unique task, identifiable by its own unique ID. To view a list of previously executed template tasks, navigate to the "Create" page and access the "Task List" from the context menu (represented by the vertical ellipsis, or 'kebab menu', icon in the upper right corner).
+* execution of a template
+  * == unique task / unique ID
+  * list of previously executed template tasks
+    * | "Create" page, "Task List"
 
-![Template Task List](../../assets/software-templates/template-task-list.png)
+    ![Template Task List](../../assets/software-templates/template-task-list.png)
 
-If you wish to re-run a previously executed template, navigate to the template tasks page. Locate the desired task and select the "Start Over" option from the context menu.
+  * if you want to re-run ->  navigate to the template tasks page. Locate the desired task and select the "Start Over" option from the context menu.
 
-![Template Start Over](../../assets/software-templates/template-start-over.png)
-
-This action will initiate a new execution of the selected template, pre-populated with the same parameters as the previous run, but these parameters can be edited before re-execution.
-
-In the event of a failed template execution, the "Start Over" option can be used to re-execute the template. The parameters from the original run will be pre-filled, but they can be adjusted as needed before retrying the template.
+    ![Template Start Over](../../assets/software-templates/template-start-over.png)
